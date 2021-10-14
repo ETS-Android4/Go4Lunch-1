@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="colorPagesViewPager">
+        <item>#3F2F5FFF</item>
+        <item>#F169FF</item>
+        <item>#8F5FFFFF</item>
+    </string-array>
+</resources>

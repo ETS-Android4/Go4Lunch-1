@@ -1,3 +1,8 @@
 <resources>
+
     <string name="app_name">Go 4 Lunch</string>
+
+    <string name="mapview_page">Map View</string>
+    <string name="list_view_page">List View</string>
+    <string name="workmates_page">Workmates List</string>
 </resources>
