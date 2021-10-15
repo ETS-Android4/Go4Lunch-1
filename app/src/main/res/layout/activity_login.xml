@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background_login">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
+        android:layout_marginBottom="80dp"
+        android:layout_marginHorizontal="@dimen/margin_normal_size">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/activity_login_facebook_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal_size"
+            android:padding="@dimen/padding_normal_size"
+            android:text="@string/facebook_login"
+            style="@style/Base.CardView"
+            android:textSize="16sp"
+            android:drawableLeft="@drawable/ic_facebook_logo"
+            android:background="@drawable/rounded_border"
+            android:backgroundTint="@color/facebook"
+            android:textColor="@color/white"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/activity_login_google_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_normal_size"
+            android:padding="@dimen/padding_normal_size"
+            android:text="@string/google_login"
+            style="@style/Base.CardView"
+            android:textSize="16sp"
+            android:drawableLeft="@drawable/ic_google_logo"
+            android:background="@drawable/rounded_border"
+            android:backgroundTint="@color/google"
+            android:textColor="@color/white"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

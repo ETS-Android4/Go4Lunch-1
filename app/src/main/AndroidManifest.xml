@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.openclassrooms.p7.go4lunch">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Go4Lunch">
+        <!-- Main Activity -->
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,6 +19,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Login Activity -->
+        <activity android:name=".LoginActivity"
+            android:parentActivityName=".MainActivity"/>
+
+        <!-- Facebook Sign In Activity -->
+        <activity android:name=".FacebookSignInActivity"
+            android:parentActivityName=".MainActivity"/>
+
+        <!-- Google Sign In Activity -->
+        <activity android:name=".GoogleSignInActivity"
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>
