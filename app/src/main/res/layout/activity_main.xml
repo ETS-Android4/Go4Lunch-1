@@ -9,40 +9,44 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/activity_main_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/activity_main_tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:background="#B6C9F1"
+                    app:tabIndicatorColor="@color/design_default_color_primary"
+                    app:tabTextColor="#D4E0F8"
+                    app:tabSelectedTextColor="#fff"/>
+
+            </androidx.viewpager.widget.ViewPager>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/activity_main_navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         app:headerLayout="@layout/navigation_drawer_header"
         app:menu="@menu/main_menu"
-        android:layout_gravity="start"/>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/activity_main_tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:elevation="3dp"
-                android:background="#B6C9F1"
-                app:tabIndicatorColor="@color/design_default_color_primary"
-                app:tabTextColor="#D4E0F8"
-                app:tabSelectedTextColor="#fff"/>
-
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/activity_main_viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </ScrollView>
+        android:layout_gravity="start"
+        android:background="@color/drawerlayout_color"
+        app:itemTextColor="@color/white"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

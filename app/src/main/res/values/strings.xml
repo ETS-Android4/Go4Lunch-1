@@ -16,5 +16,10 @@
     <string name="lunch">YOUR LUNCH</string>
     <string name="settings">SETTINGS</string>
     <string name="logout">LOGOUT</string>
+    <string name="hungry">I\'m Hungry!</string>
+    <string name="error_authentication_canceled">Authentication canceled</string>
+    <string name="connection_succeed">connection succeed</string>
+    <string name="error_no_internet">Error no internet connection</string>
+    <string name="error_unknow_error">Unknow error</string>
 
 </resources>

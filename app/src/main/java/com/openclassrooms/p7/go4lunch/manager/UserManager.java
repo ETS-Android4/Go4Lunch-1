@@ -1,5 +1,9 @@
 package com.openclassrooms.p7.go4lunch.manager;
 
+import android.content.Context;
+
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 
@@ -34,5 +38,13 @@ public class UserManager {
 
     public Boolean isCurrentUserLogged() {
         return (this.getCurrentUser() != null);
+    }
+
+    public Task<Void> signOut(Context context) {
+        return mUserRepository.signOut(context);
+    }
+
+    public Task<Void> deleteUser(Context context) {
+        return mUserRepository.deleteUser(context);
     }
 }

@@ -6,17 +6,18 @@
         <item
             android:id="@+id/your_lunch"
             android:title="@string/lunch"
-            android:icon="@drawable/ic_restaurant_menu"/>
+            android:icon="@drawable/baseline_restaurant_menu_24"
+            android:iconTint="@color/white"/>
 
         <item
             android:id="@+id/settings"
             android:title="@string/settings"
-            android:icon="@drawable/ic_settings"/>
+            android:icon="@drawable/baseline_settings_24"/>
 
         <item
             android:id="@+id/logout"
             android:title="@string/logout"
-            android:icon="@drawable/ic_power_settings"/>
+            android:icon="@drawable/baseline_power_settings_new_24"/>
 
     </group>
 </menu>
