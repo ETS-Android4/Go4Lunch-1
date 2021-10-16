@@ -5,4 +5,7 @@
     <dimen name="padding_large_size">26dp</dimen>
     <dimen name="margin_large_size">30dp</dimen>
     <dimen name="text_xlarge_size">40sp</dimen>
+    <dimen name="nav_header_height">250dp</dimen>
+    <dimen name="image_profile_width">72dp</dimen>
+    <dimen name="image_profile_height">@dimen/image_profile_width</dimen>
 </resources>
