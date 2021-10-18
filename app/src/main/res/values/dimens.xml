@@ -8,4 +8,11 @@
     <dimen name="nav_header_height">250dp</dimen>
     <dimen name="image_profile_width">72dp</dimen>
     <dimen name="image_profile_height">@dimen/image_profile_width</dimen>
+    <dimen name="margin_login_icon">50dp</dimen>
+    <dimen name="login_icon_width">300dp</dimen>
+    <dimen name="login_icon_height">@dimen/login_icon_width</dimen>
+    <dimen name="login_buttons_layout_margin_bottom">80dp</dimen>
+    <dimen name="nav_drawer_meal_icon_margin_horizontal">90dp</dimen>
+    <dimen name="nav_drawer_meal_icon_width">120dp</dimen>
+    <dimen name="nav_drawer_meal_icon_height">@dimen/nav_drawer_meal_icon_width</dimen>
 </resources>

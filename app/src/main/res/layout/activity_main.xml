@@ -48,6 +48,15 @@
         android:layout_gravity="start"
         android:background="@color/drawerlayout_color"
         app:itemTextColor="@color/white"
-        app:itemIconTint="@color/white"/>
+        app:itemIconTint="@color/white">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/nav_drawer_meal_icon_width"
+            android:layout_height="@dimen/nav_drawer_meal_icon_height"
+            android:layout_gravity="bottom"
+            android:layout_marginHorizontal="@dimen/nav_drawer_meal_icon_margin_horizontal"
+            android:src="@drawable/nav_drawer_meal_icon"/>
+
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>
