@@ -1,4 +1,4 @@
-package com.openclassrooms.p7.go4lunch;
+package com.openclassrooms.p7.go4lunch.ui.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.openclassrooms.p7.go4lunch.R;
 
 /**
  * Created by lleotraas on 14.

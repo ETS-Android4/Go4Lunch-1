@@ -1,8 +1,7 @@
-package com.openclassrooms.p7.go4lunch;
+package com.openclassrooms.p7.go4lunch.ui.sign_in;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,6 +21,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
+import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 
 import java.util.Arrays;
 
@@ -30,7 +31,7 @@ import static android.content.ContentValues.TAG;
 /**
  * Created by lleotraas on 15.
  */
-public class FacebookSignInActivity extends LoginActivity{
+public class FacebookSignInActivity extends LoginActivity {
 
     private CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;

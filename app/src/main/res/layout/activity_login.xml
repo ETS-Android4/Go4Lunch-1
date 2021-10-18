@@ -3,14 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/background_login">
+    android:background="@drawable/login_background">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="@dimen/login_icon_width"
+        android:layout_height="@dimen/login_icon_height"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/margin_login_icon"
+        android:src="@drawable/login_meal_icon"/>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="@dimen/login_buttons_layout_margin_bottom"
         android:layout_marginHorizontal="@dimen/margin_normal_size">
 
         <androidx.appcompat.widget.AppCompatButton

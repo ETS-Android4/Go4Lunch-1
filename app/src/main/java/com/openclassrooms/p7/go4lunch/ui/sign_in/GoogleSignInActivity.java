@@ -1,4 +1,4 @@
-package com.openclassrooms.p7.go4lunch;
+package com.openclassrooms.p7.go4lunch.ui.sign_in;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,13 +19,16 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
+import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 
 import static android.content.ContentValues.TAG;
 
 /**
  * Created by lleotraas on 15.
  */
-public class GoogleSignInActivity extends LoginActivity{
+public class GoogleSignInActivity extends LoginActivity {
 
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 101;

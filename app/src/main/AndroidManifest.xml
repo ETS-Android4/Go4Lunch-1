@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.openclassrooms.p7.go4lunch">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
@@ -12,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Go4Lunch">
         <!-- Main Activity -->
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,16 +23,20 @@
         </activity>
 
         <!-- Login Activity -->
-        <activity android:name=".LoginActivity"
-            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".ui.login.LoginActivity"
+            android:parentActivityName=".ui.MainActivity"/>
 
         <!-- Facebook Sign In Activity -->
-        <activity android:name=".FacebookSignInActivity"
-            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".ui.sign_in.FacebookSignInActivity"
+            android:parentActivityName=".ui.MainActivity"/>
 
         <!-- Google Sign In Activity -->
-        <activity android:name=".GoogleSignInActivity"
-            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".ui.sign_in.GoogleSignInActivity"
+            android:parentActivityName=".ui.MainActivity"/>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
     </application>
 
 </manifest>
