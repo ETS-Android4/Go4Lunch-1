@@ -6,7 +6,7 @@
     android:id="@+id/map_view_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.openclassrooms.p7.go4lunch.MapViewFragment">
+    tools:context="com.openclassrooms.p7.go4lunch.ui.fragment.MapViewFragment">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/test_tv"

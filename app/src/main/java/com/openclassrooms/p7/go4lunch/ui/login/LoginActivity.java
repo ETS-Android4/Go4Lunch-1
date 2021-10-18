@@ -1,4 +1,4 @@
-package com.openclassrooms.p7.go4lunch.ui;
+package com.openclassrooms.p7.go4lunch.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,8 @@ import com.firebase.ui.auth.IdpResponse;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityLoginBinding;
 import com.openclassrooms.p7.go4lunch.manager.UserManager;
+import com.openclassrooms.p7.go4lunch.ui.sign_in.FacebookSignInActivity;
+import com.openclassrooms.p7.go4lunch.ui.sign_in.GoogleSignInActivity;
 
 /**
  * Created by lleotraas on 15.

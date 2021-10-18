@@ -1,10 +1,14 @@
-package com.openclassrooms.p7.go4lunch;
+package com.openclassrooms.p7.go4lunch.ui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+
+import com.openclassrooms.p7.go4lunch.ui.fragment.ListViewFragment;
+import com.openclassrooms.p7.go4lunch.ui.fragment.MapViewFragment;
+import com.openclassrooms.p7.go4lunch.ui.fragment.WorkmatesFragment;
 
 /**
  * Created by lleotraas on 14.

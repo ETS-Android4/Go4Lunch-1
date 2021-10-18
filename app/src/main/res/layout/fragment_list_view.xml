@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/list_view_container"
-    tools:context=".ListViewFragment">
+    tools:context=".ui.fragment.ListViewFragment">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/list_view_tv"

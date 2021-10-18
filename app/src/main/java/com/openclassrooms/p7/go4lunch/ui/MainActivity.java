@@ -1,4 +1,4 @@
-package com.openclassrooms.p7.go4lunch;
+package com.openclassrooms.p7.go4lunch.ui;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -18,9 +18,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
+import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
 import com.openclassrooms.p7.go4lunch.databinding.NavigationDrawerHeaderBinding;
 import com.openclassrooms.p7.go4lunch.manager.UserManager;
+import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
