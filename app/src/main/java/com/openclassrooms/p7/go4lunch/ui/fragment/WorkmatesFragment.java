@@ -17,8 +17,30 @@ import com.openclassrooms.p7.go4lunch.R;
  */
 public class WorkmatesFragment extends Fragment {
 
-    public static WorkmatesFragment newInstance() {
-        return new WorkmatesFragment();
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    private String mParam1;
+    private String mParam2;
+
+    public WorkmatesFragment() { }
+
+    public static WorkmatesFragment newInstance(String param1, String param2) {
+        WorkmatesFragment fragment = new WorkmatesFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
     }
 
     @Nullable

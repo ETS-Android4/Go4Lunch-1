@@ -1,10 +1,10 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.Lifecycle;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.openclassrooms.p7.go4lunch.ui.fragment.ListViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.fragment.MapViewFragment;
@@ -13,45 +13,33 @@ import com.openclassrooms.p7.go4lunch.ui.fragment.WorkmatesFragment;
 /**
  * Created by lleotraas on 14.
  */
-public class PageAdapter extends FragmentPagerAdapter {
+public class PageAdapter extends FragmentStateAdapter {
 
-    public PageAdapter(@NonNull FragmentManager fm) {
-        super(fm);
+    public PageAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+        super(fragmentManager, lifecycle);
     }
+
+
+
 
     @NonNull
     @Override
-    public Fragment getItem(int position) {
+    public Fragment createFragment(int position) {
 
         switch (position) {
             case 0:
-                return MapViewFragment.newInstance();
+                return new MapViewFragment();
             case 1:
-                return ListViewFragment.newInstance();
+                return new ListViewFragment();
             case 2:
-                return WorkmatesFragment.newInstance();
+                return new WorkmatesFragment();
             default:
                 return null;
         }
     }
 
     @Override
-    public int getCount() {
+    public int getItemCount() {
         return 3;
-    }
-
-    @Nullable
-    @Override
-    public CharSequence getPageTitle(int position) {
-        switch (position){
-            case 0:
-                return "Map View";
-            case 1:
-                return "List View";
-            case 2:
-                return "Workmates View";
-            default:
-                return null;
-        }
     }
 }
