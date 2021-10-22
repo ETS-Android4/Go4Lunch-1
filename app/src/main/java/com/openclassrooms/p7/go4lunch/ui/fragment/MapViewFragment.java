@@ -2,10 +2,12 @@ package com.openclassrooms.p7.go4lunch.ui.fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -34,6 +37,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.openclassrooms.p7.go4lunch.JsonParser;
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
+import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,6 +79,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     private String mParam1;
     private String mParam2;
 
+    private RestaurantApiService mApiService;
+
     public MapViewFragment(){}
 
     public static MapViewFragment newInstance(String param1, String param2) {
@@ -96,6 +105,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_map_view, container, false);
+        mApiService = DI.getRestaurantApiService();
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             CameraPosition cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
@@ -301,18 +311,30 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
             for (int i = 0; i < hashMaps.size(); i++) {
                 HashMap<String, String> hashMapList = hashMaps.get(i);
                 String name = hashMapList.get("name");
-                String adress = hashMapList.get("adress");
-                String icon = hashMapList.get("icon");
-                double lat = Double.parseDouble(hashMapList.get("lat"));
-                double lng = Double.parseDouble(hashMapList.get("lng"));
-                LatLng latLng = new LatLng(lat, lng);
-                MarkerOptions options = new MarkerOptions();
-                options.position(latLng);
-                options.title(name + "\n" + adress);
-                options.getIcon();
-                mMap.addMarker(options);
+                    String adress = hashMapList.get("adress");
+                    String photos = hashMapList.get("photos");
+//                    String hours = hashMapList.get("hours");
+//                    double rating = Double.parseDouble(hashMapList.get("rating"));
+                    double lat = Double.parseDouble(hashMapList.get("lat"));
+                    double lng = Double.parseDouble(hashMapList.get("lng"));
+                    LatLng latLng = new LatLng(lat, lng);
+                    MarkerOptions options = new MarkerOptions();
+                    options.position(latLng);
+                    options.title(name + "\n" + adress);
+                    options.getIcon();
+                    mMap.addMarker(options);
+                    addInRestaurantList(name, adress, photos, "ouvert", 4);
             }
+            sendDataList();
+        }
+
+        private void addInRestaurantList(String name, String adress, String photos, String hours, double rating) {
+            mApiService.addRestaurant(new Restaurant(name, "", adress, hours, 245, 4, rating,photos));
 
         }
+    }
+
+    private void sendDataList() {
+
     }
 }

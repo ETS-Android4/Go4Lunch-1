@@ -1,16 +1,30 @@
 package com.openclassrooms.p7.go4lunch.ui.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
+import com.openclassrooms.p7.go4lunch.ui.fragment.listview.adapter.ListViewAdapter;
+
+import java.util.List;
 
 /**
  * Created by lleotraas on 14.
@@ -22,6 +36,10 @@ public class ListViewFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
+
+    private RecyclerView mRecyclerView;
+    private RestaurantApiService mApiService;
+
 
     public ListViewFragment() { }
 
@@ -41,14 +59,24 @@ public class ListViewFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mApiService = DI.getRestaurantApiService();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list_view, container, false);
-        TextView yali = view.findViewById(R.id.list_view_tv);
-        yali.setText("Ici c'est la liste des restos");
-        return view;
+        View root = inflater.inflate(R.layout.fragment_list_view, container, false);
+        mRecyclerView = root.findViewById(R.id.list_view_recycler_view);
+        this.initList();
+        return root;
     }
+
+    private void initList() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
+        ListViewAdapter listViewAdapter = new ListViewAdapter(mApiService.getRestaurant());
+        mRecyclerView.setAdapter(listViewAdapter);
+    }
+
+
 }

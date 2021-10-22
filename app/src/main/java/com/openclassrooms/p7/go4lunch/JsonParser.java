@@ -17,13 +17,18 @@ public class JsonParser {
         try {
             String name = object.getString("name");
             String id = object.getString("place_id");
-            String icon = object.getString("icon");
-            String adress = object.getString("vicinity");
             String latitude = object.getJSONObject("geometry").getJSONObject("location").getString("lat");
             String longitude = object.getJSONObject("geometry").getJSONObject("location").getString("lng");
+            String photos = object.getJSONObject("photos").getString("html_attributions");
+            String adress = object.getString("vicinity");
+//            String hours = object.getString("openning_hours");
+//            String rating = object.getString("rating");
+
             dataList.put("name", name);
             dataList.put("id", id);
-            dataList.put("icon", icon);
+//            dataList.put("hours", hours);
+//            dataList.put("rating", rating);
+            dataList.put("photos", photos);
             dataList.put("adress", adress);
             dataList.put("lat", latitude);
             dataList.put("lng", longitude);
