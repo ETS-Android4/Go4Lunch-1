@@ -16,14 +16,12 @@ public class JsonParser {
         HashMap<String,String> dataList = new HashMap<>();
         try {
             String name = object.getString("name");
-            String id = object.getString("place_id");
-            String icon = object.getString("icon");
-            String adress = object.getString("vicinity");
+            String placeId = object.getString("place_id");
             String latitude = object.getJSONObject("geometry").getJSONObject("location").getString("lat");
             String longitude = object.getJSONObject("geometry").getJSONObject("location").getString("lng");
+            String adress = object.getString("vicinity");
             dataList.put("name", name);
-            dataList.put("id", id);
-            dataList.put("icon", icon);
+            dataList.put("placeId", placeId);
             dataList.put("adress", adress);
             dataList.put("lat", latitude);
             dataList.put("lng", longitude);
@@ -53,6 +51,7 @@ public class JsonParser {
         }catch (JSONException e) {
             e.printStackTrace();
         }
+        assert jsonArray != null;
         return parseJsonArray(jsonArray);
     }
 }

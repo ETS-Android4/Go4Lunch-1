@@ -12,22 +12,27 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
-import androidx.viewpager.widget.ViewPager;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
-import com.openclassrooms.p7.go4lunch.databinding.NavigationDrawerHeaderBinding;
 import com.openclassrooms.p7.go4lunch.manager.UserManager;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding mBinding;
-    private NavigationDrawerHeaderBinding mHeaderBinding;
+    private ViewPager2 mViewPager;
+    private TabLayout mTabLayout;
+    private PageAdapter mAdapter;
+    private DrawerLayout mDrawerLayout;
+    private NavigationView mNavigationView;
     private final UserManager mUserManager = UserManager.getInstance();
     private TextView email;
     private TextView username;
@@ -36,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.ConfigureBinding();
+        setContentView(R.layout.activity_main);
         this.configureNavigationDrawer();
         this.startSignActivity();
         this.configureViewPager();
@@ -46,41 +51,72 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mBinding.activityMainDrawerLayout.isDrawerOpen(GravityCompat.START)){
-            mBinding.activityMainDrawerLayout.closeDrawer(GravityCompat.START);
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
     }
 
-    private void ConfigureBinding() {
-        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
-        View view = mBinding.getRoot();
-        setContentView(view);
-    }
-
     private void configureNavigationDrawer() {
         Toolbar toolbar = findViewById(R.id.toolbar);
+        mDrawerLayout = findViewById(R.id.activity_main_drawer_layout);
+        mNavigationView = findViewById(R.id.activity_main_navigation_view);
         setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mBinding.activityMainDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mBinding.activityMainDrawerLayout.addDrawerListener(toggle);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        final View parentView = mBinding.activityMainNavigationView.getHeaderView(0);
+        final View parentView = mNavigationView.getHeaderView(0);
         email = parentView.findViewById(R.id.header_email_adress_tv);
         username = parentView.findViewById(R.id.header_username_tv);
         userPicture = parentView.findViewById(R.id.header_user_image_img);
     }
 
     private void configureViewPager() {
-        ViewPager pager = findViewById(R.id.activity_main_viewpager);
-        pager.setAdapter(new PageAdapter(getSupportFragmentManager()));
-        TabLayout tabs = findViewById(R.id.activity_main_tabs);
-        tabs.setupWithViewPager(pager);
-        tabs.setTabMode(TabLayout.MODE_FIXED);
+        mTabLayout = findViewById(R.id.activity_main_tabs);
+        mViewPager = findViewById(R.id.activity_main_viewpager);
+        mViewPager.setUserInputEnabled(false);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        mAdapter = new PageAdapter(fragmentManager, getLifecycle());
+        mViewPager.setAdapter(mAdapter);
+        setTabLayoutName();
+    }
+
+    private void setTabLayoutName() {
+        mTabLayout.addTab(mTabLayout.newTab().setText(getString(R.string.map_view_page)));
+        mTabLayout.addTab(mTabLayout.newTab().setText(getString(R.string.list_view_page)));
+        mTabLayout.addTab(mTabLayout.newTab().setText(getString(R.string.workmates_page)));
+        setTabLayoutListener();
+    }
+
+    private void setTabLayoutListener() {
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        mViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                mTabLayout.selectTab(mTabLayout.getTabAt(position));
+            }
+        });
     }
 
     private void configureListeners() {
-        mBinding.activityMainNavigationView.setNavigationItemSelectedListener(item -> {
+        mNavigationView.setNavigationItemSelectedListener(item -> {
 
             switch (item.getItemId()) {
                 case R.id.your_lunch:
