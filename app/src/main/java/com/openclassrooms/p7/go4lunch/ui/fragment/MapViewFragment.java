@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
+import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.JsonParser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
@@ -53,6 +54,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import static android.content.ContentValues.TAG;
 
@@ -125,6 +127,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    @SuppressLint("PotentialBehaviorOverride")
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
@@ -148,6 +151,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
                 TextView snippet = infoWindow.findViewById(R.id.snippet);
                 snippet.setText(marker.getSnippet());
+
 
                 return infoWindow;
             }
@@ -232,7 +236,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                 + "&radius=5000"
                 + "&types=restaurant"
                 + "&sensor=true"
-                + "&key=" + getResources().getString(R.string.google_maps_key);
+                + "&key=" + BuildConfig.GMP_KEY;
         new PlaceTask().execute(url);
     }
 
@@ -290,6 +294,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+
     private class ParserTask extends AsyncTask<String, Integer, List<HashMap<String, String>>> {
         @Override
         protected List<HashMap<String, String>> doInBackground(String... strings) {
@@ -312,25 +317,22 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                 HashMap<String, String> hashMapList = hashMaps.get(i);
                 String name = hashMapList.get("name");
                     String adress = hashMapList.get("adress");
-                    String photos = hashMapList.get("photos");
-//                    String hours = hashMapList.get("hours");
-//                    double rating = Double.parseDouble(hashMapList.get("rating"));
-                    double lat = Double.parseDouble(hashMapList.get("lat"));
-                    double lng = Double.parseDouble(hashMapList.get("lng"));
+                    String placeId = hashMapList.get("placeId");
+                    double lat = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lat")));
+                    double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
                     LatLng latLng = new LatLng(lat, lng);
                     MarkerOptions options = new MarkerOptions();
                     options.position(latLng);
-                    options.title(name + "\n" + adress);
-                    options.getIcon();
+                    options.title(name);
+                    options.snippet(adress);
                     mMap.addMarker(options);
-                    addInRestaurantList(name, adress, photos, "ouvert", 4);
+                addInRestaurantList(name, adress, placeId);
             }
             sendDataList();
         }
 
-        private void addInRestaurantList(String name, String adress, String photos, String hours, double rating) {
-            mApiService.addRestaurant(new Restaurant(name, "", adress, hours, 245, 4, rating,photos));
-
+        private void addInRestaurantList(String name, String adress, String placceId) {
+//            mApiService.addRestaurant(new Restaurant(name, "", adress, hours, 245, 4, rating,photos));
         }
     }
 

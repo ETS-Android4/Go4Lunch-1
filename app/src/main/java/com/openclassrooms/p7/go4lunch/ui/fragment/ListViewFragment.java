@@ -25,6 +25,7 @@ import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 import com.openclassrooms.p7.go4lunch.ui.fragment.listview.adapter.ListViewAdapter;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by lleotraas on 14.
@@ -72,8 +73,8 @@ public class ListViewFragment extends Fragment {
     }
 
     private void initList() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         ListViewAdapter listViewAdapter = new ListViewAdapter(mApiService.getRestaurant());
         mRecyclerView.setAdapter(listViewAdapter);
     }
