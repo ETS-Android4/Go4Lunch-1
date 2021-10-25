@@ -8,10 +8,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -51,6 +53,7 @@ public class FacebookSignInActivity extends LoginActivity {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         handleFacebookAccessToken(loginResult.getAccessToken());
+
                     }
 
                     @Override
@@ -83,19 +86,14 @@ public class FacebookSignInActivity extends LoginActivity {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            finish();
                         } else {
                             Log.d(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(FacebookSignInActivity.this, "Authentification failed.", Toast.LENGTH_SHORT).show();
-                            updateUI(null);
+                            finish();
                         }
                     }
                 });
-    }
-
-    private void updateUI(FirebaseUser user) {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
     }
 
 }

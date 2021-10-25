@@ -39,6 +39,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="${GMP_KEY}" />
 
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_application_id"/>
+
     </application>
 
 </manifest>

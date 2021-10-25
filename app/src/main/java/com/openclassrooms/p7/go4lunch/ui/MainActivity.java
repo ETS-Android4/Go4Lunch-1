@@ -3,6 +3,7 @@ package com.openclassrooms.p7.go4lunch.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.facebook.FacebookSdk;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
+
     }
 
     @Override

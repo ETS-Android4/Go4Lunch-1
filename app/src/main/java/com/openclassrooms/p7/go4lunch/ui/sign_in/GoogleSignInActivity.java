@@ -61,7 +61,7 @@ public class GoogleSignInActivity extends LoginActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.d(TAG, "firebasAuthWithGoogle:" + account.getId());
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
                 firebaseAuthWithGoogle(account.getIdToken());
             }catch (ApiException e) {
                 Log.w(TAG, "Google sign in failed", e);
@@ -79,19 +79,13 @@ public class GoogleSignInActivity extends LoginActivity {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithCredential : Success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            finish();
                         } else {
                             finish();
                             Log.w(TAG, "signInWithCredential : Failure");
-                            updateUI(null);
+                            finish();
                         }
                     }
                 });
-    }
-
-    private void updateUI(FirebaseUser user) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 }

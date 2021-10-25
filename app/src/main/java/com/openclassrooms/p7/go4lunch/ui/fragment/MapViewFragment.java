@@ -4,6 +4,7 @@ package com.openclassrooms.p7.go4lunch.ui.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,7 +22,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -32,10 +35,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.OpeningHours;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.JsonParser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 
 import org.json.JSONException;
@@ -47,8 +58,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import static android.content.ContentValues.TAG;
@@ -63,6 +77,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     private MapView mMapView;
     private GoogleMap mMap = null;
     private Location lastKnownLocation;
+    private PlacesClient mPlacesClient;
 
     private static final String KEY_LOCATION = "location";
     private static final String KEY_CAMERA_POSITION = "camera_position";
@@ -76,6 +91,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
     private String mParam1;
     private String mParam2;
+    private Bitmap mPlacePhoto;
 
     private RestaurantApiService mApiService;
 
@@ -104,18 +120,21 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_map_view, container, false);
 
-        ConstraintLayout rootView = result.findViewById(R.id.map_view_container);
-
-
-
         mApiService = DI.getRestaurantApiService();
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             CameraPosition cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
         this.createMap(savedInstanceState, result);
-
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity().getApplicationContext());
+        Places.initialize(requireActivity().getApplicationContext(), BuildConfig.GMP_KEY);
+        mPlacesClient = Places.createClient(requireActivity().getApplicationContext());
         return result;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -316,27 +335,104 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
             for (int i = 0; i < hashMaps.size(); i++) {
                 HashMap<String, String> hashMapList = hashMaps.get(i);
                 String name = hashMapList.get("name");
-                    String adress = hashMapList.get("adress");
-                    String placeId = hashMapList.get("placeId");
-                    double lat = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lat")));
-                    double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
-                    LatLng latLng = new LatLng(lat, lng);
-                    MarkerOptions options = new MarkerOptions();
-                    options.position(latLng);
-                    options.title(name);
-                    options.snippet(adress);
-                    mMap.addMarker(options);
-                addInRestaurantList(name, adress, placeId);
+                String adress = hashMapList.get("adress");
+                String placeId = hashMapList.get("placeId");
+                double lat = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lat")));
+                double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
+                LatLng latLng = new LatLng(lat, lng);
+                MarkerOptions options = new MarkerOptions();
+                options.position(latLng);
+                options.title(name);
+                options.snippet(adress);
+                mMap.addMarker(options);
+                getPlaceDetails(placeId);
             }
-            sendDataList();
+
         }
 
-        private void addInRestaurantList(String name, String adress, String placceId) {
-//            mApiService.addRestaurant(new Restaurant(name, "", adress, hours, 245, 4, rating,photos));
-        }
+
+    }
+    private void addInRestaurantList(String placeId, String name, String adress, double rating, String hours, Bitmap photos) {
+            mApiService.addRestaurant(new Restaurant(name, "", adress, hours, 245, 4, rating, photos));
     }
 
-    private void sendDataList() {
+    private void getPlaceDetails(String placeId) {
+        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.RATING, Place.Field.OPENING_HOURS);
+        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
+                .build();
+        mPlacesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+            String openingHours = "";
+            double rating = 1.0;
+            Place place = response.getPlace();
+            Log.i(TAG, "Place found: " + place.getName());
+            if (place.getOpeningHours() != null) {
+                openingHours = getOpeningHours(place.getOpeningHours());
+            }else {
+                openingHours = "no details here";
+            }
+            if (place.getRating() != null) {
+                 rating = place.getRating();
+            }
 
+            setPlaceDetails(place.getId(), place.getName(), place.getAddress(), rating, openingHours);
+        }).addOnFailureListener((exception) -> {
+            if (exception instanceof ApiException) {
+                ApiException apiException = (ApiException) exception;
+                int statusCode = apiException.getStatusCode();
+                Log.e(TAG, "Place not found: " + exception.getMessage());
+            }
+        });
+        getPlacePhoto(placeId);
+    }
+
+    private void setPlaceDetails(String id, String name, String address, double rating, String openingHours) {
+        String placeId = id;
+        String placeName = name;
+        String placeAdress = address;
+        double placeRating = rating;
+        String placeOpeningHours = openingHours;
+        addInRestaurantList(placeId, placeName, placeAdress, placeRating, placeOpeningHours, mPlacePhoto);
+    }
+
+    private void getPlacePhoto(String placeId){
+        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
+        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields)
+                .build();
+        mPlacesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+            if (place.getPhotoMetadatas() != null) {
+                PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+                String attributions = photoMetadata.getAttributions();
+                FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                        .build();
+                mPlacesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                    Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                    Log.e(TAG, "on a trouvé une photo mec");
+                    //TODO need to set the image view in ListViewActivity
+                    setPlacePhoto(bitmap);
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        ApiException apiException = (ApiException) exception;
+                        int statusCode = apiException.getStatusCode();
+                        Log.e(TAG, "Place not found: " + exception.getMessage());
+                    }
+                });
+            }
+        });
+    }
+
+    private void setPlacePhoto(Bitmap bitmap) {
+        mPlacePhoto = bitmap;
+    }
+
+    private String getOpeningHours(OpeningHours openingHours) {
+        Calendar calendar = Calendar.getInstance(Locale.FRANCE);
+        int currentHour = calendar.get(Calendar.HOUR);
+        int hours = openingHours.getPeriods().get(0).getOpen().getTime().getHours();
+        if (currentHour > hours) {
+            return "still closed";
+        }else {
+            return "open until " + (hours - currentHour) + "pm";
+        }
     }
 }

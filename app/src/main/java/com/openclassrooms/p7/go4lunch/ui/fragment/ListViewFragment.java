@@ -30,7 +30,7 @@ import java.util.Objects;
 /**
  * Created by lleotraas on 14.
  */
-public class ListViewFragment extends Fragment {
+public class    ListViewFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
