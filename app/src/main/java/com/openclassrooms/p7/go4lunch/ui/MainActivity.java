@@ -3,6 +3,7 @@ package com.openclassrooms.p7.go4lunch.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -32,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ViewPager2 mViewPager;
     private TabLayout mTabLayout;
-    private PageAdapter mAdapter;
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private final UserManager mUserManager = UserManager.getInstance();
@@ -49,7 +49,12 @@ public class MainActivity extends AppCompatActivity {
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateHeader();
     }
 
     @Override
@@ -80,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.activity_main_viewpager);
         mViewPager.setUserInputEnabled(false);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        mAdapter = new PageAdapter(fragmentManager, getLifecycle());
+        PageAdapter mAdapter = new PageAdapter(fragmentManager, getLifecycle());
         mViewPager.setAdapter(mAdapter);
         setTabLayoutName();
     }

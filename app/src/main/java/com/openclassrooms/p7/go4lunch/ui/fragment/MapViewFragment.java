@@ -298,7 +298,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         protected List<HashMap<String, String>> doInBackground(String... strings) {
             JsonParser jsonParser = new JsonParser();
             List<HashMap<String, String>> mapList = null;
-            JSONObject object = null;
+            JSONObject object;
             try {
                 object = new JSONObject(strings[0]);
                 mapList = jsonParser.parseResult(object);
@@ -324,83 +324,75 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                 options.title(name);
                 options.snippet(adress);
                 mMap.addMarker(options);
-                getPlaceDetails(placeId);
+                requestForPlaceDetails(placeId);
             }
-
         }
     }
 
-    private void createRestaurant(String placeId, String name, String adress, double rating, String hours, Bitmap photos) {
-            mRestaurantList.put(placeId, new Restaurant(name, "", adress, hours, 245, 4, rating, photos));
+    private void createRestaurant(String placeId, String name, String adress, double rating, String hours) {
+            mRestaurantList.put(placeId, new Restaurant(name, "", adress, hours, 245, 4, rating, null));
     }
 
-
-
-    private void setPlaceDetails(String id, String name, String address, double rating, String openingHours) {
-        //        getPlacePhoto(placeId);
-        createRestaurant(id, name, address, rating, openingHours, mPlacePhoto);
-    }
-
-    private void getPlaceDetails(String placeId) {
+    private void requestForPlaceDetails(String placeId) {
         List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.RATING, Place.Field.OPENING_HOURS, Place.Field.PHOTO_METADATAS);
         FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
                 .build();
         mPlacesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-            String openingHours = "";
-            double rating = 1.0;
             Place place = response.getPlace();
-            Log.i(TAG, "Place found: " + place.getName());
-            if (place.getOpeningHours() != null) {
-                openingHours = getOpeningHours(place.getOpeningHours());
-            }else {
-                openingHours = "no details here";
-            }
-            if (place.getRating() != null) {
-                rating = place.getRating();
-            }
-
-            if (place.getPhotoMetadatas() != null) {
-                PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
-                String attributions = photoMetadata.getAttributions();
-                FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                        .build();
-                mPlacesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                    Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                    Log.e(TAG, "on a trouvé une photo mec");
-                    //TODO need to set the image view in ListViewActivity
-                    setPlacePhoto(placeId, bitmap);
-                }).addOnFailureListener((exception) -> {
-                    if (exception instanceof ApiException) {
-                        ApiException apiException = (ApiException) exception;
-                        int statusCode = apiException.getStatusCode();
-                        Log.e(TAG, "Place not found: " + exception.getMessage());
-                    }
-                });
-            }
-            setPlaceDetails(place.getId(), place.getName(), place.getAddress(), rating, openingHours);
+            getPlaceDetails(place);
+            getPlacePhoto(placeId, place);
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
-                ApiException apiException = (ApiException) exception;
-                int statusCode = apiException.getStatusCode();
                 Log.e(TAG, "Place not found: " + exception.getMessage());
             }
         });
     }
 
-    private void setPlacePhoto(String placeId, Bitmap bitmap) {
-        if (bitmap != null) {
-            mPlacePhoto = bitmap;
-        } else {
-            mPlacePhoto = null;
+    private void getPlaceDetails(Place place) {
+        String openingHours = "no details here";
+        double rating = 1.0;
+        Log.i(TAG, "Place found: " + place.getName());
+
+        if (place.getOpeningHours() != null) {
+            openingHours = makeStringOpeningHours(place.getOpeningHours());
         }
-        mRestaurantList.get(placeId).setPictureUrl(mPlacePhoto);
+
+        if (place.getRating() != null) {
+            rating = place.getRating();
+        }
+        createRestaurant(place.getId(), place.getName(), place.getAddress(), rating, openingHours);
+    }
+
+    private void getPlacePhoto(String placeId, Place place) {
+        if (place.getPhotoMetadatas() != null) {
+            PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+
+            FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                    .build();
+            mPlacesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                Log.e(TAG, "on a trouvé une photo mec");
+                setPlacePhoto(placeId, bitmap);
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+
+
+                    Log.e(TAG, "Place not found: " + exception.getMessage());
+                }
+            });
+        }
+    }
+
+    private void setPlacePhoto(String placeId, Bitmap bitmap) {
+        mPlacePhoto = bitmap;
+        Objects.requireNonNull(mRestaurantList.get(placeId)).setPictureUrl(mPlacePhoto);
         mApiService.getRestaurant().add(mRestaurantList.get(placeId));
     }
 
-    private String getOpeningHours(OpeningHours openingHours) {
+    private String makeStringOpeningHours(OpeningHours openingHours) {
         Calendar calendar = Calendar.getInstance(Locale.FRANCE);
         int currentHour = calendar.get(Calendar.HOUR);
-        int hours = openingHours.getPeriods().get(0).getOpen().getTime().getHours();
+        int hours = Objects.requireNonNull(openingHours.getPeriods().get(0).getOpen()).getTime().getHours();
         if (currentHour > hours) {
             return "still closed";
         }else {

@@ -15,14 +15,10 @@ public class JsonParser {
     private HashMap<String, String> parseJsonObject(JSONObject object){
         HashMap<String,String> dataList = new HashMap<>();
         try {
-            String name = object.getString("name");
             String placeId = object.getString("place_id");
             String latitude = object.getJSONObject("geometry").getJSONObject("location").getString("lat");
             String longitude = object.getJSONObject("geometry").getJSONObject("location").getString("lng");
-            String adress = object.getString("vicinity");
-            dataList.put("name", name);
             dataList.put("placeId", placeId);
-            dataList.put("adress", adress);
             dataList.put("lat", latitude);
             dataList.put("lng", longitude);
         }catch (JSONException e) {
