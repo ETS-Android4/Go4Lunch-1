@@ -64,10 +64,13 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             nameTv.setText(restaurant.getName());
             adressTv.setText(restaurant.getAdress());
             openningHoursTv.setText(restaurant.getOpenningHours());
-            restaurantPicture.setImageBitmap(restaurant.getPictureUrl());
-//            Glide.with(this.itemView)
-//                    .load(restaurant.getPictureUrl())
-//                    .into(restaurantPicture);
+            if (restaurant.getPictureUrl() != null) {
+                restaurantPicture.setImageBitmap(restaurant.getPictureUrl());
+                restaurantPicture.setVisibility(View.VISIBLE);
+            } else {
+                restaurantPicture.setVisibility(View.VISIBLE);
+            }
+
 
         }
     }

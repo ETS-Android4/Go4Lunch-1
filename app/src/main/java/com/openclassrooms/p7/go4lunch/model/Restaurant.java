@@ -14,7 +14,7 @@ public class Restaurant {
     private final int distance;
     private final int interestedFriends;
     private final double rating;
-    private final Bitmap pictureUrl;
+    private Bitmap pictureUrl;
 
     public Restaurant(String name, String foodType, String adress, String openningHours, int distance, int interestedFriends, double rating, Bitmap pictureUrl) {
         this.name = name;
@@ -36,4 +36,7 @@ public class Restaurant {
     public int getInterestedFriends() { return interestedFriends; }
     public double getRating() { return rating; }
     public Bitmap getPictureUrl() { return pictureUrl; }
+
+    // --- SETTERS ---
+    public void setPictureUrl(Bitmap pictureUrl){ this.pictureUrl = pictureUrl;}
 }

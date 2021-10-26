@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -84,36 +83,14 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     private boolean locationPermissionGranted;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private final LatLng defaultLocation = new LatLng(-33.8523341, 151.2106085);
+    private final LatLng defaultLocation = new LatLng(43.406656, 3.684383);
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
     private Bitmap mPlacePhoto;
 
     private RestaurantApiService mApiService;
+    private HashMap<String,Restaurant> mRestaurantList;
 
     public MapViewFragment(){}
-
-    public static MapViewFragment newInstance(String param1, String param2) {
-        MapViewFragment fragment = new MapViewFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Nullable
     @Override
@@ -121,6 +98,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         View result = inflater.inflate(R.layout.fragment_map_view, container, false);
 
         mApiService = DI.getRestaurantApiService();
+        mRestaurantList = new HashMap<>();
+
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             CameraPosition cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
@@ -349,15 +328,21 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
             }
 
         }
-
-
     }
-    private void addInRestaurantList(String placeId, String name, String adress, double rating, String hours, Bitmap photos) {
-            mApiService.addRestaurant(new Restaurant(name, "", adress, hours, 245, 4, rating, photos));
+
+    private void createRestaurant(String placeId, String name, String adress, double rating, String hours, Bitmap photos) {
+            mRestaurantList.put(placeId, new Restaurant(name, "", adress, hours, 245, 4, rating, photos));
+    }
+
+
+
+    private void setPlaceDetails(String id, String name, String address, double rating, String openingHours) {
+        //        getPlacePhoto(placeId);
+        createRestaurant(id, name, address, rating, openingHours, mPlacePhoto);
     }
 
     private void getPlaceDetails(String placeId) {
-        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.RATING, Place.Field.OPENING_HOURS);
+        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.RATING, Place.Field.OPENING_HOURS, Place.Field.PHOTO_METADATAS);
         FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
                 .build();
         mPlacesClient.fetchPlace(request).addOnSuccessListener((response) -> {
@@ -371,35 +356,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                 openingHours = "no details here";
             }
             if (place.getRating() != null) {
-                 rating = place.getRating();
+                rating = place.getRating();
             }
 
-            setPlaceDetails(place.getId(), place.getName(), place.getAddress(), rating, openingHours);
-        }).addOnFailureListener((exception) -> {
-            if (exception instanceof ApiException) {
-                ApiException apiException = (ApiException) exception;
-                int statusCode = apiException.getStatusCode();
-                Log.e(TAG, "Place not found: " + exception.getMessage());
-            }
-        });
-        getPlacePhoto(placeId);
-    }
-
-    private void setPlaceDetails(String id, String name, String address, double rating, String openingHours) {
-        String placeId = id;
-        String placeName = name;
-        String placeAdress = address;
-        double placeRating = rating;
-        String placeOpeningHours = openingHours;
-        addInRestaurantList(placeId, placeName, placeAdress, placeRating, placeOpeningHours, mPlacePhoto);
-    }
-
-    private void getPlacePhoto(String placeId){
-        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
-        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields)
-                .build();
-        mPlacesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
-            Place place = response.getPlace();
             if (place.getPhotoMetadatas() != null) {
                 PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
                 String attributions = photoMetadata.getAttributions();
@@ -409,7 +368,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                     Bitmap bitmap = fetchPhotoResponse.getBitmap();
                     Log.e(TAG, "on a trouvé une photo mec");
                     //TODO need to set the image view in ListViewActivity
-                    setPlacePhoto(bitmap);
+                    setPlacePhoto(placeId, bitmap);
                 }).addOnFailureListener((exception) -> {
                     if (exception instanceof ApiException) {
                         ApiException apiException = (ApiException) exception;
@@ -418,11 +377,24 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                     }
                 });
             }
+            setPlaceDetails(place.getId(), place.getName(), place.getAddress(), rating, openingHours);
+        }).addOnFailureListener((exception) -> {
+            if (exception instanceof ApiException) {
+                ApiException apiException = (ApiException) exception;
+                int statusCode = apiException.getStatusCode();
+                Log.e(TAG, "Place not found: " + exception.getMessage());
+            }
         });
     }
 
-    private void setPlacePhoto(Bitmap bitmap) {
-        mPlacePhoto = bitmap;
+    private void setPlacePhoto(String placeId, Bitmap bitmap) {
+        if (bitmap != null) {
+            mPlacePhoto = bitmap;
+        } else {
+            mPlacePhoto = null;
+        }
+        mRestaurantList.get(placeId).setPictureUrl(mPlacePhoto);
+        mApiService.getRestaurant().add(mRestaurantList.get(placeId));
     }
 
     private String getOpeningHours(OpeningHours openingHours) {

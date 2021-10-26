@@ -83,7 +83,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 app:srcCompat="@drawable/no_image"
-                android:layout_weight="30"/>
+                android:layout_weight="30"
+                android:visibility="gone"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
