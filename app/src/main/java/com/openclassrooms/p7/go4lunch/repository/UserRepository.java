@@ -3,7 +3,6 @@ package com.openclassrooms.p7.go4lunch.repository;
 import android.content.Context;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Task;

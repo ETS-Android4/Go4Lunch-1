@@ -3,12 +3,9 @@ package com.openclassrooms.p7.go4lunch.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,12 +17,10 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.facebook.FacebookSdk;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
-import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
 import com.openclassrooms.p7.go4lunch.manager.UserManager;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
@@ -132,9 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.settings:
 
                 case R.id.logout:
-                    mUserManager.signOut(this).addOnSuccessListener(aVoid -> {
-                        startSignActivity();
-                    });
+                    mUserManager.signOut(this).addOnSuccessListener(aVoid -> startSignActivity());
 
                 default: return true;
             }
