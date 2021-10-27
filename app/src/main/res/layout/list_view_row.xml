@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Le Zinc"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"/>
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -32,7 +32,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="9 Boulevard chevalier de clerville"
-                android:textSize="16sp"
+                android:textSize="14sp"
+                android:maxLines="1"
                 android:layout_marginVertical="4dp"/>
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -40,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="est ouvert"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="italic"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -80,11 +81,10 @@
         <!-- Picture of restaurant container -->
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/list_view_row_restaurant_picture_img"
-                android:layout_width="0dp"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
                 app:srcCompat="@drawable/no_image"
-                android:layout_weight="30"
-                android:visibility="gone"/>
+                />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

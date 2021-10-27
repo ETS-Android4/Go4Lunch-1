@@ -11,12 +11,12 @@ public class Restaurant {
     private final String foodType;
     private final String adress;
     private final String openningHours;
-    private final int distance;
+    private final float distance;
     private final int interestedFriends;
     private final double rating;
     private Bitmap pictureUrl;
 
-    public Restaurant(String name, String foodType, String adress, String openningHours, int distance, int interestedFriends, double rating, Bitmap pictureUrl) {
+    public Restaurant(String name, String foodType, String adress, String openningHours, float distance, int interestedFriends, double rating, Bitmap pictureUrl) {
         this.name = name;
         this.foodType = foodType;
         this.adress = adress;
@@ -32,7 +32,7 @@ public class Restaurant {
     public String getFoodType() { return foodType; }
     public String getAdress() { return adress; }
     public String getOpenningHours() { return openningHours; }
-    public int getDistance() { return distance; }
+    public float getDistance() { return distance; }
     public int getInterestedFriends() { return interestedFriends; }
     public double getRating() { return rating; }
     public Bitmap getPictureUrl() { return pictureUrl; }

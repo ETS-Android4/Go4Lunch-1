@@ -51,6 +51,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         private TextView adressTv;
         private TextView openningHoursTv;
         private ImageView restaurantPicture;
+        private TextView distanceTv;
 
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -58,18 +59,26 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             adressTv = itemView.findViewById(R.id.list_view_row_restaurant_adress_tv);
             openningHoursTv = itemView.findViewById(R.id.list_view_row_restaurant_is_open_tv);
             restaurantPicture = itemView.findViewById(R.id.list_view_row_restaurant_picture_img);
+            distanceTv = itemView.findViewById(R.id.list_view_row_distance_tv);
         }
 
         public void bind(Restaurant restaurant){
             nameTv.setText(restaurant.getName());
             adressTv.setText(restaurant.getAdress());
             openningHoursTv.setText(restaurant.getOpenningHours());
-            if (restaurant.getPictureUrl() != null) {
-                restaurantPicture.setImageBitmap(restaurant.getPictureUrl());
-                restaurantPicture.setVisibility(View.VISIBLE);
-            } else {
-                restaurantPicture.setVisibility(View.VISIBLE);
-            }
+            distanceTv.setText(String.format("%4.0fm",restaurant.getDistance()));
+            Glide.with(itemView)
+                    .load(restaurant.getPictureUrl())
+                    .centerCrop()
+                    .into(restaurantPicture);
+//            if (restaurant.getPictureUrl() != null) {
+//                restaurantPicture.setImageBitmap(restaurant.getPictureUrl());
+//
+//
+//                restaurantPicture.setVisibility(View.VISIBLE);
+//            } else {
+//                restaurantPicture.setVisibility(View.VISIBLE);
+//            }
 
 
         }

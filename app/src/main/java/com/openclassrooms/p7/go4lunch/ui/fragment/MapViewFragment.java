@@ -244,12 +244,20 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
 
     // Create a restaurant list with the placeId as the key.
-    private void createRestaurant(String placeId, String name, String adress, double rating, String hours) {
-            mRestaurantList.put(placeId, new Restaurant(name, "", adress, hours, 245, 4, rating, null));
+    private void createRestaurant(String placeId, String name, String adress, double rating, String hours, float distance) {
+            mRestaurantList.put(placeId, new Restaurant(name, "", adress, hours, distance, 4, rating, null));
     }
 
     private void requestForPlaceDetails(String placeId) {
-        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.RATING, Place.Field.OPENING_HOURS, Place.Field.PHOTO_METADATAS);
+        List<Place.Field> placeFields = Arrays.asList(
+                Place.Field.ID,
+                Place.Field.NAME,
+                Place.Field.ADDRESS,
+                Place.Field.RATING,
+                Place.Field.OPENING_HOURS,
+                Place.Field.LAT_LNG,
+                Place.Field.PHOTO_METADATAS
+        );
         FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
                 .build();
         mPlacesClient.fetchPlace(request).addOnSuccessListener((response) -> {
@@ -275,7 +283,15 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         if (place.getRating() != null) {
             rating = place.getRating();
         }
-        createRestaurant(place.getId(), place.getName(), place.getAddress(), rating, openingHours);
+        float results[] = new float[10];
+        Location.distanceBetween(
+                lastKnownLocation.getLatitude(),
+                lastKnownLocation.getLongitude(),
+                place.getLatLng().latitude,
+                place.getLatLng().longitude,
+                results
+        );
+        createRestaurant(place.getId(), place.getName(), place.getAddress(), rating, openingHours, results[0]);
     }
 
     private void requestForPlacePhoto(String placeId, Place place) {
@@ -327,6 +343,28 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         return data;
     }
 
+    private void getNearbyRestaurantsInfos(List<HashMap<String, String>> hashMaps, int index) {
+        HashMap<String, String> hashMapList = hashMaps.get(index);
+        String name = hashMapList.get("placeName");
+        String adress = hashMapList.get("placeAdress");
+        String placeId = hashMapList.get("placeId");
+        double lat = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lat")));
+        double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
+        LatLng latLng = new LatLng(lat, lng);
+
+        setInfoOnMarker(name, adress, latLng);
+
+        requestForPlaceDetails(placeId);
+    }
+
+    private void setInfoOnMarker(String name, String adress, LatLng latLng) {
+        MarkerOptions options = new MarkerOptions();
+        options.position(latLng);
+        options.title(name);
+        options.snippet(adress);
+        mMap.addMarker(options);
+    }
+
     private class PlaceTask extends AsyncTask<String, Integer, String> {
 
         // Get the data from the url
@@ -372,26 +410,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
             }
         }
 
-        private void getNearbyRestaurantsInfos(List<HashMap<String, String>> hashMaps, int index) {
-            HashMap<String, String> hashMapList = hashMaps.get(index);
-            String name = hashMapList.get("placeName");
-            String adress = hashMapList.get("placeAdress");
-            String placeId = hashMapList.get("placeId");
-            double lat = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lat")));
-            double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
-            LatLng latLng = new LatLng(lat, lng);
 
-            setInfoOnMarker(name, adress, latLng);
-
-            requestForPlaceDetails(placeId);
-        }
-
-        private void setInfoOnMarker(String name, String adress, LatLng latLng) {
-            MarkerOptions options = new MarkerOptions();
-            options.position(latLng);
-            options.title(name);
-            options.snippet(adress);
-            mMap.addMarker(options);
-        }
     }
 }
