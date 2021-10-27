@@ -374,8 +374,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
         private void getNearbyRestaurantsInfos(List<HashMap<String, String>> hashMaps, int index) {
             HashMap<String, String> hashMapList = hashMaps.get(index);
-            String name = hashMapList.get("name");
-            String adress = hashMapList.get("adress");
+            String name = hashMapList.get("placeName");
+            String adress = hashMapList.get("placeAdress");
             String placeId = hashMapList.get("placeId");
             double lat = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lat")));
             double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));

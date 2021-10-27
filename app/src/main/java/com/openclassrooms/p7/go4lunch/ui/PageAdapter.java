@@ -18,7 +18,7 @@ public class PageAdapter extends FragmentStateAdapter {
     public PageAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
     }
-    
+
     @NonNull
     @Override
     public Fragment createFragment(int position) {
