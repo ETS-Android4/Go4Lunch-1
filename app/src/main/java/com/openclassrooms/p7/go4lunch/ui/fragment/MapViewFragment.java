@@ -371,7 +371,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                     .build();
             mPlacesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
                 Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                Log.e(TAG, "on a trouvé une photo mec");
                 setPlacePhoto(placeId, bitmap);
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
