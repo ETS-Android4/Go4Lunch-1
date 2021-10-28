@@ -245,7 +245,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
     // Create a restaurant list with the placeId as the key.
     private void createRestaurant(String placeId, String name, String adress, double rating, String hours, float distance) {
-            mRestaurantList.put(placeId, new Restaurant(name, "", adress, hours, distance, 4, rating, null));
+            mRestaurantList.put(placeId, new Restaurant(placeId, name, "", adress, hours, distance, 4, rating, null));
     }
 
     private void requestForPlaceDetails(String placeId) {

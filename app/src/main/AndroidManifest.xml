@@ -13,12 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Go4Lunch">
+        <activity
+            android:name=".ui.DetailActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${GMP_KEY}" />
-
-        <!-- Main Activity -->
+            android:value="${GMP_KEY}" /> <!-- Main Activity -->
         <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

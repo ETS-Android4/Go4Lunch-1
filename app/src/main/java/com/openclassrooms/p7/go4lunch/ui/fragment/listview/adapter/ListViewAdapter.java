@@ -1,5 +1,6 @@
 package com.openclassrooms.p7.go4lunch.ui.fragment.listview.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 
 import java.util.List;
 import java.util.Locale;
@@ -36,6 +38,12 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     @Override
     public void onBindViewHolder(@NonNull ListViewAdapter.ListViewHolder holder, int position) {
         holder.bind(mRestaurantList.get(position));
+        holder.itemView.setOnClickListener(view -> {
+            Intent intent = new Intent(view.getContext(), DetailActivity.class);
+            String id = mRestaurantList.get(position).getId();
+            intent.putExtra("restaurantId", id);
+            view.getContext().startActivity(intent);
+        });
     }
 
     @Override

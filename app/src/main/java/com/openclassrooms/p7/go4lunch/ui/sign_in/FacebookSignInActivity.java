@@ -1,5 +1,7 @@
 package com.openclassrooms.p7.go4lunch.ui.sign_in;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,14 +10,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -23,12 +26,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
+import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
+import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
+
+import org.json.JSONObject;
 
 import java.util.Arrays;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by lleotraas on 15.
@@ -45,7 +49,6 @@ public class FacebookSignInActivity extends LoginActivity {
         mCallbackManager = CallbackManager.Factory.create();
         mAuth = FirebaseAuth.getInstance();
 
-//        loginButton.setReadPermissions("email", "public_profile");
 
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
         LoginManager.getInstance().registerCallback(mCallbackManager,
@@ -53,7 +56,6 @@ public class FacebookSignInActivity extends LoginActivity {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         handleFacebookAccessToken(loginResult.getAccessToken());
-
                     }
 
                     @Override
@@ -71,9 +73,10 @@ public class FacebookSignInActivity extends LoginActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode,@Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
+
+
 
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
@@ -89,11 +92,10 @@ public class FacebookSignInActivity extends LoginActivity {
                             finish();
                         } else {
                             Log.d(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(FacebookSignInActivity.this, "Authentification failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Authentification failed.", Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     }
                 });
     }
-
 }

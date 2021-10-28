@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView username;
     private ImageView userPicture;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
