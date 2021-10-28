@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_weight="55">
+            android:layout_weight="65">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/list_view_row_restaurant_name_tv"
@@ -70,20 +70,43 @@
                 android:textSize="16sp"
                 android:drawableLeft="@drawable/baseline_person_outline_24"/>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/list_view_row_rating_img"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/baseline_star_rate_black_18"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/list_view_row_rating_first_star_img"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/baseline_star_rate_black_18"
+                    android:layout_weight="33"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/list_view_row_rating_second_star_img"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/baseline_star_rate_black_18"
+                    android:layout_weight="33"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/list_view_row_rating_third_star_img"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/baseline_star_rate_black_18"
+                    android:layout_weight="33"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <!-- Picture of restaurant container -->
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/list_view_row_restaurant_picture_img"
-                android:layout_width="80dp"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 app:srcCompat="@drawable/no_image"
+                android:layout_weight="20"
                 />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

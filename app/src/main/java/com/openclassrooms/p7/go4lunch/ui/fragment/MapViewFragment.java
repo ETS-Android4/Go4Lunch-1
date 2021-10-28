@@ -282,12 +282,13 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
         if (place.getRating() != null) {
             rating = place.getRating();
+            Log.i(TAG, "Restaurant name: " + place.getName() + " Rating: " + place.getRating());
         }
-        float results[] = new float[10];
+        float[] results = new float[10];
         Location.distanceBetween(
                 lastKnownLocation.getLatitude(),
                 lastKnownLocation.getLongitude(),
-                place.getLatLng().latitude,
+                Objects.requireNonNull(place.getLatLng()).latitude,
                 place.getLatLng().longitude,
                 results
         );
@@ -326,7 +327,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    // Read the url to do a request to find nearby restaurants
+    // Read the url and do a request to find nearby restaurants
     private String downloadUrl (String string) throws IOException {
         URL url = new URL(string);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

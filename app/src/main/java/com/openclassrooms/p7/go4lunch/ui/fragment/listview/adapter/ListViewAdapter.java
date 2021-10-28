@@ -10,18 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-
-
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
-import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 
 import java.util.List;
+import java.util.Locale;
 
 
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListViewHolder> {
 
-    private List<Restaurant> mRestaurantList;
+    private final List<Restaurant> mRestaurantList;
 
     public ListViewAdapter(List<Restaurant> restaurantList) {
         mRestaurantList = restaurantList;
@@ -45,42 +43,55 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         return mRestaurantList.size();
     }
 
-    public class ListViewHolder extends RecyclerView.ViewHolder {
+    public static class ListViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView nameTv;
-        private TextView adressTv;
-        private TextView openningHoursTv;
-        private ImageView restaurantPicture;
-        private TextView distanceTv;
+        private final TextView nameTv;
+        private final TextView addressTv;
+        private final TextView openingHoursTv;
+        private final ImageView restaurantPicture;
+        private final TextView distanceTv;
+
+        private final ImageView[] ratingStars = new ImageView[3];
+
 
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             nameTv = itemView.findViewById(R.id.list_view_row_restaurant_name_tv);
-            adressTv = itemView.findViewById(R.id.list_view_row_restaurant_adress_tv);
-            openningHoursTv = itemView.findViewById(R.id.list_view_row_restaurant_is_open_tv);
+            addressTv = itemView.findViewById(R.id.list_view_row_restaurant_adress_tv);
+            openingHoursTv = itemView.findViewById(R.id.list_view_row_restaurant_is_open_tv);
             restaurantPicture = itemView.findViewById(R.id.list_view_row_restaurant_picture_img);
             distanceTv = itemView.findViewById(R.id.list_view_row_distance_tv);
+            ratingStars[0] = itemView.findViewById(R.id.list_view_row_rating_first_star_img);
+            ratingStars[1] = itemView.findViewById(R.id.list_view_row_rating_second_star_img);
+            ratingStars[2] = itemView.findViewById(R.id.list_view_row_rating_third_star_img);
+
         }
 
         public void bind(Restaurant restaurant){
             nameTv.setText(restaurant.getName());
-            adressTv.setText(restaurant.getAdress());
-            openningHoursTv.setText(restaurant.getOpenningHours());
-            distanceTv.setText(String.format("%4.0fm",restaurant.getDistance()));
-            Glide.with(itemView)
-                    .load(restaurant.getPictureUrl())
-                    .centerCrop()
-                    .into(restaurantPicture);
-//            if (restaurant.getPictureUrl() != null) {
-//                restaurantPicture.setImageBitmap(restaurant.getPictureUrl());
-//
-//
-//                restaurantPicture.setVisibility(View.VISIBLE);
-//            } else {
-//                restaurantPicture.setVisibility(View.VISIBLE);
-//            }
+            addressTv.setText(restaurant.getAdress());
+            openingHoursTv.setText(restaurant.getOpenningHours());
+            distanceTv.setText(String.format(Locale.ENGLISH,"%4.0fm",restaurant.getDistance()));
 
+            if (restaurant.getPictureUrl() != null) {
+                Glide.with(itemView)
+                        .load(restaurant.getPictureUrl())
+                        .centerCrop()
+                        .into(restaurantPicture);
+            }
+            setRatingStars(restaurant.getRating());
+        }
 
+        private void setRatingStars(double rating) {
+            int convertedRating = (int) rating;
+            for (int i = 0;i < ratingStars.length;i++) {
+                if (convertedRating == 2 && i == 1|| convertedRating == 4 && i == 2) {
+                    ratingStars[i].setImageResource(R.drawable.baseline_star_half_black_18);
+                }
+                if (convertedRating < 4 && i == 2 || convertedRating < 2 && i == 1) {
+                    ratingStars[i].setImageResource(R.drawable.baseline_star_border_black_18);
+                }
+            }
         }
     }
 }
