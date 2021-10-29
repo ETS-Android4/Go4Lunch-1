@@ -11,4 +11,5 @@ public interface RestaurantApiService {
     List<Restaurant> getRestaurant();
     void addRestaurant(Restaurant restaurant);
     void removeRestaurant(Restaurant restaurant);
+    int setRatingStars(int index, double rating);
 }

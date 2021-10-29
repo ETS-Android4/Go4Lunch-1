@@ -1,4 +1,4 @@
-package com.openclassrooms.p7.go4lunch.ui.fragment.listview.adapter;
+package com.openclassrooms.p7.go4lunch.ui.fragment.listview_adapter;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 
 import java.util.List;
@@ -32,6 +34,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     @Override
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_row, parent, false);
+
         return new ListViewHolder(view);
     }
 
@@ -58,8 +61,8 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         private final TextView openingHoursTv;
         private final ImageView restaurantPicture;
         private final TextView distanceTv;
-
-        private final ImageView[] ratingStars = new ImageView[3];
+        private final ImageView[] ratingStarsArray = new ImageView[3];
+        private RestaurantApiService mApiService;
 
 
         public ListViewHolder(@NonNull View itemView) {
@@ -69,10 +72,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             openingHoursTv = itemView.findViewById(R.id.list_view_row_restaurant_is_open_tv);
             restaurantPicture = itemView.findViewById(R.id.list_view_row_restaurant_picture_img);
             distanceTv = itemView.findViewById(R.id.list_view_row_distance_tv);
-            ratingStars[0] = itemView.findViewById(R.id.list_view_row_rating_first_star_img);
-            ratingStars[1] = itemView.findViewById(R.id.list_view_row_rating_second_star_img);
-            ratingStars[2] = itemView.findViewById(R.id.list_view_row_rating_third_star_img);
-
+            ratingStarsArray[0] = itemView.findViewById(R.id.list_view_row_rating_first_star_img);
+            ratingStarsArray[1] = itemView.findViewById(R.id.list_view_row_rating_second_star_img);
+            ratingStarsArray[2] = itemView.findViewById(R.id.list_view_row_rating_third_star_img);
+            mApiService = DI.getRestaurantApiService();
         }
 
         public void bind(Restaurant restaurant){
@@ -87,18 +90,9 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
                         .centerCrop()
                         .into(restaurantPicture);
             }
-            setRatingStars(restaurant.getRating());
-        }
 
-        private void setRatingStars(double rating) {
-            int convertedRating = (int) rating;
-            for (int i = 0;i < ratingStars.length;i++) {
-                if (convertedRating == 2 && i == 1|| convertedRating == 4 && i == 2) {
-                    ratingStars[i].setImageResource(R.drawable.baseline_star_half_black_18);
-                }
-                if (convertedRating < 4 && i == 2 || convertedRating < 2 && i == 1) {
-                    ratingStars[i].setImageResource(R.drawable.baseline_star_border_black_18);
-                }
+            for (int index = 0; index < ratingStarsArray.length; index++) {
+                ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, restaurant.getRating()));
             }
         }
     }

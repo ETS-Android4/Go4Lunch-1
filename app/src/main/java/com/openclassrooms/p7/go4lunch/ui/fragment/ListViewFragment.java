@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
-import com.openclassrooms.p7.go4lunch.ui.fragment.listview.adapter.ListViewAdapter;
+import com.openclassrooms.p7.go4lunch.ui.fragment.listview_adapter.ListViewAdapter;
 
 /**
  * Created by lleotraas on 14.

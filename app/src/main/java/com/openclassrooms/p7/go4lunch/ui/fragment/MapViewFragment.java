@@ -221,9 +221,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
     private void showRestaurantAtStart() {
         String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
-                + "?location=" + lastKnownLocation.getLatitude() + "," + lastKnownLocation.getLongitude()
+                + "?keyword=restaurant"
+                + "&location=" + lastKnownLocation.getLatitude() + "," + lastKnownLocation.getLongitude()
                 + "&radius=1500"
-                + "&types=restaurant"
+//                + "&types=restaurant"
                 + "&sensor=true"
                 + "&key=" + BuildConfig.GMP_KEY;
         new PlaceTask().execute(url);
@@ -252,6 +253,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         List<Place.Field> placeFields = Arrays.asList(
                 Place.Field.ID,
                 Place.Field.NAME,
+                Place.Field.TYPES,
                 Place.Field.ADDRESS,
                 Place.Field.RATING,
                 Place.Field.OPENING_HOURS,
