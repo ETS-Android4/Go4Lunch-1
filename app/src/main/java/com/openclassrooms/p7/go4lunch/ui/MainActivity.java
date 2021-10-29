@@ -21,7 +21,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
-import com.openclassrooms.p7.go4lunch.manager.UserManager;
+import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
-    private final UserManager mUserManager = UserManager.getInstance();
+    private final CurrentUserManager mCurrentUserManager = CurrentUserManager.getInstance();
     private TextView email;
     private TextView username;
     private ImageView userPicture;
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.settings:
 
                 case R.id.logout:
-                    mUserManager.signOut(this).addOnSuccessListener(aVoid -> startSignActivity());
+                    mCurrentUserManager.signOut(this).addOnSuccessListener(aVoid -> startSignActivity());
 
                 default: return true;
             }
@@ -138,15 +138,15 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO change the startActivityForResult deprecated method
     private void startSignActivity() {
-        if (!mUserManager.isCurrentUserLogged()) {
+        if (!mCurrentUserManager.isCurrentUserLogged()) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
     }
 
     private void updateHeader() {
-        if (mUserManager.isCurrentUserLogged()) {
-            FirebaseUser user = mUserManager.getCurrentUser();
+        if (mCurrentUserManager.isCurrentUserLogged()) {
+            FirebaseUser user = mCurrentUserManager.getCurrentUser();
 
             if (user.getPhotoUrl() != null) {
                 setUserPicture(user.getPhotoUrl());

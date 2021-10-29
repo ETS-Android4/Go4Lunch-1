@@ -1,28 +1,20 @@
 package com.openclassrooms.p7.go4lunch.ui.login;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.facebook.FacebookSdk;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityLoginBinding;
-import com.openclassrooms.p7.go4lunch.manager.UserManager;
+import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.FacebookSignInActivity;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.GoogleSignInActivity;
-
-import java.security.MessageDigest;
 
 /**
  * Created by lleotraas on 15.
@@ -31,7 +23,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     private ActivityLoginBinding mBinding;
-    private final UserManager mUserManager = UserManager.getInstance();
+    private final CurrentUserManager mCurrentUserManager = CurrentUserManager.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,7 +67,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void currentUserLogged() {
-        if (mUserManager.isCurrentUserLogged()) {
+        if (mCurrentUserManager.isCurrentUserLogged()) {
+            mCurrentUserManager.createUser();
             finish();
         }
     }
