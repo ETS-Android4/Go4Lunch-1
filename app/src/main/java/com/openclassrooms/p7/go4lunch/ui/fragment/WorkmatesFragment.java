@@ -1,6 +1,9 @@
 package com.openclassrooms.p7.go4lunch.ui.fragment;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +16,16 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
 import com.openclassrooms.p7.go4lunch.manager.UsersManager;
@@ -23,7 +33,10 @@ import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.ui.fragment.workmates_adapter.WorkmatesAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by lleotraas on 14.
@@ -57,21 +70,31 @@ public class WorkmatesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mCurrentUserManager.getDatabaseReference().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                users.clear();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            users.clear();
+                            int index = 0;
+                            HashMap<String,Boolean> hashMap = new HashMap<>();
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                String photoUrl = documentSnapshot.get("photoUrl").toString();
+                                String username = documentSnapshot.get("userName").toString();
+                                String uid = documentSnapshot.get("uid").toString();
+                                List<String> favoriteRestaurantList = new ArrayList<>();
+                                Object object = Objects.requireNonNull(documentSnapshot.get("favoriteRestaurantId")).hashCode();
+                                favoriteRestaurantList.add(object.toString());
+                                Log.i(TAG, "pseudoList restoId: " + favoriteRestaurantList.get(0));
 
-                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                    users.add(childSnapshot.getValue(User.class));
-                }
-                workmatesAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+                                users.add(new User(uid, username, hashMap, photoUrl));
+                                workmatesAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+                });
     }
 }

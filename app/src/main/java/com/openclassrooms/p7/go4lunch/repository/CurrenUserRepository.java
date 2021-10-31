@@ -19,16 +19,20 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
+import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 
 import java.util.List;
 
 public final class CurrenUserRepository {
 
     private static volatile CurrenUserRepository INSTANCE;
+    private static final String COLLECTION_NAME = "users";
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = mDatabase.getReference(COLLECTION_NAME);
-    private static final String COLLECTION_NAME = "users";
+    private RestaurantApiService mApiService;
+
 
     private CurrenUserRepository() { }
 
@@ -69,25 +73,28 @@ public final class CurrenUserRepository {
 
     public void createUserInDatabase(){
         FirebaseUser user = getCurrentUser();
+        mApiService = DI.getRestaurantApiService();
         if (user != null) {
-            Uri urlPicture = null;
+            Uri uri = null;
+            String urlPicture = "";
             if (user.getPhotoUrl() != null) {
-                urlPicture = user.getPhotoUrl();
+                uri = user.getPhotoUrl();
+                urlPicture = uri.toString();
             }
 
             String username = user.getDisplayName();
             String uid = user.getUid();
 
-            User userToCreate = new User(uid, username, "", urlPicture);
+            User userToCreate = new User(uid, username, mApiService.getFavoriteRestaurant(), urlPicture);
 
             Task<DocumentSnapshot> userData = getUserData();
 
+            assert userData != null;
             userData.addOnSuccessListener(documentSnapshot -> {
 //                if (documentSnapshot.contains("quelque chose")){
 //                    userToCreate.setLeBoolean((Boolean) documentSnapshot.get("quelque chose"));
 //                }
-//                this.getUsersCollection().document(uid).set(userToCreate);
-                databaseReference.setValue(userToCreate);
+                this.getUsersCollection().document(uid).set(userToCreate);
             });
         }
     }

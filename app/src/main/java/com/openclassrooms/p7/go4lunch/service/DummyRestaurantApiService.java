@@ -3,6 +3,7 @@ package com.openclassrooms.p7.go4lunch.service;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -11,10 +12,26 @@ import java.util.List;
 public class DummyRestaurantApiService implements RestaurantApiService {
 
     private final List<Restaurant> mRestaurantList = DummyRestaurant.generateRestaurant();
+    private final HashMap<String, Boolean> mFavoriteRestaurantList = DummyRestaurant.generateFavoriteRestaurant();
 
     @Override
     public List<Restaurant> getRestaurant() {
         return mRestaurantList;
+    }
+
+    @Override
+    public HashMap<String, Boolean> getFavoriteRestaurant() {
+        return mFavoriteRestaurantList;
+    }
+
+    @Override
+    public void addFavoriteRestaurant(String restaurantId, Boolean isFavorite) {
+        mFavoriteRestaurantList.put(restaurantId, isFavorite);
+    }
+
+    @Override
+    public void deleteFavoriteRestaurant(String restaurantId) {
+        mFavoriteRestaurantList.remove(restaurantId);
     }
 
     @Override

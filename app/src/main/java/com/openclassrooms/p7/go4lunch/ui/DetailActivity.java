@@ -64,7 +64,14 @@ public class DetailActivity extends AppCompatActivity {
 
     private void configureListeners() {
         mBinding.activityDetailCallBtn.setOnClickListener(view ->{ });
-        mBinding.activityDetailLikeBtn.setOnClickListener(view ->{ });
+        mBinding.activityDetailLikeBtn.setOnClickListener(view ->{
+            if (mApiService.getFavoriteRestaurant().get(mRestaurant.getId()) != null) {
+                boolean isFavorite = !mApiService.getFavoriteRestaurant().get(mRestaurant.getId());
+                mApiService.getFavoriteRestaurant().put(mRestaurant.getId(),isFavorite);
+            } else {
+                mApiService.getFavoriteRestaurant().put(mRestaurant.getId(),false);
+            }
+        });
         mBinding.activityDetailWebsiteBtn.setOnClickListener(view ->{ });
     }
 }
