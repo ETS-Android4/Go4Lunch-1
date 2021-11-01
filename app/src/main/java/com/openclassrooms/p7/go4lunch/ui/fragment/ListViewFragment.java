@@ -24,6 +24,7 @@ public class    ListViewFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RestaurantApiService mApiService;
+    private ListViewAdapter listViewAdapter;
 
     public ListViewFragment() { }
 
@@ -40,9 +41,13 @@ public class    ListViewFragment extends Fragment {
     private void initList() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
-        ListViewAdapter listViewAdapter = new ListViewAdapter(mApiService.getRestaurant());
+        listViewAdapter = new ListViewAdapter(mApiService.getRestaurant());
         mRecyclerView.setAdapter(listViewAdapter);
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        listViewAdapter.notifyDataSetChanged();
+    }
 }

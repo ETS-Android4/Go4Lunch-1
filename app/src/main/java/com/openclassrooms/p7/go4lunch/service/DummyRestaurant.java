@@ -1,9 +1,9 @@
 package com.openclassrooms.p7.go4lunch.service;
 
+import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,8 +12,8 @@ import java.util.List;
  */
 public abstract class DummyRestaurant {
     public static List<Restaurant> DUMMY_RESTAURANT = new ArrayList<>();
-    public static HashMap<String,Boolean> DUMMY_FAVORITE_RESTAURANT = new HashMap<>();
+    public static List<FavoriteRestaurant> DUMMY_FAVORITE_RESTAURANT = new ArrayList<>();
 
     static List<Restaurant> generateRestaurant(){ return new ArrayList<>(DUMMY_RESTAURANT);}
-    static HashMap<String,Boolean> generateFavoriteRestaurant(){ return new HashMap<>(DUMMY_FAVORITE_RESTAURANT); }
+    static List<FavoriteRestaurant> generateFavoriteRestaurant(){ return new ArrayList<>(DUMMY_FAVORITE_RESTAURANT); }
 }

@@ -50,7 +50,7 @@ public class FacebookSignInActivity extends LoginActivity {
         mAuth = FirebaseAuth.getInstance();
 
 
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
         LoginManager.getInstance().registerCallback(mCallbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
