@@ -8,8 +8,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.R;
@@ -18,11 +16,8 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
 import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
-import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class DetailActivity extends AppCompatActivity {
@@ -40,7 +35,7 @@ public class DetailActivity extends AppCompatActivity {
         this.configureViewBinding();
         mApiService = DI.getRestaurantApiService();
         Intent mainActivityIntent = getIntent();
-        this.searchRestaurantFromId(mainActivityIntent);
+        this.findRestaurantById(mainActivityIntent);
         this.configureView();
         this.configureListeners();
     }
@@ -59,17 +54,17 @@ public class DetailActivity extends AppCompatActivity {
                             String restaurantId = Objects.requireNonNull(documentSnapshot.get("restaurantId")).toString();
                             String restaurantName = Objects.requireNonNull(documentSnapshot.get("restaurantName")).toString();
                             boolean isFavorite = Boolean.parseBoolean(Objects.requireNonNull(documentSnapshot.get("favorite")).toString());
-                            boolean isSelected = Boolean.parseBoolean(Objects.requireNonNull(documentSnapshot.get("isSelected")).toString());
+                            boolean isSelected = Boolean.parseBoolean(Objects.requireNonNull(documentSnapshot.get("selected")).toString());
                             mApiService.getFavoriteRestaurant().add(new FavoriteRestaurant(uid, restaurantId, restaurantName, isFavorite, isSelected));
                             if (restaurantId.equals(mRestaurant.getId())) {
-                                mBinding.activityDetailLikeImg.setImageResource(R.drawable.baseline_star_rate_black_24);
+                                setFavoriteImage(isFavorite);
                             }
                         }
                     }
                 });
     }
 
-    private void searchRestaurantFromId(Intent mainActivityIntent) {
+    private void findRestaurantById(Intent mainActivityIntent) {
         String restaurantId = mainActivityIntent.getStringExtra("restaurantId");
         for (Restaurant restaurant : mApiService.getRestaurant()) {
             if (restaurantId.equals(restaurant.getId())){
@@ -104,34 +99,66 @@ public class DetailActivity extends AppCompatActivity {
         mBinding.activityDetailCallBtn.setOnClickListener(view ->{
             //TODO call btn
             });
-        mBinding.activityDetailLikeBtn.setOnClickListener(view ->{
-            //TODO change the method logic
-             if (mApiService.getFavoriteRestaurant().isEmpty()) {
-                mApiService.addFavoriteRestaurant(new FavoriteRestaurant(mCurrentUserManager.getCurrentUser().getUid(), mRestaurant.getId(), mRestaurant.getName(), true, false));
-                mCurrentUserManager.createUserFavoriteRestaurantList(mCurrentUserManager.getCurrentUser(), mRestaurant, true, false);
-                 mBinding.activityDetailLikeImg.setImageResource(R.drawable.baseline_star_rate_black_24);
-            } else {
-                for (FavoriteRestaurant favoriteRestaurant : mApiService.getFavoriteRestaurant()) {
-                    if (favoriteRestaurant.getRestaurantId().equals(mRestaurant.getId()) && mCurrentUserManager.getCurrentUser().getUid().equals(favoriteRestaurant.getUid())) {
-                        mFavoriteRestaurant = favoriteRestaurant;
-                    }
-                }
-                if (mFavoriteRestaurant != null) {
-//                    mApiService.deleteFavoriteRestaurant(mFavoriteRestaurant);
-//                    mCurrentUserManager.deleteFavoriteRestaurant(mFavoriteRestaurant.getUid() + mFavoriteRestaurant.getRestaurantId());
-                    mFavoriteRestaurant = null;
-                    mBinding.activityDetailLikeImg.setImageResource(R.drawable.baseline_star_border_24);
-                } else {
-                    mApiService.addFavoriteRestaurant(new FavoriteRestaurant(mCurrentUserManager.getCurrentUser().getUid(), mRestaurant.getId(), mRestaurant.getName(), true, false));
-                    mCurrentUserManager.createUserFavoriteRestaurantList(mCurrentUserManager.getCurrentUser(), mRestaurant, true, false);
-                    mBinding.activityDetailLikeImg.setImageResource(R.drawable.baseline_star_rate_black_24);
-                }
-            }
-             mFavoriteRestaurant.setFavorite(!mFavoriteRestaurant.isFavorite());
-             mCurrentUserManager.updateFavoriteRestaurant(mFavoriteRestaurant.getUid(), mFavoriteRestaurant.isFavorite());
-        });
+        /**
+         * Favorite button
+         */
+        mBinding.activityDetailLikeBtn.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
         mBinding.activityDetailWebsiteBtn.setOnClickListener(view ->{
             //TODO website btn
         });
+        mBinding.activityDetailFab.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
+    }
+
+    private void setFavoriteOrSelectedRestaurant(View view) {
+        int buttonId = view.getId();
+        for (FavoriteRestaurant favoriteRestaurant : mApiService.getFavoriteRestaurant()) {
+            if (favoriteRestaurant.getRestaurantId().equals(mRestaurant.getId()) && favoriteRestaurant.getUid().equals(mCurrentUserManager.getCurrentUser().getUid())) {
+                mFavoriteRestaurant = favoriteRestaurant;
+                if (buttonId == mBinding.activityDetailFab.getId()){
+                    //TODO if a restaurant already selected, deselect it
+                }
+            }
+        }
+        if (mFavoriteRestaurant != null) {
+            mFavoriteRestaurant.setFavorite(!mFavoriteRestaurant.isFavorite());
+            mCurrentUserManager.updateFavoriteRestaurant(
+                    mFavoriteRestaurant.getUid() + mFavoriteRestaurant.getRestaurantId(),
+                    mFavoriteRestaurant.isFavorite()
+            );
+            setFavoriteImage(mFavoriteRestaurant.isFavorite());
+            mFavoriteRestaurant = null;
+        } else {
+            mCurrentUserManager.createUserFavoriteRestaurantList(
+                    mCurrentUserManager.getCurrentUser(),
+                    mRestaurant,
+                    true,
+                    false
+            );
+
+            mApiService.addFavoriteRestaurant(new FavoriteRestaurant(
+                    mCurrentUserManager.getCurrentUser().getUid(),
+                    mRestaurant.getId(),
+                    mRestaurant.getName(),
+                    true,
+                    false
+            ));
+            setFavoriteImage(true);
+        }
+    }
+
+    private void setFavoriteImage(boolean favorite) {
+        if (favorite) {
+            mBinding.activityDetailLikeImg.setImageResource(R.drawable.baseline_star_rate_black_24);
+        } else {
+            mBinding.activityDetailLikeImg.setImageResource(R.drawable.baseline_star_border_24);
+        }
+    }
+
+    private void setSelectedImage(boolean selected) {
+        if (selected) {
+            mBinding.activityDetailFab.setImageResource(R.drawable.baseline_check_circle_black_24);
+        } else {
+            mBinding.activityDetailFab.setImageResource(R.drawable.baseline_check_circle_outline_24);
+        }
     }
 }

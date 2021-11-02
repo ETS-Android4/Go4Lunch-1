@@ -147,11 +147,16 @@ public final class CurrenUserRepository {
 
     public void updateFavoriteRestaurant(String uid, boolean isFavorite) {
         DocumentReference documentReference = getFavoriteCollection().document(uid);
-        documentReference.update("isFavorite", isFavorite);
+        documentReference.update("favorite", isFavorite).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
     }
 
     public void updateSelectedRestaurant(String uid, boolean isSelected) {
         DocumentReference documentReference = getFavoriteCollection().document(uid);
-        documentReference.update("isSelected", isSelected);
+        documentReference.update("selected", isSelected);
     }
 }
