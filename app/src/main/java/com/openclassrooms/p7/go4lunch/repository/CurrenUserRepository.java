@@ -99,7 +99,7 @@ public final class CurrenUserRepository {
         }
     }
 
-    public void createUserFavoriteRestaurantList(FirebaseUser user, Restaurant restaurant, boolean isFavorite, boolean isSelected) {
+    public void createFavoriteRestaurant(FirebaseUser user, Restaurant restaurant, boolean isFavorite, boolean isSelected) {
         String favoriteId = user.getUid() + restaurant.getId();
         String uid = user.getUid();
         String restaurantName = restaurant.getName();
@@ -157,6 +157,11 @@ public final class CurrenUserRepository {
 
     public void updateSelectedRestaurant(String uid, boolean isSelected) {
         DocumentReference documentReference = getFavoriteCollection().document(uid);
-        documentReference.update("selected", isSelected);
+        documentReference.update("selected", isSelected).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
     }
 }

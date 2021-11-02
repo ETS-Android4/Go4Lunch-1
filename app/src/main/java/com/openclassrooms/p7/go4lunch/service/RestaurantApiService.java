@@ -1,5 +1,7 @@
 package com.openclassrooms.p7.go4lunch.service;
 
+import android.view.View;
+
 import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 
@@ -17,4 +19,6 @@ public interface RestaurantApiService {
     void addRestaurant(Restaurant restaurant);
     void removeRestaurant(Restaurant restaurant);
     int setRatingStars(int index, double rating);
+    int setFavoriteImage(boolean favorite);
+    int setSelectedImage(boolean Selected);
 }

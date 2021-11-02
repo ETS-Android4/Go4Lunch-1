@@ -55,8 +55,8 @@ public class CurrentUserManager {
         mCurrenUserRepository.createUserInDatabase();
     }
 
-    public void createUserFavoriteRestaurantList(FirebaseUser user, Restaurant restaurant, boolean isFavorite, boolean isSelected) {
-        mCurrenUserRepository.createUserFavoriteRestaurantList(user, restaurant , isFavorite, isSelected);
+    public void createFavoriteRestaurant(FirebaseUser user, Restaurant restaurant, boolean isFavorite, boolean isSelected) {
+        mCurrenUserRepository.createFavoriteRestaurant(user, restaurant , isFavorite, isSelected);
     }
 
     public void deleteFavoriteRestaurant(String uid) {

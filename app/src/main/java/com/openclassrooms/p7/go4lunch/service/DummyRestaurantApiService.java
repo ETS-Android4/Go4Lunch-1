@@ -1,5 +1,7 @@
 package com.openclassrooms.p7.go4lunch.service;
 
+import android.view.View;
+
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
@@ -48,7 +50,6 @@ public class DummyRestaurantApiService implements RestaurantApiService {
     @Override
     public int setRatingStars(int index, double rating) {
         int convertedRating = (int) rating;
-
             if (convertedRating == 2 && index == 1|| convertedRating == 4 && index == 2) {
               return R.drawable.baseline_star_half_black_18;
             }
@@ -56,5 +57,22 @@ public class DummyRestaurantApiService implements RestaurantApiService {
                return R.drawable.baseline_star_border_black_18;
             }
         return R.drawable.baseline_star_rate_black_18;
+    }
+
+    @Override
+    public int setFavoriteImage(boolean favoriteOrSelected) {
+            if (favoriteOrSelected) {
+                return R.drawable.baseline_star_rate_black_24;
+            }
+            return R.drawable.baseline_star_border_24;
+    }
+
+    @Override
+    public int setSelectedImage(boolean selected) {
+        if (selected) {
+            return R.drawable.baseline_check_circle_black_24;
+        }
+        return R.drawable.baseline_check_circle_outline_24;
+
     }
 }

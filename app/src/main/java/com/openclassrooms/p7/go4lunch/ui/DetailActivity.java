@@ -28,6 +28,8 @@ public class DetailActivity extends AppCompatActivity {
     private final ImageView[] ratingStarsArray = new ImageView[3];
     private final CurrentUserManager mCurrentUserManager = CurrentUserManager.getInstance();
     private FavoriteRestaurant mFavoriteRestaurant;
+    private static int LIKE_BTN_TAG;
+    private static int SELECT_BTN_TAG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,17 @@ public class DetailActivity extends AppCompatActivity {
         this.configureListeners();
     }
 
+    private void configureViewBinding() {
+        mBinding = ActivityDetailBinding.inflate(getLayoutInflater());
+        View view = mBinding.getRoot();
+        setContentView(view);
+        ratingStarsArray[0] = mBinding.activityDetailFirstRatingImg;
+        ratingStarsArray[1] = mBinding.activityDetailSecondRatingImg;
+        ratingStarsArray[2] = mBinding.activityDetailThirdRatingImg;
+        LIKE_BTN_TAG = mBinding.activityDetailLikeBtn.getId();
+        SELECT_BTN_TAG = mBinding.activityDetailFab.getId();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -50,18 +63,35 @@ public class DetailActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         mApiService.getFavoriteRestaurant().clear();
                         for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                            String uid = Objects.requireNonNull(documentSnapshot.get("uid")).toString();
-                            String restaurantId = Objects.requireNonNull(documentSnapshot.get("restaurantId")).toString();
-                            String restaurantName = Objects.requireNonNull(documentSnapshot.get("restaurantName")).toString();
-                            boolean isFavorite = Boolean.parseBoolean(Objects.requireNonNull(documentSnapshot.get("favorite")).toString());
-                            boolean isSelected = Boolean.parseBoolean(Objects.requireNonNull(documentSnapshot.get("selected")).toString());
-                            mApiService.getFavoriteRestaurant().add(new FavoriteRestaurant(uid, restaurantId, restaurantName, isFavorite, isSelected));
-                            if (restaurantId.equals(mRestaurant.getId())) {
-                                setFavoriteImage(isFavorite);
-                            }
+                            initFavoriteRestaurantList(documentSnapshot);
                         }
                     }
                 });
+    }
+
+    private void initFavoriteRestaurantList(QueryDocumentSnapshot documentSnapshot) {
+        String uid = Objects.requireNonNull(documentSnapshot.get("uid")).toString();
+        String restaurantId = Objects.requireNonNull(documentSnapshot.get("restaurantId")).toString();
+        String restaurantName = Objects.requireNonNull(documentSnapshot.get("restaurantName")).toString();
+        boolean isFavorite = Boolean.parseBoolean(Objects.requireNonNull(documentSnapshot.get("favorite")).toString());
+        boolean isSelected = Boolean.parseBoolean(Objects.requireNonNull(documentSnapshot.get("selected")).toString());
+        addNewFavoriteRestaurant(uid, restaurantId, restaurantName, isFavorite, isSelected);
+    }
+
+    private void addNewFavoriteRestaurant(String uid, String restaurantId, String restaurantName, boolean isFavorite, boolean isSelected) {
+        mApiService.getFavoriteRestaurant().add(new FavoriteRestaurant(
+                uid,
+                restaurantId,
+                restaurantName,
+                isFavorite,
+                isSelected
+        ));
+        if (restaurantId.equals(mRestaurant.getId()) && isFavorite) {
+            setFavoriteImage(true);
+        }
+        if (restaurantId.equals(mRestaurant.getId()) && isSelected) {
+            setSelectedImage(true);
+        }
     }
 
     private void findRestaurantById(Intent mainActivityIntent) {
@@ -86,79 +116,97 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    private void configureViewBinding() {
-        mBinding = ActivityDetailBinding.inflate(getLayoutInflater());
-        View view = mBinding.getRoot();
-        setContentView(view);
-        ratingStarsArray[0] = mBinding.activityDetailFirstRatingImg;
-        ratingStarsArray[1] = mBinding.activityDetailSecondRatingImg;
-        ratingStarsArray[2] = mBinding.activityDetailThirdRatingImg;
-    }
-
     private void configureListeners() {
+        // Call Restaurant Button
         mBinding.activityDetailCallBtn.setOnClickListener(view ->{
             //TODO call btn
             });
-        /**
-         * Favorite button
-         */
+        // Favorite Button
         mBinding.activityDetailLikeBtn.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
         mBinding.activityDetailWebsiteBtn.setOnClickListener(view ->{
             //TODO website btn
         });
+        // Select Restaurant Button
         mBinding.activityDetailFab.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
     }
 
+    /**
+     * Check if the FavoriteRestaurant exist in the DB
+     * if exist, update the corresponding boolean
+     * if not exist, create it.
+     * @param view button id.
+     */
     private void setFavoriteOrSelectedRestaurant(View view) {
         int buttonId = view.getId();
+
         for (FavoriteRestaurant favoriteRestaurant : mApiService.getFavoriteRestaurant()) {
             if (favoriteRestaurant.getRestaurantId().equals(mRestaurant.getId()) && favoriteRestaurant.getUid().equals(mCurrentUserManager.getCurrentUser().getUid())) {
                 mFavoriteRestaurant = favoriteRestaurant;
-                if (buttonId == mBinding.activityDetailFab.getId()){
-                    //TODO if a restaurant already selected, deselect it
+            }
+            if (buttonId == mBinding.activityDetailFab.getId()){
+
+                if (favoriteRestaurant.isSelected() && !mRestaurant.getId().equals(favoriteRestaurant.getRestaurantId())){
+                    favoriteRestaurant.setSelected(false);
+                    mCurrentUserManager.updateSelectedRestaurant(mCurrentUserManager.getCurrentUser().getUid() + favoriteRestaurant.getRestaurantId(), false);
                 }
             }
         }
-        if (mFavoriteRestaurant != null) {
-            mFavoriteRestaurant.setFavorite(!mFavoriteRestaurant.isFavorite());
-            mCurrentUserManager.updateFavoriteRestaurant(
-                    mFavoriteRestaurant.getUid() + mFavoriteRestaurant.getRestaurantId(),
-                    mFavoriteRestaurant.isFavorite()
-            );
-            setFavoriteImage(mFavoriteRestaurant.isFavorite());
-            mFavoriteRestaurant = null;
-        } else {
-            mCurrentUserManager.createUserFavoriteRestaurantList(
-                    mCurrentUserManager.getCurrentUser(),
-                    mRestaurant,
-                    true,
-                    false
-            );
+            if (mFavoriteRestaurant != null) {
+                updateFavoriteRestaurant(buttonId);
+            } else {
+                createFavoriteRestaurant(buttonId);
+            }
 
-            mApiService.addFavoriteRestaurant(new FavoriteRestaurant(
-                    mCurrentUserManager.getCurrentUser().getUid(),
-                    mRestaurant.getId(),
-                    mRestaurant.getName(),
-                    true,
-                    false
-            ));
-            setFavoriteImage(true);
+    }
+
+    private void updateFavoriteRestaurant(int buttonId) {
+        if (buttonId == LIKE_BTN_TAG) {
+            mCurrentUserManager.updateFavoriteRestaurant(
+                    mCurrentUserManager.getCurrentUser().getUid() + mRestaurant.getId(),
+                    !mFavoriteRestaurant.isFavorite()
+            );
+            mFavoriteRestaurant.setFavorite(!mFavoriteRestaurant.isFavorite());
+            setFavoriteImage(mFavoriteRestaurant.isFavorite());
+        } else {
+            mCurrentUserManager.updateSelectedRestaurant(
+                    mCurrentUserManager.getCurrentUser().getUid() + mRestaurant.getId(),
+                    !mFavoriteRestaurant.isSelected()
+            );
+            mFavoriteRestaurant.setSelected(!mFavoriteRestaurant.isSelected());
+            setSelectedImage(mFavoriteRestaurant.isSelected());
         }
+        mFavoriteRestaurant = null;
+    }
+
+    private void createFavoriteRestaurant(int buttonId) {
+        boolean favorite = false, selected = false;
+        if (buttonId == LIKE_BTN_TAG) {
+            favorite = true;
+        } else {
+            selected = true;
+        }
+        mCurrentUserManager.createFavoriteRestaurant(
+                mCurrentUserManager.getCurrentUser(),
+                mRestaurant,
+                favorite,
+                selected);
+        addNewFavoriteRestaurant(
+                mCurrentUserManager.getCurrentUser().getUid(),
+                mRestaurant.getId(),
+                mRestaurant.getName(),
+                favorite,
+                selected
+        );
+
+        setFavoriteImage(favorite);
+        setSelectedImage(selected);
     }
 
     private void setFavoriteImage(boolean favorite) {
-        if (favorite) {
-            mBinding.activityDetailLikeImg.setImageResource(R.drawable.baseline_star_rate_black_24);
-        } else {
-            mBinding.activityDetailLikeImg.setImageResource(R.drawable.baseline_star_border_24);
-        }
+        mBinding.activityDetailLikeImg.setImageResource(mApiService.setFavoriteImage(favorite));
     }
 
     private void setSelectedImage(boolean selected) {
-        if (selected) {
-            mBinding.activityDetailFab.setImageResource(R.drawable.baseline_check_circle_black_24);
-        } else {
-            mBinding.activityDetailFab.setImageResource(R.drawable.baseline_check_circle_outline_24);
-        }
+        mBinding.activityDetailFab.setImageResource(mApiService.setSelectedImage(selected));
     }
 }

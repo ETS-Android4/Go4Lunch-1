@@ -22,5 +22,7 @@
     <string name="error_no_internet">Error no internet connection</string>
     <string name="error_unknow_error">Unknow error</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="favorite">favorite</string>
+    <string name="selected">selected</string>
 
 </resources>
