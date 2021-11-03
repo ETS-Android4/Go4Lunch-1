@@ -23,22 +23,12 @@ import java.util.List;
 public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAdapter.DetailActivityViewHolder> {
 
     private List<User> mUsers;
-    private final List<FavoriteRestaurant> mFavoriteRestaurantList;
 
-    public DetailActivityAdapter(List<User> users, List<FavoriteRestaurant> favoriteRestaurant, Restaurant mCurrentRestaurant) {
-        this.mFavoriteRestaurantList = favoriteRestaurant;
-        CurrentUserManager mCurrentUserManager = CurrentUserManager.getInstance();
+
+    public DetailActivityAdapter(List<User> users, Restaurant mCurrentRestaurant) {
+
         RestaurantApiService apiService = DI.getRestaurantApiService();
-        List<User> userList = new ArrayList<>();
-        for (FavoriteRestaurant favoriteRestaurants : mFavoriteRestaurantList) {
-            // Les restos qui sont selectionnés  &                              ne doit pas être le User actuel                         &           doit être dans le resto actuel
-            if (favoriteRestaurants.isSelected() && !mCurrentUserManager.getCurrentUser().getUid().equals(favoriteRestaurants.getUid()) && mCurrentRestaurant.getId().equals(favoriteRestaurants.getRestaurantId())) {
-                User user = apiService.searchUserById(favoriteRestaurants.getUid());
-                userList.add(user);
-            }
-            this.mUsers = userList;
-        }
-
+        this.mUsers = apiService.getUsersInterestedAtCurrentRestaurant(mCurrentRestaurant);
     }
 
     @NonNull

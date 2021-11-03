@@ -34,7 +34,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     @Override
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_row, parent, false);
-
         return new ListViewHolder(view);
     }
 
@@ -62,6 +61,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         private final ImageView restaurantPicture;
         private final TextView distanceTv;
         private final ImageView[] ratingStarsArray = new ImageView[3];
+        private final TextView numberOfFriendsInterested;
         private RestaurantApiService mApiService;
 
 
@@ -75,6 +75,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             ratingStarsArray[0] = itemView.findViewById(R.id.list_view_row_rating_first_star_img);
             ratingStarsArray[1] = itemView.findViewById(R.id.list_view_row_rating_second_star_img);
             ratingStarsArray[2] = itemView.findViewById(R.id.list_view_row_rating_third_star_img);
+            numberOfFriendsInterested = itemView.findViewById(R.id.list_view_row_interested_friend_tv);
             mApiService = DI.getRestaurantApiService();
         }
 
@@ -94,6 +95,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             for (int index = 0; index < ratingStarsArray.length; index++) {
                 ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, restaurant.getRating()));
             }
+            numberOfFriendsInterested.setText(String.format("(%s)", mApiService.getUsersInterestedAtCurrentRestaurant(restaurant).size()));
         }
     }
 }

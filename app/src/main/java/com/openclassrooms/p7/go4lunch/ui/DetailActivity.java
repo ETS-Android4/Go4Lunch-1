@@ -1,11 +1,17 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -19,6 +25,7 @@ import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 
 public class DetailActivity extends AppCompatActivity {
 
+    private static final int PERMISSION_CODE = 100;
     private ActivityDetailBinding mBinding;
     private Restaurant mCurrentRestaurant;
     private RestaurantApiService mApiService;
@@ -98,22 +105,44 @@ public class DetailActivity extends AppCompatActivity {
     private void initRecyclerView() {
         mBinding.activityDetailRecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mBinding.activityDetailRecyclerview.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-        DetailActivityAdapter mAdapter = new DetailActivityAdapter(mApiService.getUsers(), mApiService.getFavoriteRestaurant(), mCurrentRestaurant);
+        DetailActivityAdapter mAdapter = new DetailActivityAdapter(mApiService.getUsers(), mCurrentRestaurant);
         mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
     }
 
     private void configureListeners() {
         // Call Restaurant Button
-        mBinding.activityDetailCallBtn.setOnClickListener(view ->{
-            //TODO call btn
-            });
-        // Favorite Button
+        mBinding.activityDetailCallBtn.setOnClickListener(view -> permissionToCall());
+        // Go to the website of the restaurant
+        mBinding.activityDetailWebsiteBtn.setOnClickListener(view -> goToWebsite());
+        // Make Restaurant as Favorite Button
         mBinding.activityDetailLikeBtn.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
-        mBinding.activityDetailWebsiteBtn.setOnClickListener(view ->{
-            //TODO website btn
-        });
-        // Select Restaurant Button
+        // Select Restaurant to lunch Button
         mBinding.activityDetailFab.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
+    }
+
+    private void permissionToCall() {
+        if (ContextCompat.checkSelfPermission(DetailActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(DetailActivity.this, new String[]{Manifest.permission.CALL_PHONE}, PERMISSION_CODE);
+        }
+        callTheRestaurant();
+    }
+    private void callTheRestaurant() {
+
+        String phoneNumber = mCurrentRestaurant.getPhoneNumber();
+        Intent phoneIntent = new Intent(Intent.ACTION_CALL);
+        phoneIntent.setData(Uri.parse("tel:" + phoneNumber));
+        startActivity(phoneIntent);
+    }
+
+    private void goToWebsite() {
+        String url =  mCurrentRestaurant.getUriWebsite();
+        if (!url.equals("")) {
+            Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(browse);
+        } else {
+            Toast toast = Toast.makeText(this,"No website found",Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     /**

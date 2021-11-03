@@ -24,5 +24,9 @@
     <string name="title_activity_maps">MapsActivity</string>
     <string name="favorite">favorite</string>
     <string name="selected">selected</string>
+    <string name="activity_detail_fab_content_description">Select a restaurant</string>
+    <string name="activity_detail_call_text">CALL</string>
+    <string name="activity_detail_like_text">LIKE</string>
+    <string name="activity_detail_website_text">WEBSITE</string>
 
 </resources>

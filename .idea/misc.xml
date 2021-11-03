@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/charl/Documents/P7/Go4Lunch/app/src/main/res/drawable/baseline_call_24.xml" value="0.26597938144329897" />
+        <entry key="..\:/Users/charl/Documents/P7/Go4Lunch/app/src/main/res/drawable/baseline_public_24.xml" value="0.26597938144329897" />
+        <entry key="..\:/Users/charl/Documents/P7/Go4Lunch/app/src/main/res/drawable/baseline_star_rate_24.xml" value="0.26597938144329897" />
         <entry key="..\:/Users/charl/Documents/P7/Go4Lunch/app/src/main/res/layout/activity_detail.xml" value="0.25" />
         <entry key="..\:/Users/charl/Documents/P7/Go4Lunch/app/src/main/res/layout/activity_login.xml" value="0.38697916666666665" />
         <entry key="..\:/Users/charl/Documents/P7/Go4Lunch/app/src/main/res/layout/activity_maps.xml" value="0.38697916666666665" />

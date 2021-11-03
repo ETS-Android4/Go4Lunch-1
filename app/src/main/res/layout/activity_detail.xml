@@ -6,45 +6,48 @@
     android:layout_height="match_parent"
     tools:context=".ui.DetailActivity">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/activity_detail_image_header"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/activity_detail_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/activity_detail_image_header"
-        app:layout_constraintBottom_toTopOf="@+id/layout_parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"
+        android:layout_marginTop="-30dp"
+        android:layout_marginHorizontal="16dp"
         android:backgroundTint="@color/white"
-        android:src="@drawable/baseline_check_circle_outline_24"/>
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/activity_detail_image_header"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/header_background"/>
+        android:src="@drawable/baseline_check_circle_outline_24"
+        android:contentDescription="@string/activity_detail_fab_content_description" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/layout_parent"
+        android:id="@+id/activity_detail_layout_primary"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintVertical_weight="60"
+        android:layout_height="match_parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_detail_image_header"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="250dp"
         android:orientation="vertical">
 
         <!-- Restaurant details -->
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             android:orientation="vertical"
             android:background="@color/map_marker">
 
             <!-- Name, Rating, Type & Address container -->
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/activity_detail_restaurant_info_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginHorizontal="10dp"
                 android:orientation="horizontal">
 
@@ -52,10 +55,9 @@
                     android:id="@+id/activity_detail_restaurant_name_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Le Zinc"
                     android:textColor="@color/white"
                     android:textSize="26sp"
-                    android:layout_marginVertical="10dp" />
+                    android:layout_marginTop="10dp" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/activity_detail_first_rating_img"
@@ -64,6 +66,7 @@
                     app:srcCompat="@drawable/baseline_star_rate_black_24"
                     android:layout_marginVertical="16dp"
                     android:layout_marginStart="10dp"/>
+
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/activity_detail_second_rating_img"
@@ -85,29 +88,65 @@
                 android:id="@+id/activity_detail_restaurant_type_and_adress_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Restaurant - 12 rue du Faubourg Poissonnière"
+                app:layout_constraintTop_toBottomOf="@id/activity_detail_restaurant_info_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:layout_marginHorizontal="10dp"
-                android:layout_marginBottom="30dp"/>
+                android:layout_marginBottom="44dp"
+                />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Button container -->
+        <!-- BUTTON CONTAINER -->
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="10dp">
+            android:layout_height="100dp"
+            android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/activity_detail_call_btn"
+            <!-- CALL CONTAINER -->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="33"
-                android:background="@android:color/transparent"
-                android:text="CALL"
-                android:drawableTop="@drawable/baseline_call_24"/>
+                android:layout_height="match_parent"
+                android:layout_weight="33">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/activity_detail_call_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:background="@android:color/transparent"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/activity_detail_call_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/baseline_call_black_36"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/activity_detail_call_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/activity_detail_call_img"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/activity_detail_call_text"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:background="@android:color/transparent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- LIKE CONTAINER -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -115,42 +154,80 @@
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/activity_detail_like_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/baseline_star_border_24"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:background="@android:color/transparent"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/activity_detail_like_img"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:src="@drawable/baseline_star_border_24"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/baseline_star_border_black_36"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/activity_detail_like_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/activity_detail_like_img"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:text="LIKE"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/activity_detail_like_text"
                     android:textAlignment="center"
                     android:textStyle="bold"
                     android:background="@android:color/transparent"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/activity_detail_website_btn"
+            <!-- WEBSITE CONTAINER -->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="33"
-                android:background="@android:color/transparent"
-                android:text="WEBSITE"
-                android:drawableTop="@drawable/baseline_public_24"/>
+                android:layout_height="match_parent"
+                android:layout_weight="33">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/activity_detail_website_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/baseline_star_border_24"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/activity_detail_website_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/baseline_public_black_36"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/activity_detail_website_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/activity_detail_website_img"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/activity_detail_website_text"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:background="@android:color/transparent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

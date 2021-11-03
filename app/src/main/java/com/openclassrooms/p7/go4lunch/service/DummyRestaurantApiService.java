@@ -1,13 +1,12 @@
 package com.openclassrooms.p7.go4lunch.service;
 
-import android.view.View;
-
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
 import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -109,23 +108,36 @@ public class DummyRestaurantApiService implements RestaurantApiService {
     }
 
     @Override
+    public List<User> getUsersInterestedAtCurrentRestaurant(Restaurant currentRestaurant) {
+        List<User> userList = new ArrayList<>();
+        CurrentUserManager currentUserManager = CurrentUserManager.getInstance();
+        for (FavoriteRestaurant favoriteRestaurants : mFavoriteRestaurantList) {
+            if (favoriteRestaurants.isSelected() && !currentUserManager.getCurrentUser().getUid().equals(favoriteRestaurants.getUid()) && currentRestaurant.getId().equals(favoriteRestaurants.getRestaurantId())) {
+                User user = searchUserById(favoriteRestaurants.getUid());
+                userList.add(user);
+            }
+        }
+        return userList;
+    }
+
+    @Override
     public int setRatingStars(int index, double rating) {
         int convertedRating = (int) rating;
             if (convertedRating == 2 && index == 1|| convertedRating == 4 && index == 2) {
-              return R.drawable.baseline_star_half_black_18;
+              return R.drawable.baseline_star_half_black_24;
             }
             if (convertedRating < 4 && index == 2 || convertedRating < 2 && index == 1) {
-               return R.drawable.baseline_star_border_black_18;
+               return R.drawable.baseline_star_border_black_24;
             }
-        return R.drawable.baseline_star_rate_black_18;
+        return R.drawable.baseline_star_rate_black_24;
     }
 
     @Override
     public int setFavoriteImage(boolean favoriteOrSelected) {
             if (favoriteOrSelected) {
-                return R.drawable.baseline_star_rate_black_24;
+                return R.drawable.baseline_star_rate_black_36;
             }
-            return R.drawable.baseline_star_border_24;
+            return R.drawable.baseline_star_border_black_36;
     }
 
     @Override

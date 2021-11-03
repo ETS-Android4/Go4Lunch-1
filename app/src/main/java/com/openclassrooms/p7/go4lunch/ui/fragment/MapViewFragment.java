@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -245,17 +246,18 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
 
     // Create a restaurant list with the placeId as the key.
-    private void createRestaurant(String placeId, String name, String adress, double rating, String hours, float distance) {
-            mRestaurantList.put(placeId, new Restaurant(placeId, name, "", adress, hours, distance, 4, rating, null));
+    private void createRestaurant(String placeId, String name, String adress, double rating, String hours, float distance, String phoneNumber, String uriWebsite) {
+            mRestaurantList.put(placeId, new Restaurant(placeId, name, adress, hours,phoneNumber, uriWebsite, distance, 4, rating, null));
     }
 
     private void requestForPlaceDetails(String placeId) {
         List<Place.Field> placeFields = Arrays.asList(
                 Place.Field.ID,
                 Place.Field.NAME,
-                Place.Field.TYPES,
                 Place.Field.ADDRESS,
                 Place.Field.RATING,
+                Place.Field.PHONE_NUMBER,
+                Place.Field.WEBSITE_URI,
                 Place.Field.OPENING_HOURS,
                 Place.Field.LAT_LNG,
                 Place.Field.PHOTO_METADATAS
@@ -276,6 +278,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     private void getPlaceDetails(Place place) {
         String openingHours = "no details here";
         double rating = 1.0;
+        String uriWebsite = "";
         Log.i(TAG, "Place found: " + place.getName());
 
         if (place.getOpeningHours() != null) {
@@ -286,6 +289,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
             rating = place.getRating();
             Log.i(TAG, "Restaurant name: " + place.getName() + " Rating: " + place.getRating());
         }
+
+        if (place.getWebsiteUri() != null) {
+            uriWebsite = String.format("%s",place.getWebsiteUri());
+        }
         float[] results = new float[10];
         Location.distanceBetween(
                 lastKnownLocation.getLatitude(),
@@ -294,7 +301,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                 place.getLatLng().longitude,
                 results
         );
-        createRestaurant(place.getId(), place.getName(), place.getAddress(), rating, openingHours, results[0]);
+        createRestaurant(place.getId(), place.getName(), place.getAddress(), rating, openingHours, results[0], place.getPhoneNumber(), uriWebsite);
     }
 
     private void requestForPlacePhoto(String placeId, Place place) {
@@ -337,7 +344,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         InputStream stream = connection.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         StringBuilder builder = new StringBuilder();
-        String line = "";
+        String line;
         while ((line = reader.readLine()) != null) {
             builder.append(line);
         }

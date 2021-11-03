@@ -79,21 +79,21 @@
                     android:id="@+id/list_view_row_rating_first_star_img"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    app:srcCompat="@drawable/baseline_star_rate_black_18"
+                    app:srcCompat="@drawable/baseline_star_rate_24"
                     android:layout_weight="33"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/list_view_row_rating_second_star_img"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    app:srcCompat="@drawable/baseline_star_rate_black_18"
+                    app:srcCompat="@drawable/baseline_star_rate_24"
                     android:layout_weight="33"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/list_view_row_rating_third_star_img"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    app:srcCompat="@drawable/baseline_star_rate_black_18"
+                    app:srcCompat="@drawable/baseline_star_rate_24"
                     android:layout_weight="33"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
