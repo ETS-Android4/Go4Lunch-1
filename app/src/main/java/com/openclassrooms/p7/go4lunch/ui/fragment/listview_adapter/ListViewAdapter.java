@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.databinding.ListViewRowBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
@@ -54,48 +55,37 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     }
 
     public static class ListViewHolder extends RecyclerView.ViewHolder {
-
-        private final TextView nameTv;
-        private final TextView addressTv;
-        private final TextView openingHoursTv;
-        private final ImageView restaurantPicture;
-        private final TextView distanceTv;
+        private ListViewRowBinding mBinding;
         private final ImageView[] ratingStarsArray = new ImageView[3];
-        private final TextView numberOfFriendsInterested;
-        private RestaurantApiService mApiService;
+        private final RestaurantApiService mApiService;
 
 
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
-            nameTv = itemView.findViewById(R.id.list_view_row_restaurant_name_tv);
-            addressTv = itemView.findViewById(R.id.list_view_row_restaurant_adress_tv);
-            openingHoursTv = itemView.findViewById(R.id.list_view_row_restaurant_is_open_tv);
-            restaurantPicture = itemView.findViewById(R.id.list_view_row_restaurant_picture_img);
-            distanceTv = itemView.findViewById(R.id.list_view_row_distance_tv);
-            ratingStarsArray[0] = itemView.findViewById(R.id.list_view_row_rating_first_star_img);
-            ratingStarsArray[1] = itemView.findViewById(R.id.list_view_row_rating_second_star_img);
-            ratingStarsArray[2] = itemView.findViewById(R.id.list_view_row_rating_third_star_img);
-            numberOfFriendsInterested = itemView.findViewById(R.id.list_view_row_interested_friend_tv);
+            mBinding = ListViewRowBinding.bind(itemView);
+            ratingStarsArray[0] = mBinding.listViewRowRatingFirstStarImg;
+            ratingStarsArray[1] = mBinding.listViewRowRatingSecondStarImg;
+            ratingStarsArray[2] = mBinding.listViewRowRatingThirdStarImg;
             mApiService = DI.getRestaurantApiService();
         }
 
         public void bind(Restaurant restaurant){
-            nameTv.setText(restaurant.getName());
-            addressTv.setText(restaurant.getAdress());
-            openingHoursTv.setText(restaurant.getOpenningHours());
-            distanceTv.setText(String.format(Locale.ENGLISH,"%4.0fm",restaurant.getDistance()));
+            mBinding.listViewRowRestaurantNameTv.setText(restaurant.getName());
+            mBinding.listViewRowRestaurantAdressTv.setText(restaurant.getAdress());
+            mBinding.listViewRowRestaurantIsOpenTv.setText(restaurant.getOpenningHours());
+            mBinding.listViewRowDistanceTv.setText(String.format(Locale.ENGLISH,"%4.0fm",restaurant.getDistance()));
 
             if (restaurant.getPictureUrl() != null) {
                 Glide.with(itemView)
                         .load(restaurant.getPictureUrl())
                         .centerCrop()
-                        .into(restaurantPicture);
+                        .into(mBinding.listViewRowRestaurantPictureImg);
             }
 
             for (int index = 0; index < ratingStarsArray.length; index++) {
                 ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, restaurant.getRating()));
             }
-            numberOfFriendsInterested.setText(String.format("(%s)", mApiService.getUsersInterestedAtCurrentRestaurant(restaurant).size()));
+            mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)", mApiService.getUsersInterestedAtCurrentRestaurant(restaurant).size()));
         }
     }
 }

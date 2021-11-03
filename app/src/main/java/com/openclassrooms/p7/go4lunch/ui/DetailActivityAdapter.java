@@ -25,8 +25,7 @@ public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAd
     private List<User> mUsers;
 
 
-    public DetailActivityAdapter(List<User> users, Restaurant mCurrentRestaurant) {
-
+    public DetailActivityAdapter(Restaurant mCurrentRestaurant) {
         RestaurantApiService apiService = DI.getRestaurantApiService();
         this.mUsers = apiService.getUsersInterestedAtCurrentRestaurant(mCurrentRestaurant);
     }

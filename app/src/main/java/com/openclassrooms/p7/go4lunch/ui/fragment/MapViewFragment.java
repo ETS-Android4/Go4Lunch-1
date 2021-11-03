@@ -31,6 +31,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -46,6 +48,7 @@ import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.JsonParser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 
@@ -225,7 +228,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                 + "?keyword=restaurant"
                 + "&location=" + lastKnownLocation.getLatitude() + "," + lastKnownLocation.getLongitude()
                 + "&radius=1500"
-//                + "&types=restaurant"
                 + "&sensor=true"
                 + "&key=" + BuildConfig.GMP_KEY;
         new PlaceTask().execute(url);
@@ -307,7 +309,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     private void requestForPlacePhoto(String placeId, Place place) {
         if (place.getPhotoMetadatas() != null) {
             PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
-
             FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
                     .build();
             mPlacesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) ->
@@ -362,13 +363,19 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
         LatLng latLng = new LatLng(lat, lng);
 
-        setInfoOnMarker(name, adress, latLng);
+        setInfoOnMarker(name, adress, latLng, placeId);
 
         requestForPlaceDetails(placeId);
     }
 
-    private void setInfoOnMarker(String name, String adress, LatLng latLng) {
+    private void setInfoOnMarker(String name, String adress, LatLng latLng,String placeId) {
         MarkerOptions options = new MarkerOptions();
+        options.icon(BitmapDescriptorFactory.fromResource(R.drawable.baseline_place_orange));
+        for (FavoriteRestaurant favoriteRestaurant : mApiService.getFavoriteRestaurant()) {
+            if (favoriteRestaurant.getRestaurantId().equals(placeId) && favoriteRestaurant.isSelected()) {
+                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.baseline_place_cyan));
+            }
+        }
         options.position(latLng);
         options.title(name);
         options.snippet(adress);

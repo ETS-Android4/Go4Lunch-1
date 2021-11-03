@@ -14,23 +14,12 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.openclassrooms.p7.go4lunch.R;
-import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
-
-import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -64,7 +53,7 @@ public class FacebookSignInActivity extends LoginActivity {
                     }
 
                     @Override
-                    public void onError(FacebookException error) {
+                    public void onError(@NonNull FacebookException error) {
 
                     }
                 });
@@ -83,18 +72,14 @@ public class FacebookSignInActivity extends LoginActivity {
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            finish();
-                        } else {
-                            Log.d(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(getApplicationContext(), "Authentification failed.", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(getApplicationContext(), "Authentication success", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Log.d(TAG, "signInWithCredential:failure", task.getException());
+                        Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 });
     }

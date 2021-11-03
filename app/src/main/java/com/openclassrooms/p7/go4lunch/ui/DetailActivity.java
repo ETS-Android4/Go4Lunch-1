@@ -95,8 +95,7 @@ public class DetailActivity extends AppCompatActivity {
                 .centerCrop()
                 .into(mBinding.activityDetailImageHeader);
         mBinding.activityDetailRestaurantNameTv.setText(mCurrentRestaurant.getName());
-        //TODO the good answer in the activityDetailRestaurantTypeAndAdressTv
-        mBinding.activityDetailRestaurantTypeAndAdressTv.setText(String.format("Restaurant - %s", mCurrentRestaurant.getAdress()));
+        mBinding.activityDetailRestaurantTypeAndAdressTv.setText(mCurrentRestaurant.getAdress());
         for (int index = 0; index < ratingStarsArray.length; index++) {
             ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, mCurrentRestaurant.getRating()));
         }
@@ -105,7 +104,7 @@ public class DetailActivity extends AppCompatActivity {
     private void initRecyclerView() {
         mBinding.activityDetailRecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mBinding.activityDetailRecyclerview.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-        DetailActivityAdapter mAdapter = new DetailActivityAdapter(mApiService.getUsers(), mCurrentRestaurant);
+        DetailActivityAdapter mAdapter = new DetailActivityAdapter(mCurrentRestaurant);
         mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
     }
 

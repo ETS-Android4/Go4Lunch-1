@@ -2,22 +2,19 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_margin="16dp">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/workmates_list_row_profile_img"
         android:layout_width="80dp"
-        android:layout_height="80dp"
-        app:srcCompat="@drawable/no_image"/>
+        android:layout_height="80dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/workmates_list_row_eating_type_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Scarlett is eating french "
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginHorizontal="16dp"/>

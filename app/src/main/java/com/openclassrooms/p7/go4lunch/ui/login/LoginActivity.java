@@ -74,7 +74,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showToastMessage(String message){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
+        Toast toastMessage = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        toastMessage.show();
     }
 
     private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data) {
