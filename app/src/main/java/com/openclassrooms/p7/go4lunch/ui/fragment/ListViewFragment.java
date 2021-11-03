@@ -20,7 +20,7 @@ import com.openclassrooms.p7.go4lunch.ui.fragment.listview_adapter.ListViewAdapt
 /**
  * Created by lleotraas on 14.
  */
-public class    ListViewFragment extends Fragment {
+public class ListViewFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RestaurantApiService mApiService;

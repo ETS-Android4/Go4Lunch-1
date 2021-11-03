@@ -5,6 +5,7 @@ import android.view.View;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ public class DummyRestaurantApiService implements RestaurantApiService {
 
     private final List<Restaurant> mRestaurantList = DummyRestaurant.generateRestaurant();
     private final List<FavoriteRestaurant> mFavoriteRestaurantList = DummyRestaurant.generateFavoriteRestaurant();
+    private final List<User> mUserList = DummyRestaurant.generateUsers();
 
     @Override
     public List<Restaurant> getRestaurant() {
@@ -25,6 +27,11 @@ public class DummyRestaurantApiService implements RestaurantApiService {
     @Override
     public List<FavoriteRestaurant> getFavoriteRestaurant() {
         return mFavoriteRestaurantList;
+    }
+
+    @Override
+    public List<User> getUsers() {
+        return mUserList;
     }
 
     @Override
@@ -45,6 +52,60 @@ public class DummyRestaurantApiService implements RestaurantApiService {
     @Override
     public void removeRestaurant(Restaurant restaurant) {
         mRestaurantList.remove(restaurant);
+    }
+
+    @Override
+    public void addUser(User user) {
+        mUserList.add(user);
+    }
+
+    @Override
+    public void deleteUser(User user) {
+        mUserList.remove(user);
+    }
+
+    @Override
+    public Restaurant searchRestaurantById(String id) {
+        Restaurant restaurantFound = null;
+        for (Restaurant restaurant : getRestaurant()) {
+            if (id.equals(restaurant.getId())){
+                restaurantFound = restaurant;
+            }
+        }
+        return restaurantFound;
+    }
+
+    @Override
+    public User searchUserById(String uid) {
+        User userFound = null;
+        for (User user : getUsers()) {
+            if (uid.equals(user.getUid())) {
+                userFound = user;
+            }
+        }
+        return userFound;
+    }
+
+    @Override
+    public FavoriteRestaurant searchFavoriteRestaurantById(String favoriteRestaurantId) {
+        FavoriteRestaurant favoriteRestaurantFound = null;
+        for (FavoriteRestaurant favoriteRestaurant : getFavoriteRestaurant()) {
+            if (favoriteRestaurantId.equals(favoriteRestaurant.getUid() + favoriteRestaurant.getRestaurantId())) {
+                favoriteRestaurantFound = favoriteRestaurant;
+            }
+        }
+        return favoriteRestaurantFound;
+    }
+
+    @Override
+    public FavoriteRestaurant searchFavoriteRestaurantSelected(String currentUid, String currentRestaurantId) {
+        FavoriteRestaurant favoriteRestaurantFound = null;
+        for (FavoriteRestaurant favoriteRestaurant : getFavoriteRestaurant()) {
+            if (favoriteRestaurant.isSelected() && currentUid.equals(favoriteRestaurant.getUid()) && !currentRestaurantId.equals(favoriteRestaurant.getRestaurantId())){
+                favoriteRestaurantFound = favoriteRestaurant;
+            }
+        }
+        return favoriteRestaurantFound;
     }
 
     @Override

@@ -6,7 +6,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.repository.CurrenUserRepository;
+
+import java.util.List;
 
 /**
  * Created by lleotraas on 15.
@@ -54,6 +57,8 @@ public class CurrentUserManager {
     public void createUser(){
         mCurrenUserRepository.createUserInDatabase();
     }
+
+    public List<User> getUsersList(){ return mCurrenUserRepository.getUsersList(); }
 
     public void createFavoriteRestaurant(FirebaseUser user, Restaurant restaurant, boolean isFavorite, boolean isSelected) {
         mCurrenUserRepository.createFavoriteRestaurant(user, restaurant , isFavorite, isSelected);

@@ -20,9 +20,17 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
+import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
+import com.openclassrooms.p7.go4lunch.model.User;
+import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,23 +42,27 @@ public class MainActivity extends AppCompatActivity {
     private TextView email;
     private TextView username;
     private ImageView userPicture;
+    private RestaurantApiService mApiService;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mApiService = DI.getRestaurantApiService();
         this.configureNavigationDrawer();
         this.startSignActivity();
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
+        this.initLists();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         updateHeader();
+        initLists();
     }
 
     @Override
@@ -153,6 +165,60 @@ public class MainActivity extends AppCompatActivity {
             }
             setTextUserData(user);
         }
+    }
+
+    /**
+     * Initialize User List and Favorite Restaurant List
+     */
+    private void initLists() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        mApiService.getUsers().clear();
+                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                            createUserList(documentSnapshot);
+                        }
+                    }
+                });
+        db.collection("favorite")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        mApiService.getFavoriteRestaurant().clear();
+//                        mApiService.getFavoriteRestaurant().clear();
+                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                            createFavoriteRestaurantList(documentSnapshot);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Add user in the User List
+     * @param documentSnapshot User
+     */
+    private void createUserList(QueryDocumentSnapshot documentSnapshot) {
+        String photoUrl = Objects.requireNonNull(documentSnapshot.get("photoUrl")).toString();
+        String username = Objects.requireNonNull(documentSnapshot.get("userName")).toString();
+        String uid = Objects.requireNonNull(documentSnapshot.get("uid")).toString();
+        mApiService.getUsers().add(new User(uid, username, photoUrl));
+    }
+
+    private void createFavoriteRestaurantList(QueryDocumentSnapshot documentSnapshot) {
+        String uid = Objects.requireNonNull(documentSnapshot.get("uid")).toString();
+        String restaurantId = Objects.requireNonNull(documentSnapshot.get("restaurantId")).toString();
+        String restaurantName = Objects.requireNonNull(documentSnapshot.get("restaurantName")).toString();
+        boolean isFavorite = Boolean.parseBoolean(Objects.requireNonNull(documentSnapshot.get("favorite")).toString());
+        boolean isSelected = Boolean.parseBoolean(Objects.requireNonNull(documentSnapshot.get("selected")).toString());
+        mApiService.addFavoriteRestaurant(new FavoriteRestaurant(
+                uid,
+                restaurantId,
+                restaurantName,
+                isFavorite,
+                isSelected
+        ));
     }
 
     private void setUserPicture(Uri photoUrl) {

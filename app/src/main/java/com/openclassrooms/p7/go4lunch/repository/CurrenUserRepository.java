@@ -1,10 +1,7 @@
 package com.openclassrooms.p7.go4lunch.repository;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,13 +19,14 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -115,6 +113,22 @@ public final class CurrenUserRepository {
         } else {
             return null;
         }
+    }
+
+    public List<User> getUsersList() {
+        List<User> users = new ArrayList<>();
+        getUsersCollection().get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                    String photoUrl = Objects.requireNonNull(documentSnapshot.get("photoUrl")).toString();
+                    String username = Objects.requireNonNull(documentSnapshot.get("userName")).toString();
+                    String uid = Objects.requireNonNull(documentSnapshot.get("uid")).toString();
+                    User user = new User(uid, username, photoUrl);
+                    users.add(user);
+                }
+            }
+        });
+        return users;
     }
 
     public void deleteUserFromFirestore() {

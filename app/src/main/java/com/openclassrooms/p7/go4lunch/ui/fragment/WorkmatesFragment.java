@@ -27,10 +27,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
 import com.openclassrooms.p7.go4lunch.manager.UsersManager;
 import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
+import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
+import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 import com.openclassrooms.p7.go4lunch.ui.fragment.workmates_adapter.WorkmatesAdapter;
 
 import java.util.ArrayList;
@@ -45,8 +48,7 @@ import java.util.Objects;
 public class WorkmatesFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
-    private List<User> users;
-    private WorkmatesAdapter workmatesAdapter;
+    private RestaurantApiService mApiservice;
 
     public WorkmatesFragment() { }
 
@@ -54,7 +56,7 @@ public class WorkmatesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_workmates, container, false);
-        users = new ArrayList<>();
+        mApiservice = DI.getRestaurantApiService();
         mRecyclerView = root.findViewById(R.id.workmates_fragment_recycler_view);
         this.initList();
         return root;
@@ -63,27 +65,12 @@ public class WorkmatesFragment extends Fragment {
     private void initList() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
-        workmatesAdapter = new WorkmatesAdapter(users);
+        WorkmatesAdapter workmatesAdapter = new WorkmatesAdapter(mApiservice.getUsers());
         mRecyclerView.setAdapter(workmatesAdapter);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("users")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        users.clear();
-                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                            String photoUrl = Objects.requireNonNull(documentSnapshot.get("photoUrl")).toString();
-                            String username = Objects.requireNonNull(documentSnapshot.get("userName")).toString();
-                            String uid = Objects.requireNonNull(documentSnapshot.get("uid")).toString();
-                            users.add(new User(uid, username, photoUrl));
-                            workmatesAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
-    }
+
+
+
+
 }
