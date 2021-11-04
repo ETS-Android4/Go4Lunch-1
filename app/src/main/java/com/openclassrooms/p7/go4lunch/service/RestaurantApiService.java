@@ -34,4 +34,5 @@ public interface RestaurantApiService {
     int setRatingStars(int index, double rating);
     int setFavoriteImage(boolean favorite);
     int setSelectedImage(boolean Selected);
+    int setMarker(String placeId);
 }

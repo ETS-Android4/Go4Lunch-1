@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,6 +49,6 @@ public class ListViewFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        listViewAdapter.notifyDataSetChanged();
+        mRecyclerView.setAdapter(listViewAdapter);
     }
 }

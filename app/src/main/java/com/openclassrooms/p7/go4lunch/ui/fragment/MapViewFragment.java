@@ -5,17 +5,16 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.ContentValues.TAG;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +30,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -48,9 +46,9 @@ import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.JsonParser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
+import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,7 +70,8 @@ import java.util.Objects;
 /**
  * Created by lleotraas on 14.
  */
-public class MapViewFragment extends Fragment implements OnMapReadyCallback {
+public class MapViewFragment extends Fragment implements OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener {
 
 
     private MapView mMapView;
@@ -85,7 +84,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String KEY_LOCATION = "location";
     private static final String KEY_CAMERA_POSITION = "camera_position";
-    private static final int DEFAULT_ZOOM = 15;
+    private static final int DEFAULT_ZOOM = 16;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
 
     private boolean locationPermissionGranted;
@@ -125,34 +124,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-
-        this.mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-            @Override
-            // Return null here, so that getInfoContents() is called next.
-            public View getInfoWindow(@NonNull Marker arg0) {
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(@NonNull Marker marker) {
-                // Inflate the layouts for the info window, title and snippet.
-                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
-                        mMapView.findViewById(R.id.map), false);
-
-                TextView title = infoWindow.findViewById(R.id.title);
-                title.setText(marker.getTitle());
-
-                TextView snippet = infoWindow.findViewById(R.id.snippet);
-                snippet.setText(marker.getSnippet());
-
-                return infoWindow;
-            }
-        });
-
         getLocationPermission();
         updateLocationUI();
         getDeviceLocation();
+        googleMap.setOnMarkerClickListener(this);
     }
 
     @Override
@@ -177,7 +152,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    @SuppressLint("MissingPermission")
     private void updateLocationUI() {
         if (mMap == null) {
             return;
@@ -185,7 +159,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         try {
             if (locationPermissionGranted) {
                 mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(true);
+//                mMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -196,6 +170,17 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
             Log.e("Exception: %s", e.getMessage() );
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        for (Restaurant restaurant : mApiService.getRestaurant()){
+            LatLng latLng = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
+            setInfoOnMarker(latLng, restaurant.getId());
+        }
+    }
+
+
 
     private void getDeviceLocation() {
         try {
@@ -208,7 +193,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(lastKnownLocation.getLatitude(),
                                             lastKnownLocation.getLongitude()),DEFAULT_ZOOM));
-                            showRestaurantAtStart();
+                            nearbySearch();
                         }
                     } else {
                         Log.d(TAG, "Current location is null. Using defaults.");
@@ -223,7 +208,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void showRestaurantAtStart() {
+    private void nearbySearch() {
         String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
                 + "?keyword=restaurant"
                 + "&location=" + lastKnownLocation.getLatitude() + "," + lastKnownLocation.getLongitude()
@@ -248,8 +233,32 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
 
     // Create a restaurant list with the placeId as the key.
-    private void createRestaurant(String placeId, String name, String adress, double rating, String hours, float distance, String phoneNumber, String uriWebsite) {
-            mRestaurantList.put(placeId, new Restaurant(placeId, name, adress, hours,phoneNumber, uriWebsite, distance, 4, rating, null));
+    private void createRestaurant(
+            String placeId,
+            String name,
+            String adress,
+            double rating,
+            String hours,
+            float distance,
+            String phoneNumber,
+            String uriWebsite,
+            double latitude,
+            double longitude
+    ) {
+            mRestaurantList.put(placeId, new Restaurant(
+                    placeId,
+                    name,
+                    adress,
+                    hours,
+                    phoneNumber,
+                    uriWebsite,
+                    distance,
+                    latitude,
+                    longitude,
+                    0,
+                    rating,
+                    null
+            ));
     }
 
     private void requestForPlaceDetails(String placeId) {
@@ -303,7 +312,17 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                 place.getLatLng().longitude,
                 results
         );
-        createRestaurant(place.getId(), place.getName(), place.getAddress(), rating, openingHours, results[0], place.getPhoneNumber(), uriWebsite);
+        createRestaurant(
+                place.getId(),
+                place.getName(),
+                place.getAddress(),
+                rating,
+                openingHours,
+                results[0],
+                place.getPhoneNumber(),
+                uriWebsite,
+                place.getLatLng().latitude,
+                place.getLatLng().longitude);
     }
 
     private void requestForPlacePhoto(String placeId, Place place) {
@@ -363,23 +382,26 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
         LatLng latLng = new LatLng(lat, lng);
 
-        setInfoOnMarker(name, adress, latLng, placeId);
+        setInfoOnMarker(latLng, placeId);
 
         requestForPlaceDetails(placeId);
     }
 
-    private void setInfoOnMarker(String name, String adress, LatLng latLng,String placeId) {
+    private void setInfoOnMarker(LatLng latLng,String placeId) {
         MarkerOptions options = new MarkerOptions();
-        options.icon(BitmapDescriptorFactory.fromResource(R.drawable.baseline_place_orange));
-        for (FavoriteRestaurant favoriteRestaurant : mApiService.getFavoriteRestaurant()) {
-            if (favoriteRestaurant.getRestaurantId().equals(placeId) && favoriteRestaurant.isSelected()) {
-                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.baseline_place_cyan));
-            }
-        }
+        options.icon(BitmapDescriptorFactory.fromResource(mApiService.setMarker(placeId)));
         options.position(latLng);
-        options.title(name);
-        options.snippet(adress);
+        options.snippet(placeId);
         mMap.addMarker(options);
+    }
+
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        String restaurantId = marker.getSnippet();
+        Intent detailIntent = new Intent(requireActivity(), DetailActivity.class);
+        detailIntent.putExtra("restaurantId", restaurantId);
+        startActivity(detailIntent);
+        return false;
     }
 
     private class PlaceTask extends AsyncTask<String, Integer, String> {
@@ -426,7 +448,5 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                 getNearbyRestaurantsInfos(hashMaps, i);
             }
         }
-
-
     }
 }

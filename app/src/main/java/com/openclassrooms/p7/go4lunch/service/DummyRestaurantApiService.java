@@ -1,5 +1,7 @@
 package com.openclassrooms.p7.go4lunch.service;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
 import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
@@ -146,6 +148,15 @@ public class DummyRestaurantApiService implements RestaurantApiService {
             return R.drawable.baseline_check_circle_black_24;
         }
         return R.drawable.baseline_check_circle_outline_24;
+    }
 
+    @Override
+    public int setMarker(String placeId) {
+        for (FavoriteRestaurant favoriteRestaurant : getFavoriteRestaurant()) {
+            if (favoriteRestaurant.getRestaurantId().equals(placeId) && favoriteRestaurant.isSelected()) {
+                return R.drawable.baseline_place_cyan;
+            }
+        }
+        return R.drawable.baseline_place_orange;
     }
 }
