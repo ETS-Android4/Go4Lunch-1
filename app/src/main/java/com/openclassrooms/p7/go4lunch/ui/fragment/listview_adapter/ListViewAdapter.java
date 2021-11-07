@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +16,8 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
+import com.openclassrooms.p7.go4lunch.ui.MainActivity;
+import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 import java.util.List;
 import java.util.Locale;
@@ -58,6 +59,8 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         private ListViewRowBinding mBinding;
         private final ImageView[] ratingStarsArray = new ImageView[3];
         private final RestaurantApiService mApiService;
+        private UserAndRestaurantViewModel viewModel;
+        private String CURRENT_USER_ID = MainActivity.CURRENT_USER_ID;
 
 
         public ListViewHolder(@NonNull View itemView) {
@@ -67,6 +70,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             ratingStarsArray[1] = mBinding.listViewRowRatingSecondStarImg;
             ratingStarsArray[2] = mBinding.listViewRowRatingThirdStarImg;
             mApiService = DI.getRestaurantApiService();
+
         }
 
         public void bind(Restaurant restaurant){
@@ -85,7 +89,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             for (int index = 0; index < ratingStarsArray.length; index++) {
                 ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, restaurant.getRating()));
             }
-            mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)", mApiService.getUsersInterestedAtCurrentRestaurant(restaurant).size()));
+            mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",mApiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, restaurant).size()));
         }
     }
 }

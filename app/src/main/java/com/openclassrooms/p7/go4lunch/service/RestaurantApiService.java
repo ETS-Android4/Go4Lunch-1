@@ -1,6 +1,6 @@
 package com.openclassrooms.p7.go4lunch.service;
 
-import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
+import com.openclassrooms.p7.go4lunch.model.FavoriteOrSelectedRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 
@@ -12,11 +12,11 @@ import java.util.List;
 public interface RestaurantApiService {
 
     List<Restaurant> getRestaurant();
-    List<FavoriteRestaurant> getFavoriteRestaurant();
+    List<FavoriteOrSelectedRestaurant> getFavoriteRestaurant();
     List<User> getUsers();
 
-    void addFavoriteRestaurant(FavoriteRestaurant favoriteRestaurant);
-    void deleteFavoriteRestaurant(FavoriteRestaurant favoriteRestaurant);
+    void addFavoriteRestaurant(FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant);
+    void deleteFavoriteRestaurant(FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant);
 
     void addRestaurant(Restaurant restaurant);
     void removeRestaurant(Restaurant restaurant);
@@ -26,10 +26,11 @@ public interface RestaurantApiService {
 
     Restaurant searchRestaurantById(String id);
     User searchUserById(String uid);
-    FavoriteRestaurant searchFavoriteRestaurantById(String favoriteRestaurantId);
-    FavoriteRestaurant searchFavoriteRestaurantSelected(String currentUId, String currentRestaurantId);
+    FavoriteOrSelectedRestaurant searchFavoriteRestaurantById(String currentUserId, String favoriteRestaurantId);
+    FavoriteOrSelectedRestaurant searchSelectedRestaurantToDeselect(String userId, String currentRestaurantId);
+    FavoriteOrSelectedRestaurant searchSelectedRestaurant(User user);
 
-    List<User> getUsersInterestedAtCurrentRestaurant(Restaurant mCurrentRestaurant);
+    List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant mCurrentRestaurant);
 
     int setRatingStars(int index, double rating);
     int setFavoriteImage(boolean favorite);

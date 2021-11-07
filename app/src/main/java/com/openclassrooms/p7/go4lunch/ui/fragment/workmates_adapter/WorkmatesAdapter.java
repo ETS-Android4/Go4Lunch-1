@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.WorkmatesListRowBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
+import com.openclassrooms.p7.go4lunch.model.FavoriteOrSelectedRestaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 
@@ -21,6 +21,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
     private List<User> mUsersList;
     private RestaurantApiService mApiService;
+
     public WorkmatesAdapter(List<User> usersList) {
         mUsersList = usersList;
     }
@@ -35,13 +36,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
     @Override
     public void onBindViewHolder(@NonNull WorkmatesViewolder holder, int position) {
-        FavoriteRestaurant favoriteRestaurantSelected = null;
-        for (FavoriteRestaurant favoriteRestaurant : mApiService.getFavoriteRestaurant()) {
-            if (favoriteRestaurant.isSelected() && mUsersList.get(position).getUid().equals(favoriteRestaurant.getUid())) {
-                favoriteRestaurantSelected = favoriteRestaurant;
-            }
-        }
-        holder.bind(mUsersList.get(position), favoriteRestaurantSelected);
+        holder.bind(mUsersList.get(position));
     }
 
     @Override
@@ -58,13 +53,15 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
             mBinding = WorkmatesListRowBinding.bind(itemView);
         }
 
-        public void bind(User user, FavoriteRestaurant favoriteRestaurantSelected){
+        public void bind(User user){
+            //TODO repaired
+            FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant = mApiService.searchSelectedRestaurant(user);
             Glide.with(itemView)
                     .load(user.getPhotoUrl())
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
-            if (favoriteRestaurantSelected != null) {
-                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s is eating at %s", user.getUserName(), favoriteRestaurantSelected.getRestaurantName()));
+            if (favoriteOrSelectedRestaurant != null) {
+                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s is eating at %s", user.getUserName(), favoriteOrSelectedRestaurant.getRestaurantName()));
             } else {
                 mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s hasn't decided yet", user.getUserName()));
             }

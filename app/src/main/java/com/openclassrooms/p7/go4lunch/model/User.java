@@ -1,13 +1,12 @@
 package com.openclassrooms.p7.go4lunch.model;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class User {
 
-    private String uid;
-    private String userName;
-    private String photoUrl;
+    private final String uid;
+    private final String userName;
+    private final String photoUrl;
 
 
     public User(String uid, String userName, String photoUrl) {
@@ -25,13 +24,5 @@ public class User {
     }
     public String getPhotoUrl() {
         return photoUrl;
-    }
-
-    // --- SETTERS ---
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
     }
 }

@@ -7,12 +7,14 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityLoginBinding;
 import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
+import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.FacebookSignInActivity;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.GoogleSignInActivity;
 
@@ -23,12 +25,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     private ActivityLoginBinding mBinding;
-    private final CurrentUserManager mCurrentUserManager = CurrentUserManager.getInstance();
+    private UserAndRestaurantViewModel mUserAndRestaurantViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.configureBinding();
+        initViewModel();
         this.configureListeners();
         this.currentUserLogged();
 
@@ -52,6 +55,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(view);
     }
 
+    private void initViewModel() {
+        mUserAndRestaurantViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
+    }
+
     private void configureListeners() {
         mBinding.activityLoginFacebookBtn.setOnClickListener(view -> {
             Intent intent = new Intent(this, FacebookSignInActivity.class);
@@ -67,8 +74,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void currentUserLogged() {
-        if (mCurrentUserManager.isCurrentUserLogged()) {
-            mCurrentUserManager.createUser();
+        if (mUserAndRestaurantViewModel.isCurrentUserLogged()) {
+            mUserAndRestaurantViewModel.createUser();
             finish();
         }
     }

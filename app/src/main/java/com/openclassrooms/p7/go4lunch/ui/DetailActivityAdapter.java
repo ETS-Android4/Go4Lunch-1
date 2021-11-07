@@ -11,23 +11,21 @@ import com.bumptech.glide.Glide;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.WorkmatesListRowBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
-import com.openclassrooms.p7.go4lunch.model.FavoriteRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAdapter.DetailActivityViewHolder> {
 
     private List<User> mUsers;
-
+    private final String CURRENT_USER_ID = MainActivity.CURRENT_USER_ID;
 
     public DetailActivityAdapter(Restaurant mCurrentRestaurant) {
         RestaurantApiService apiService = DI.getRestaurantApiService();
-        this.mUsers = apiService.getUsersInterestedAtCurrentRestaurant(mCurrentRestaurant);
+        //TODO repaired
+        this.mUsers = apiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, mCurrentRestaurant);
     }
 
     @NonNull

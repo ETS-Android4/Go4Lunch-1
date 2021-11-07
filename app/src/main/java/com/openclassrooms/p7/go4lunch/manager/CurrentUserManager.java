@@ -36,43 +36,7 @@ public class CurrentUserManager {
         }
     }
 
-    public FirebaseUser getCurrentUser() {
-        return mCurrenUserRepository.getCurrentUser();
-    }
 
-    public Boolean isCurrentUserLogged() {
-        return (this.getCurrentUser() != null);
-    }
 
-    public Task<Void> signOut(Context context) {
-        return mCurrenUserRepository.signOut(context);
-    }
 
-    public Task<Void> deleteUser(Context context) {
-        return mCurrenUserRepository.deleteUser(context);
-    }
-
-    public DatabaseReference getDatabaseReference() { return mCurrenUserRepository.getDatabaseReference(); }
-
-    public void createUser(){
-        mCurrenUserRepository.createUserInDatabase();
-    }
-
-    public List<User> getUsersList(){ return mCurrenUserRepository.getUsersList(); }
-
-    public void createFavoriteRestaurant(FirebaseUser user, Restaurant restaurant, boolean isFavorite, boolean isSelected) {
-        mCurrenUserRepository.createFavoriteRestaurant(user, restaurant , isFavorite, isSelected);
-    }
-
-    public void deleteFavoriteRestaurant(String uid) {
-        mCurrenUserRepository.deleteFavoriteRestaurant(uid);
-    }
-
-    public void updateFavoriteRestaurant(String uid, boolean isFavorite) {
-        mCurrenUserRepository.updateFavoriteRestaurant(uid, isFavorite);
-    }
-
-    public void updateSelectedRestaurant(String uid, boolean isSelected) {
-        mCurrenUserRepository.updateSelectedRestaurant(uid, isSelected);
-    }
 }
