@@ -6,9 +6,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.p7.go4lunch.model.FavoriteOrSelectedRestaurant;
+import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.repository.CurrenUserRepository;
 import com.openclassrooms.p7.go4lunch.repository.FavoriteOrSelectedRestaurantRepository;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -25,7 +28,7 @@ public class UserAndRestaurantViewModel extends androidx.lifecycle.ViewModel {
     }
     public FirebaseUser getCurrentUser() { return userDataSource.getCurrentUser(); }
     public void getUsersDataList() { userDataSource.getUsersDataList(); }
-    public void updateUser(String key, Object object) { userDataSource.updateUser(key, object);}
+    public void updateUser(String currentUserID, Map<String, FavoriteOrSelectedRestaurant> likedOrSelectedRestaurant) { userDataSource.updateUser(currentUserID, likedOrSelectedRestaurant);}
     public Task<Void> deleteUser(Context context) { return userDataSource.deleteUser(context); }
 
     public Boolean isCurrentUserLogged() {

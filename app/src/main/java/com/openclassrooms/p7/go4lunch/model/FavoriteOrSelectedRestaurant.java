@@ -2,12 +2,13 @@ package com.openclassrooms.p7.go4lunch.model;
 
 public class FavoriteOrSelectedRestaurant {
 
-    private final String userId;
-    private final String restaurantId;
-    private final String restaurantName;
+    private String userId;
+    private String restaurantId;
+    private String restaurantName;
     private boolean isFavorite;
     private boolean isSelected;
 
+    public FavoriteOrSelectedRestaurant() { }
 
     public FavoriteOrSelectedRestaurant(String userId, String restaurantId, String restaurantName, boolean isFavorite, boolean isSelected) {
         this.userId = userId;

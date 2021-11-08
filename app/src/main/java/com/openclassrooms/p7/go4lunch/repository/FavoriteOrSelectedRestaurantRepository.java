@@ -49,11 +49,7 @@ public final class FavoriteOrSelectedRestaurantRepository {
                 if (task.isSuccessful()) {
                     apiService.getFavoriteRestaurant().clear();
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                        String restaurantId = Objects.requireNonNull(documentSnapshot.get("restaurant_id")).toString();
-                        String restaurantName = Objects.requireNonNull(documentSnapshot.get("restaurant_name")).toString();
-                        boolean isFavorite = Boolean.parseBoolean(Objects.requireNonNull(documentSnapshot.get("is_favorite")).toString());
-                        boolean isSelected = Boolean.parseBoolean(Objects.requireNonNull(documentSnapshot.get("is_selectable")).toString());
-                        FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant = new FavoriteOrSelectedRestaurant(user.getUid(), restaurantId, restaurantName, isFavorite, isSelected);
+                        FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant = documentSnapshot.toObject(FavoriteOrSelectedRestaurant.class);
                         apiService.getFavoriteRestaurant().add(favoriteOrSelectedRestaurant);
                     }
                 }
@@ -71,16 +67,9 @@ public final class FavoriteOrSelectedRestaurantRepository {
 
 
     public void createFavoriteRestaurant(String userId, FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant) {
-//        this.getFavoriteOrSelectedRestaurantCollection(userId).document(favoriteOrSelectedRestaurant.getRestaurantId()).set(favoriteOrSelectedRestaurant);
-        Map<String, Object> userWithRestaurantToCreate = new HashMap<>();
-        userWithRestaurantToCreate.put("restaurant_name", favoriteOrSelectedRestaurant.getRestaurantName());
-        userWithRestaurantToCreate.put("restaurant_id", favoriteOrSelectedRestaurant.getRestaurantId());
-        userWithRestaurantToCreate.put("is_favorite", favoriteOrSelectedRestaurant.isFavorite());
-        userWithRestaurantToCreate.put("is_selectable", favoriteOrSelectedRestaurant.isSelected());
-        userWithRestaurantToCreate.put("user_id", favoriteOrSelectedRestaurant.getUserId());
         Task<DocumentSnapshot> userWithRestaurantData = getFavoriteOrSelectedRestaurantToCreate(userId);
         userWithRestaurantData.addOnSuccessListener(queryDocumentSnapshots -> {
-           this.getFavoriteOrSelectedRestaurantCollection(userId).document(favoriteOrSelectedRestaurant.getRestaurantId()).set(userWithRestaurantToCreate);
+           this.getFavoriteOrSelectedRestaurantCollection(userId).document(favoriteOrSelectedRestaurant.getRestaurantId()).set(favoriteOrSelectedRestaurant);
         });
     }
 

@@ -6,7 +6,10 @@ import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by lleotraas on 21.
@@ -63,6 +66,28 @@ public class DummyRestaurantApiService implements RestaurantApiService {
     }
 
     @Override
+    public Map<String, FavoriteOrSelectedRestaurant> makeLikedOrSelectedRestaurantMap(String currentUserId) {
+        Map<String, FavoriteOrSelectedRestaurant> likedOrSelectedRestaurant = new HashMap<>();
+        for (FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant : getFavoriteRestaurant()) {
+            if (favoriteOrSelectedRestaurant.getUserId().equals(currentUserId)) {
+                likedOrSelectedRestaurant.put(favoriteOrSelectedRestaurant.getRestaurantId(), favoriteOrSelectedRestaurant);
+            }
+        }
+        return likedOrSelectedRestaurant;
+    }
+
+    @Override
+    public void makeLikedOrSelectedRestaurantList(Restaurant restaurant) {
+        FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant = null;
+        for (int index = 0;index < getUsers().size();index++) {
+            favoriteOrSelectedRestaurant = getUsers().get(index).getLikedOrSelectedRestaurant().get(restaurant.getId());
+            if (favoriteOrSelectedRestaurant != null) {
+                getFavoriteRestaurant().add(favoriteOrSelectedRestaurant);
+            }
+        }
+    }
+
+    @Override
     public Restaurant searchRestaurantById(String id) {
         Restaurant restaurantFound = null;
         for (Restaurant restaurant : getRestaurant()) {
@@ -103,11 +128,9 @@ public class DummyRestaurantApiService implements RestaurantApiService {
         FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurantFound = null;
         for (FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant : getFavoriteRestaurant()) {
             if (
-                    !currentRestaurantId.equals(favoriteOrSelectedRestaurant.getRestaurantId()) &&
-                    currentUserId.equals(favoriteOrSelectedRestaurant.getUserId()) &&
-                    favoriteOrSelectedRestaurant.isSelected()
-
-            ){
+                    favoriteOrSelectedRestaurant.getUserId().equals(currentUserId) &&
+                    !favoriteOrSelectedRestaurant.getRestaurantId().equals(currentRestaurantId))
+            {
                 favoriteOrSelectedRestaurantFound = favoriteOrSelectedRestaurant;
             }
         }
@@ -128,7 +151,8 @@ public class DummyRestaurantApiService implements RestaurantApiService {
     @Override
     public List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurant) {
         List<User> userList = new ArrayList<>();
-        for (FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurants : mFavoriteOrSelectedRestaurantList) {
+        //TODO pas sûr que ça marche
+        for (FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurants : getFavoriteRestaurant()) {
             if (
                     favoriteOrSelectedRestaurants.isSelected() &&
                     !currentUserId.equals(favoriteOrSelectedRestaurants.getUserId()) &&

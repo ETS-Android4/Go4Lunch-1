@@ -89,6 +89,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             for (int index = 0; index < ratingStarsArray.length; index++) {
                 ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, restaurant.getRating()));
             }
+            //TODO pas sur que ça marche
             mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",mApiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, restaurant).size()));
         }
     }

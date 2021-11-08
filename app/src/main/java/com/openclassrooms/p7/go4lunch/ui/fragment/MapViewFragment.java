@@ -371,6 +371,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private void setPlacePhoto(String placeId, Bitmap placeImage) {
         Objects.requireNonNull(mRestaurantList.get(placeId)).setPictureUrl(placeImage);
         mApiService.getRestaurant().add(mRestaurantList.get(placeId));
+        mApiService.makeLikedOrSelectedRestaurantList(mRestaurantList.get(placeId));
     }
 
     private String makeStringOpeningHours(OpeningHours openingHours) {

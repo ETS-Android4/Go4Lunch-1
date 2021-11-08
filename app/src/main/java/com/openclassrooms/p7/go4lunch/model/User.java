@@ -1,18 +1,23 @@
 package com.openclassrooms.p7.go4lunch.model;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class User {
 
-    private final String uid;
-    private final String userName;
-    private final String photoUrl;
+    private  String uid;
+    private  String userName;
+    private  String photoUrl;
+    private Map<String, FavoriteOrSelectedRestaurant> likedOrSelectedRestaurant;
 
+    public User() {
+    }
 
-    public User(String uid, String userName, String photoUrl) {
+    public User(String uid, String userName, String photoUrl, Map<String, FavoriteOrSelectedRestaurant> likedOrSelectedRestaurant) {
         this.uid = uid;
         this.userName = userName;
         this.photoUrl = photoUrl;
+        this.likedOrSelectedRestaurant = likedOrSelectedRestaurant;
     }
 
     // --- GETTERS ---
@@ -24,5 +29,8 @@ public class User {
     }
     public String getPhotoUrl() {
         return photoUrl;
+    }
+    public Map<String, FavoriteOrSelectedRestaurant> getLikedOrSelectedRestaurant() {
+        return likedOrSelectedRestaurant;
     }
 }

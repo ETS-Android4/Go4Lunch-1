@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
-        CURRENT_USER_ID = mUserAndRestaurantViewModel.getCurrentUser().getUid();
     }
 
     @Override
@@ -71,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViewModel() {
         mUserAndRestaurantViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
-
+        if (mUserAndRestaurantViewModel.isCurrentUserLogged()) {
+            CURRENT_USER_ID = mUserAndRestaurantViewModel.getCurrentUser().getUid();
+        }
     }
 
     private void configureNavigationDrawer() {
@@ -148,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // TODO change the startActivityForResult deprecated method
     private void startSignActivity() {
         if (!mUserAndRestaurantViewModel.isCurrentUserLogged()) {
             Intent intent = new Intent(this, LoginActivity.class);
