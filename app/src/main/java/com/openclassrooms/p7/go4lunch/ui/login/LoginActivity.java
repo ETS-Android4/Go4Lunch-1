@@ -14,6 +14,7 @@ import com.firebase.ui.auth.IdpResponse;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityLoginBinding;
 import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
+import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.FacebookSignInActivity;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.GoogleSignInActivity;
@@ -76,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
     private void currentUserLogged() {
         if (mUserAndRestaurantViewModel.isCurrentUserLogged()) {
             mUserAndRestaurantViewModel.createUser();
-            finish();
+            startActivity(new Intent(this, MainActivity.class));
         }
     }
 

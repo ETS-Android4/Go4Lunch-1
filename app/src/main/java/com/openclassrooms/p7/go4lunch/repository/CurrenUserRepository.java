@@ -80,7 +80,13 @@ public final class CurrenUserRepository {
         );
         Task<DocumentSnapshot> userData = getUserData();
         userData.addOnSuccessListener(documentSnapshot -> {
-            this.getUsersCollection().document(user.getUid()).set(userToCreate);
+            if (documentSnapshot.contains("likedOrSelectedRestaurant")) {
+                this.getUsersCollection().document().update("userName", userToCreate.getUserName());
+                this.getUsersCollection().document().update("photoUrl", userToCreate.getPhotoUrl());
+                this.getUsersCollection().document().update("uid", userToCreate.getUid());
+            } else {
+                this.getUsersCollection().document(user.getUid()).set(userToCreate);
+            }
         });
     }
 

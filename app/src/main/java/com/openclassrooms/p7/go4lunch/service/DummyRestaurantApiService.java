@@ -4,12 +4,12 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.FavoriteOrSelectedRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
+import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by lleotraas on 21.
@@ -124,17 +124,32 @@ public class DummyRestaurantApiService implements RestaurantApiService {
     }
 
     @Override
-    public FavoriteOrSelectedRestaurant searchSelectedRestaurantToDeselect(String currentUserId, String currentRestaurantId) {
-        FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurantFound = null;
-        for (FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant : getFavoriteRestaurant()) {
+    public void searchSelectedRestaurantToDeselect(String currentUserId, String currentRestaurantId) {
+        for (int index = 0;index < getFavoriteRestaurant().size();index++) {
             if (
-                    favoriteOrSelectedRestaurant.getUserId().equals(currentUserId) &&
-                    !favoriteOrSelectedRestaurant.getRestaurantId().equals(currentRestaurantId))
+                    getFavoriteRestaurant().get(index).getUserId().equals(currentUserId) &&
+                    !getFavoriteRestaurant().get(index).getRestaurantId().equals(currentRestaurantId) &&
+                    getFavoriteRestaurant().get(index).isSelected())
             {
-                favoriteOrSelectedRestaurantFound = favoriteOrSelectedRestaurant;
+                getFavoriteRestaurant().get(index).setSelected(false);
             }
         }
-        return favoriteOrSelectedRestaurantFound;
+    }
+
+    @Override
+    public void selectRestaurant(String currentUserId, String currentRestaurantId, int buttonId) {
+        for (int index = 0;index < getFavoriteRestaurant().size();index++) {
+            if (
+                    currentRestaurantId.equals(getFavoriteRestaurant().get(index).getRestaurantId()) &&
+                            currentUserId.equals(getFavoriteRestaurant().get(index).getUserId())
+            ) {
+                if (buttonId == DetailActivity.LIKE_BTN_TAG) {
+                    getFavoriteRestaurant().get(index).setFavorite(!getFavoriteRestaurant().get(index).isFavorite());
+                } else {
+                    getFavoriteRestaurant().get(index).setSelected(!getFavoriteRestaurant().get(index).isSelected());
+                }
+            }
+        }
     }
 
     @Override

@@ -37,8 +37,7 @@ public class DetailActivity extends AppCompatActivity {
     private FavoriteOrSelectedRestaurant mCurrentFavoriteOrSelectedRestaurant;
     private String CURRENT_USER_UID;
     private String CURRENT_RESTAURANT_ID;
-    private String CURRENT_FAVORITE_RESTAURANT_ID;
-    private static int LIKE_BTN_TAG;
+    public static int LIKE_BTN_TAG;
     private User mCurrentUser;
 
 
@@ -89,7 +88,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void searchFavoriteRestaurantById() {
-        //TODO mCurrentFavoriteOrSelectedRestaurant reste a null car la liste de restaurant n'est pas initialisée au bon moment
         mCurrentFavoriteOrSelectedRestaurant = (FavoriteOrSelectedRestaurant) mCurrentUser.getLikedOrSelectedRestaurant().get(CURRENT_RESTAURANT_ID);
         if (mCurrentFavoriteOrSelectedRestaurant != null) {
             this.setImageAtStart();
@@ -167,28 +165,23 @@ public class DetailActivity extends AppCompatActivity {
      */
     private void setFavoriteOrSelectedRestaurant(View view) {
         int buttonId = view.getId();
-
-            if (buttonId == mBinding.activityDetailFab.getId()){
-                FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurantToDeselect = mApiService.searchSelectedRestaurantToDeselect(CURRENT_USER_UID, CURRENT_RESTAURANT_ID);
-                if (favoriteOrSelectedRestaurantToDeselect != null)  {
-                    favoriteOrSelectedRestaurantToDeselect.setSelected(false);
-                    mUserAndRestaurantViewModel.updateSelectedRestaurant(CURRENT_USER_UID, favoriteOrSelectedRestaurantToDeselect.getRestaurantId(), false);                }
-                }
-            if (mCurrentFavoriteOrSelectedRestaurant != null) {
-                updateFavoriteOrSelectedRestaurant(buttonId);
-            } else {
-                createFavoriteOrSelectedRestaurant(buttonId);
-            }
+        if (buttonId == mBinding.activityDetailFab.getId()){
+            mApiService.searchSelectedRestaurantToDeselect(CURRENT_USER_UID, CURRENT_RESTAURANT_ID);
+        }
+        if (mCurrentFavoriteOrSelectedRestaurant != null) {
+            updateFavoriteOrSelectedRestaurant(buttonId);
+        } else {
+            createFavoriteOrSelectedRestaurant(buttonId);
+        }
     }
 
     private void updateFavoriteOrSelectedRestaurant(int buttonId) {
         if (buttonId == LIKE_BTN_TAG) {
-            mCurrentFavoriteOrSelectedRestaurant.setFavorite(!mCurrentFavoriteOrSelectedRestaurant.isFavorite());
-            setFavoriteImage(mCurrentFavoriteOrSelectedRestaurant.isFavorite());
+            setFavoriteImage(!mCurrentFavoriteOrSelectedRestaurant.isFavorite());
         } else {
-            mCurrentFavoriteOrSelectedRestaurant.setSelected(!mCurrentFavoriteOrSelectedRestaurant.isSelected());
-            setSelectedImage(mCurrentFavoriteOrSelectedRestaurant.isSelected());
+            setSelectedImage(!mCurrentFavoriteOrSelectedRestaurant.isSelected());
         }
+        mApiService.selectRestaurant(CURRENT_USER_UID, CURRENT_RESTAURANT_ID, buttonId);
         mUserAndRestaurantViewModel.updateUser(CURRENT_USER_UID, mApiService.makeLikedOrSelectedRestaurantMap(CURRENT_USER_UID));
     }
 

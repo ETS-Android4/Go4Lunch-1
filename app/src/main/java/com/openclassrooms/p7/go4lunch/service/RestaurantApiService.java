@@ -31,7 +31,8 @@ public interface RestaurantApiService {
     Restaurant searchRestaurantById(String id);
     User searchUserById(String uid);
     FavoriteOrSelectedRestaurant searchFavoriteRestaurantById(String currentUserId, String favoriteRestaurantId);
-    FavoriteOrSelectedRestaurant searchSelectedRestaurantToDeselect(String currentUserId, String currentRestaurantId);
+    void searchSelectedRestaurantToDeselect(String currentUserId, String currentRestaurantId);
+    void selectRestaurant(String currentUserId, String currentRestaurantId, int buttonId);
     FavoriteOrSelectedRestaurant searchSelectedRestaurant(User user);
 
     List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant mCurrentRestaurant);

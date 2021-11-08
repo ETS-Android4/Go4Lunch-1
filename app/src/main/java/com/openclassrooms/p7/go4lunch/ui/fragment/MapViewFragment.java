@@ -287,6 +287,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                     rating,
                     null
             ));
+        mApiService.getRestaurant().add(mRestaurantList.get(placeId));
+        mApiService.makeLikedOrSelectedRestaurantList(mRestaurantList.get(placeId));
+        LatLng latLng = new LatLng(latitude, longitude);
+        setInfoOnMarker(latLng, placeId);
     }
 
     private void requestForPlaceDetails(String placeId) {
@@ -370,8 +374,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     // Add the place image in the hashmap and put the Restaurant with full details needed in the static list.
     private void setPlacePhoto(String placeId, Bitmap placeImage) {
         Objects.requireNonNull(mRestaurantList.get(placeId)).setPictureUrl(placeImage);
-        mApiService.getRestaurant().add(mRestaurantList.get(placeId));
-        mApiService.makeLikedOrSelectedRestaurantList(mRestaurantList.get(placeId));
     }
 
     private String makeStringOpeningHours(OpeningHours openingHours) {
@@ -411,7 +413,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
         LatLng latLng = new LatLng(lat, lng);
 
-        setInfoOnMarker(latLng, placeId);
+
 
         requestForPlaceDetails(placeId);
     }
