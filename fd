@@ -1,0 +1,229 @@
+[33mcommit 3f0e7030c206f1ff12bc36fcf4a80ebdb629c9af[m[33m ([m[1;36mHEAD -> [m[1;32mdevelop[m[33m)[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Tue Nov 9 21:06:02 2021 +0100
+
+    wrong commit
+
+[33mcommit ee711018966ae3dae339d8cd140e4da0728ee9d8[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mtest[m[33m)[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Tue Nov 9 16:12:08 2021 +0100
+
+    Refactor: add binding view in main activity and put the search icon in the tooblar.
+
+[33mcommit 3e98d836141b1ad996045a196cf1a41778762f30[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Mon Nov 8 23:30:26 2021 +0100
+
+    Fix: login don't write on the previous user data if the user log out. when the application start, markers are correctly colored.
+
+[33mcommit 0621e59df2d5f751a1ba1c57500ecaa0adc5a954[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Mon Nov 8 13:44:51 2021 +0100
+
+    Feature: view model implemented
+
+[33mcommit 073cfc762e14e5b4bba37a8011db336c7559baf9[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Sun Nov 7 11:20:37 2021 +0100
+
+    Feature: add ViewModel in progress
+
+[33mcommit 11e5dd264f8218aeccea0c009cb0eed40f61f50c[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Thu Nov 4 21:09:33 2021 +0100
+
+    Feature: the different recyclerView and the markers on the map are correctly refresh when user select a restaurant.
+
+[33mcommit e78592aa08a4e38c092c737489dff086e38ce0d1[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Thu Nov 4 00:57:30 2021 +0100
+
+    Feature: the map show custom icon, workmatesList show the username and the restaurant if selected, if not show a hint, login give a toast message.
+
+[33mcommit 6032fb8158dc161b899371b6dcf562e912e66c28[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Wed Nov 3 19:05:01 2021 +0100
+
+    Feature: Phone call the restaurant, go to the website, the number of interested friend is show.
+
+[33mcommit a3b82d56b7201488e135ed11b340b9527b73c4c1[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Wed Nov 3 12:32:17 2021 +0100
+
+    Feature: recycler view in DetailActivity show users have selected the restaurant.
+
+[33mcommit 0a15fba51e278478c75183a358b069749f114c85[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Tue Nov 2 18:39:59 2021 +0100
+
+    Feature: select unique restaurant deselect automatiquely the previous in the database.
+
+[33mcommit ea4f7feeb35ed99d2c7f3e40cd182ee4b5f4bed2[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Tue Nov 2 12:00:06 2021 +0100
+
+    Feature: favorite work now and is correctly save in database
+
+[33mcommit e90ee160b3003e93a2f40a4e9c802c61829752b9[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Mon Nov 1 17:58:42 2021 +0100
+
+    Feature: put restaurant in favorite in progress
+
+[33mcommit 1c156a375537bde0332652d0d2a086aed7a1b9f8[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Sun Oct 31 17:39:56 2021 +0100
+
+    Feature: workmatesList work, favoriteRestaurant in progress
+
+[33mcommit 3d2cad4ada6c7acd35025da4aef15968659e0751[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Fri Oct 29 18:23:50 2021 +0200
+
+    Feature: show Workmates recyclerView in progress
+
+[33mcommit c2fde728ea2d5f49bbac1ac2fcd680cc8f05837f[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Fri Oct 29 10:49:59 2021 +0200
+
+    Feature: detail show rating and nearby search show only restaurant
+
+[33mcommit 228c2d7a62a193bedec30eb24896f24788efa7a8[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Thu Oct 28 18:36:06 2021 +0200
+
+    Feature: detail activity with photo, name and adress
+
+[33mcommit bc374935db6e6318d4088d671fedebb08a877e47[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Thu Oct 28 12:26:12 2021 +0200
+
+    Feature: rating now show the good ratio in ListView
+
+[33mcommit 5edced40b0ffebbcb71a0692252074cb93f5d4e3[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Wed Oct 27 18:06:15 2021 +0200
+
+    Feature: distance between user and restaurant is show in ListView.
+
+[33mcommit 88fc3dafef38f68e48b2fc73be36ad2cd4cd0019[m[33m ([m[1;32mmain[m[33m)[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Wed Oct 27 15:57:10 2021 +0200
+
+    Refactor
+
+[33mcommit 7075b36171f1d14a5ec0af9d04086a9f27fb58f0[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Wed Oct 27 15:54:01 2021 +0200
+
+    Refactor
+
+[33mcommit 1972eef6b380c2be4dcdd70bfce6ea714e3aec54[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Wed Oct 27 08:55:40 2021 +0200
+
+    Build: update of gradle
+
+[33mcommit d85f7a6677c8b017fdaac0fc6f2ec92a7b1fa2d4[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Tue Oct 26 18:17:36 2021 +0200
+
+    Fix: the header update the user infos correctly
+
+[33mcommit cf4882fc9c1c091d70e2f467ffb25e63306a745c[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Tue Oct 26 12:13:22 2021 +0200
+
+    feature: photo in the list view available and functional
+
+[33mcommit b2010f7d14422680297726ea779d27620ff2675a[m
+Author: Freddy Charles <lleotraas@gmail.com>
+Date:   Mon Oct 25 18:36:41 2021 +0200
+
+    feature: restaurant list view in progress, photo don't work properly
+
+[33mcommit 90a1d624a030fc223b733c545a3494c6eca00b51[m
+Merge: 7f48942 f1ea21f
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Fri Oct 22 15:05:39 2021 +0200
+
+    merge viewPager2
+
+[33mcommit f1ea21fb379065498ad1c3420d57b8c201c3c936[m
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Fri Oct 22 14:57:57 2021 +0200
+
+    refactor: preparation for the place details
+
+[33mcommit 2ad0b1fffa2567355a0b1ad6b080d8050233f8ee[m
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Fri Oct 22 11:43:16 2021 +0200
+
+    feature: show the list of all restaurants near the user in the 2nd fragment
+
+[33mcommit 78abcbefda54a78c49255dd634ccb828e5b4d40a[m[33m ([m[1;31morigin/viewPager2[m[33m)[m
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Thu Oct 21 10:08:23 2021 +0200
+
+    viewPager2 used instead of viewPager
+
+[33mcommit 7f4894247d8f3f1d80281defde57b1d1dea820e1[m
+Merge: 682a760 96b2aaa
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Mon Oct 18 11:12:42 2021 +0200
+
+    minor fix
+
+[33mcommit 96b2aaa97ffcdec160f65a67c70099324ebee4de[m[33m ([m[1;31morigin/google_maps[m[33m)[m
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Mon Oct 18 10:48:57 2021 +0200
+
+    google maps api added in the MapViewFragment.java, locate restaurants around the user when the application started added.
+
+[33mcommit 682a760c21d10ea5c877e6200e0d269325650fa0[m
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Mon Oct 18 08:46:32 2021 +0200
+
+    add ui package and sub package fragment, login and sign_in
+
+[33mcommit 001bb699f5a1c24f0f2ea5435d262119b734ea3a[m
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Mon Oct 18 08:44:45 2021 +0200
+
+    add ui package and sub package fragment, login and sign_in
+
+[33mcommit 237586f96b97dfafa7fb7176cd993d6eab1bcb94[m
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Sat Oct 16 18:33:53 2021 +0200
+
+    Image picture, username and user email is show on the navigation drawer
+
+[33mcommit 88bb54fc09af6bdd38714b3936adab977643ad96[m
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Sat Oct 16 14:44:34 2021 +0200
+
+    Logout and multiples icons are added
+
+[33mcommit aecb50b9ad7a260e7daa586cab975a02fe4db93e[m
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Fri Oct 15 20:57:05 2021 +0200
+
+    Authentification added with facebook and google, LoginActivity.java added with the choice to sign in with google or facebook, FacebookSignInActivity.java and GoogleSignInActivity.java added for the authentification, UserManager.java and UserRepository.java added for manipulate firebase user data, drawer added to the MainActivity, icons for LoginActivity and drawer added.
+
+[33mcommit b12059d8963a9f6bb13874638fb1bd4095c2e121[m
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Thu Oct 14 17:44:31 2021 +0200
+
+    fragment_map_view, fragment_list_view, fragment_workmates_view and their java class added, PageAdapter added.
+
+[33mcommit 3060f865c4d5aee47d17cbd24d2c9faf0dea187a[m
+Author: lleotraas <69635921+lleotraas@users.noreply.github.com>
+Date:   Thu Oct 14 13:57:20 2021 +0200
+
+    Create README.md
+
+[33mcommit f566e719aba34220c27ad56e14dbf8c77107d265[m
+Author: lleotraas <lleotraas@gmail.com>
+Date:   Thu Oct 14 13:54:21 2021 +0200
+
+    Add new project to gitHub

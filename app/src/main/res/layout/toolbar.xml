@@ -9,11 +9,4 @@
     app:titleTextColor="@color/white"
     app:title="@string/hungry">
 
-    <AutoCompleteTextView
-        android:id="@+id/toolbar_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:hint="Search restaurant"/>
-
 </androidx.appcompat.widget.Toolbar>

@@ -1,7 +1,10 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
+import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.KEY_LOCATION;
+
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -37,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static String CURRENT_USER_ID;
     private ActivityMainBinding mBinding;
+    private UserAndRestaurantViewModel mViewModel;
+    private Location lastKnownLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
+        this.initViewModel();
     }
 
     private void configureViewBinding() {
@@ -81,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        lastKnownLocation = new Location("location");
+        mViewModel.ConfigureSearchPlace(lastKnownLocation,this);
+        mBinding.toolbarEditText.setVisibility(View.VISIBLE);
         return super.onOptionsItemSelected(item);
     }
 
@@ -180,6 +189,10 @@ public class MainActivity extends AppCompatActivity {
             }
             this.setTextUserData(user);
         }
+    }
+
+    private void initViewModel(){
+        mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
     }
 
     private void setUserPicture(Uri photoUrl) {

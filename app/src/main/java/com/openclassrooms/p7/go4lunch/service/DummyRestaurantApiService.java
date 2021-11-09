@@ -189,42 +189,6 @@ public class DummyRestaurantApiService implements RestaurantApiService {
         return userList;
     }
 
-    private void getNearbyRestaurantsInfos(List<HashMap<String, String>> hashMaps, int index) {
-        HashMap<String, String> hashMapList = hashMaps.get(index);
-        String name = hashMapList.get("placeName");
-        String adress = hashMapList.get("placeAdress");
-        String placeId = hashMapList.get("placeId");
-        double lat = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lat")));
-        double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
-        LatLng latLng = new LatLng(lat, lng);
-        requestForPlaceDetails(placeId);
-    }
-
-    private void requestForPlaceDetails(String placeId) {
-        List<Place.Field> placeFields = Arrays.asList(
-                Place.Field.ID,
-                Place.Field.NAME,
-                Place.Field.ADDRESS,
-                Place.Field.RATING,
-                Place.Field.PHONE_NUMBER,
-                Place.Field.WEBSITE_URI,
-                Place.Field.OPENING_HOURS,
-                Place.Field.LAT_LNG,
-                Place.Field.PHOTO_METADATAS
-        );
-        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
-                .build();
-        mPlacesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-            Place place = response.getPlace();
-            getPlaceDetails(place);
-            requestForPlacePhoto(placeId, place);
-        }).addOnFailureListener((exception) -> {
-            if (exception instanceof ApiException) {
-                Log.e(TAG, "Place not found: " + exception.getMessage());
-            }
-        });
-    }
-
     @Override
     public int setRatingStars(int index, double rating) {
         int convertedRating = (int) rating;

@@ -6,9 +6,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.openclassrooms.p7.go4lunch.ui.fragment.ListViewFragment;
-import com.openclassrooms.p7.go4lunch.ui.fragment.WorkmatesFragment;
+import com.openclassrooms.p7.go4lunch.ui.fragment.list_view.ListViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
+import com.openclassrooms.p7.go4lunch.ui.fragment.workmates_view.WorkmatesFragment;
 
 /**
  * Created by lleotraas on 14.
