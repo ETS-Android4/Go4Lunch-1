@@ -1,4 +1,4 @@
-package com.openclassrooms.p7.go4lunch.ui.fragment.workmates_adapter;
+package com.openclassrooms.p7.go4lunch.ui.fragment.workmates_view;
 
 import android.view.LayoutInflater;
 import android.view.View;

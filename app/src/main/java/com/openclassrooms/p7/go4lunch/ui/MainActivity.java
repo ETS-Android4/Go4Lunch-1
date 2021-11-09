@@ -1,12 +1,9 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,15 +22,10 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
-import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
-import com.openclassrooms.p7.go4lunch.ui.fragment.MapViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {

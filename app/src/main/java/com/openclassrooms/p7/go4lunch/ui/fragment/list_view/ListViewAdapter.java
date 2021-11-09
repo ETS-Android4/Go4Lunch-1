@@ -1,4 +1,4 @@
-package com.openclassrooms.p7.go4lunch.ui.fragment.listview_adapter;
+package com.openclassrooms.p7.go4lunch.ui.fragment.list_view;
 
 import android.content.Intent;
 import android.view.LayoutInflater;

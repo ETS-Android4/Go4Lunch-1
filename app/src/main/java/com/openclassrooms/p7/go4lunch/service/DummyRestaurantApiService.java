@@ -1,5 +1,13 @@
 package com.openclassrooms.p7.go4lunch.service;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
+
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.FavoriteOrSelectedRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
@@ -7,9 +15,11 @@ import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by lleotraas on 21.
@@ -177,6 +187,42 @@ public class DummyRestaurantApiService implements RestaurantApiService {
             }
         }
         return userList;
+    }
+
+    private void getNearbyRestaurantsInfos(List<HashMap<String, String>> hashMaps, int index) {
+        HashMap<String, String> hashMapList = hashMaps.get(index);
+        String name = hashMapList.get("placeName");
+        String adress = hashMapList.get("placeAdress");
+        String placeId = hashMapList.get("placeId");
+        double lat = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lat")));
+        double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
+        LatLng latLng = new LatLng(lat, lng);
+        requestForPlaceDetails(placeId);
+    }
+
+    private void requestForPlaceDetails(String placeId) {
+        List<Place.Field> placeFields = Arrays.asList(
+                Place.Field.ID,
+                Place.Field.NAME,
+                Place.Field.ADDRESS,
+                Place.Field.RATING,
+                Place.Field.PHONE_NUMBER,
+                Place.Field.WEBSITE_URI,
+                Place.Field.OPENING_HOURS,
+                Place.Field.LAT_LNG,
+                Place.Field.PHOTO_METADATAS
+        );
+        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
+                .build();
+        mPlacesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+            getPlaceDetails(place);
+            requestForPlacePhoto(placeId, place);
+        }).addOnFailureListener((exception) -> {
+            if (exception instanceof ApiException) {
+                Log.e(TAG, "Place not found: " + exception.getMessage());
+            }
+        });
     }
 
     @Override
