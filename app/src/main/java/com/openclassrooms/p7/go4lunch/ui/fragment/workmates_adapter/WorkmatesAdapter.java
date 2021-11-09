@@ -54,7 +54,6 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
         }
 
         public void bind(User user){
-            //TODO repaired
             FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant = mApiService.searchSelectedRestaurant(user);
             Glide.with(itemView)
                     .load(user.getPhotoUrl())

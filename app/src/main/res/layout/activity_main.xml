@@ -10,14 +10,17 @@
     tools:openDrawer="start">
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <include
+                android:id="@+id/activity_main_toolbar"
+                layout="@layout/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/activity_main_viewpager"
@@ -41,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         app:headerLayout="@layout/navigation_drawer_header"
-        app:menu="@menu/main_menu"
+        app:menu="@menu/navigation_drawer_menu"
         android:layout_gravity="start"
         android:background="@color/drawerlayout_color"
         app:itemTextColor="@color/white"

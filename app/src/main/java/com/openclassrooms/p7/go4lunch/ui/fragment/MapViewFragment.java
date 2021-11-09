@@ -5,6 +5,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.ContentValues.TAG;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -21,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -53,6 +55,7 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
+import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -104,7 +107,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
         mApiService = DI.getRestaurantApiService();
         mRestaurantList = new HashMap<>();
-
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
         }
@@ -112,6 +114,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity().getApplicationContext());
         Places.initialize(requireActivity().getApplicationContext(), BuildConfig.GMP_KEY);
         mPlacesClient = Places.createClient(requireActivity().getApplicationContext());
+        UserAndRestaurantViewModel userAndRestaurantViewModel = new ViewModelProvider(this.requireActivity()).get(UserAndRestaurantViewModel.class);
         return result;
     }
 
@@ -133,29 +136,27 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         getDeviceLocation();
         googleMap.setOnMarkerClickListener(this);
     }
-
     //TODO use it soon
     private void ConfigureSearchPlace() {
-        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-        String query = "restaurant";
-        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
-                .setOrigin(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
-                .setCountry("FR")
-                .setTypeFilter(TypeFilter.ADDRESS)
-                .setSessionToken(token)
-                .setQuery(query)
-                .build();
-        mPlacesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
-            for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                Log.i(TAG, "FOUND THIS: " + prediction.getPlaceId());
-            }
-        }).addOnFailureListener((exception) -> {
-            if (exception instanceof ApiException) {
-                ApiException apiException = (ApiException) exception;
-                Log.e(TAG, "NOT FOUND" + apiException.getStatusCode());
-            }
-        });
-
+                AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+                String query = "restaurant";
+                FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                        .setOrigin(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
+                        .setCountry("FR")
+                        .setTypeFilter(TypeFilter.ADDRESS)
+                        .setSessionToken(token)
+                        .setQuery(query)
+                        .build();
+                mPlacesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
+                    for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                        Log.i(TAG, "FOUND THIS: " + prediction.getPlaceId());
+                    }
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        ApiException apiException = (ApiException) exception;
+                        Log.e(TAG, "NOT FOUND" + apiException.getStatusCode());
+                    }
+                });
     }
 
     @Override

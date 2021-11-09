@@ -13,7 +13,6 @@ import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityLoginBinding;
-import com.openclassrooms.p7.go4lunch.manager.CurrentUserManager;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.FacebookSignInActivity;

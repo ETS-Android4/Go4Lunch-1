@@ -28,5 +28,6 @@
     <string name="activity_detail_call_text">CALL</string>
     <string name="activity_detail_like_text">LIKE</string>
     <string name="activity_detail_website_text">WEBSITE</string>
+    <string name="search_button">Search</string>
 
 </resources>

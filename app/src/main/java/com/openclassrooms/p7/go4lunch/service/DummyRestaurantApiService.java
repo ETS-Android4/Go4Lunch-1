@@ -166,7 +166,6 @@ public class DummyRestaurantApiService implements RestaurantApiService {
     @Override
     public List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurant) {
         List<User> userList = new ArrayList<>();
-        //TODO pas sûr que ça marche
         for (FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurants : getFavoriteRestaurant()) {
             if (
                     favoriteOrSelectedRestaurants.isSelected() &&
