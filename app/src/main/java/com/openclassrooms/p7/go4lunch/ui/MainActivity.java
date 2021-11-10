@@ -1,10 +1,8 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
-import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.KEY_LOCATION;
-
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,23 +23,27 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
+import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
+import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private UserAndRestaurantViewModel mUserAndRestaurantViewModel;
     private TextView email;
     private TextView username;
     private ImageView userPicture;
-
     public static String CURRENT_USER_ID;
     private ActivityMainBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
-    private Location lastKnownLocation;
+    private RestaurantApiService mApiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
-        this.initViewModel();
+        this.initViewModelAndService();
     }
 
     private void configureViewBinding() {
@@ -87,9 +89,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        lastKnownLocation = new Location("location");
-        mViewModel.ConfigureSearchPlace(lastKnownLocation,this);
-        mBinding.toolbarEditText.setVisibility(View.VISIBLE);
+        LatLng currentLocation = MapViewFragment.currentLocation;
+        // get the placeId
+        String placeId = mViewModel.searchPlace(this);
+        // fetch the details of the place from placeId
+        Place place = mViewModel.requestForPlaceDetails(placeId, getApplicationContext());
+        // get the place details
+        Restaurant restaurantFound = mApiService.getPlaceDetails(place);
+        // get the photos from placeId
+        Bitmap placePhoto = mViewModel.requestForPlacePhoto(place, getApplicationContext());
+        // set the picture in restaurant
+        restaurantFound.setPictureUrl(placePhoto);
+        // put restaurantFound marker
+        mApiService.getRestaurant().add(restaurantFound);
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -111,9 +124,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViewModelAndService() {
-        mUserAndRestaurantViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
-        if (mUserAndRestaurantViewModel.isCurrentUserLogged()) {
-            CURRENT_USER_ID = mUserAndRestaurantViewModel.getCurrentUser().getUid();
+        mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
+        mApiService = DI.getRestaurantApiService();
+        if (mViewModel.isCurrentUserLogged()) {
+            CURRENT_USER_ID = mViewModel.getCurrentUser().getUid();
         }
     }
 
@@ -166,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.settings:
 
                 case R.id.logout:
-                    mUserAndRestaurantViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
+                    mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
 
                 default: return true;
             }
@@ -175,24 +189,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startSignActivity() {
-        if (!mUserAndRestaurantViewModel.isCurrentUserLogged()) {
+        if (!mViewModel.isCurrentUserLogged()) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
     }
 
     private void updateHeader() {
-        if (mUserAndRestaurantViewModel.isCurrentUserLogged()) {
-            FirebaseUser user = mUserAndRestaurantViewModel.getCurrentUser();
+        if (mViewModel.isCurrentUserLogged()) {
+            FirebaseUser user = mViewModel.getCurrentUser();
             if (user.getPhotoUrl() != null) {
                 setUserPicture(user.getPhotoUrl());
             }
             this.setTextUserData(user);
         }
-    }
-
-    private void initViewModel(){
-        mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
     }
 
     private void setUserPicture(Uri photoUrl) {
@@ -211,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
      * Initialize User List and Favorite Restaurant List
      */
     private void initLists() {
-        mUserAndRestaurantViewModel.getUsersDataList();
+        mViewModel.getUsersDataList();
     }
 
 

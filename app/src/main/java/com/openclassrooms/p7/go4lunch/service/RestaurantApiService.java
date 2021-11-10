@@ -1,5 +1,12 @@
 package com.openclassrooms.p7.go4lunch.service;
 
+import android.location.Location;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.model.OpeningHours;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.model.FavoriteOrSelectedRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
@@ -27,6 +34,7 @@ public interface RestaurantApiService {
 
     Map<String, FavoriteOrSelectedRestaurant> makeLikedOrSelectedRestaurantMap(String currentUserId);
     void makeLikedOrSelectedRestaurantList(Restaurant restaurant);
+    String makeStringOpeningHours(OpeningHours openingHours);
 
     Restaurant searchRestaurantById(String id);
     User searchUserById(String uid);
@@ -41,4 +49,8 @@ public interface RestaurantApiService {
     int setFavoriteImage(boolean favorite);
     int setSelectedImage(boolean Selected);
     int setMarker(String placeId);
+
+    RectangularBounds getRectangularBound(LatLng currentLocation);
+    Restaurant getPlaceDetails(Place place);
+    MarkerOptions setInfoOnMarker(Restaurant restaurantFound);
 }

@@ -86,6 +86,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     private final LatLng defaultLocation = new LatLng(43.406656, 3.684383);
+    public static LatLng currentLocation;
 
     public static final String KEY_LOCATION = "location";
     private static final String KEY_CAMERA_POSITION = "camera_position";
@@ -108,6 +109,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
         }
+
         this.createMap(savedInstanceState, result);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity().getApplicationContext());
         Places.initialize(requireActivity().getApplicationContext(), BuildConfig.GMP_KEY);
@@ -186,8 +188,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-
-
     private void getDeviceLocation() {
         try {
             if (locationPermissionGranted) {
@@ -195,6 +195,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                 locationResult.addOnCompleteListener(this.requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         lastKnownLocation = task.getResult();
+                        currentLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
                         if (lastKnownLocation != null) {
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(lastKnownLocation.getLatitude(),
@@ -303,7 +304,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         Log.i(TAG, "Place found: " + place.getName());
 
         if (place.getOpeningHours() != null) {
-            openingHours = makeStringOpeningHours(place.getOpeningHours());
+            openingHours = mApiService.makeStringOpeningHours(place.getOpeningHours());
         }
 
         if (place.getRating() != null) {
@@ -354,17 +355,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         Objects.requireNonNull(mRestaurantList.get(placeId)).setPictureUrl(placeImage);
     }
 
-    private String makeStringOpeningHours(OpeningHours openingHours) {
-        Calendar calendar = Calendar.getInstance(Locale.FRANCE);
-        int currentHour = calendar.get(Calendar.HOUR);
-        int hours = Objects.requireNonNull(openingHours.getPeriods().get(0).getOpen()).getTime().getHours();
-        if (currentHour > hours) {
-            return "still closed";
-        }else {
-            return "open until " + (hours - currentHour) + "pm";
-        }
-    }
-
     // Read the url and do a request to find nearby restaurants
     private String downloadUrl (String string) throws IOException {
         URL url = new URL(string);
@@ -391,9 +381,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
         LatLng latLng = new LatLng(lat, lng);
 
-
-
-        requestForPlaceDetails(placeId);
+        this.requestForPlaceDetails(placeId);
     }
 
     private void setInfoOnMarker(LatLng latLng,String placeId) {

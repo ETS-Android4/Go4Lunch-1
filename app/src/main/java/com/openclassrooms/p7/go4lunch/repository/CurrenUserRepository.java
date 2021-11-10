@@ -78,8 +78,7 @@ public final class CurrenUserRepository {
                 Objects.requireNonNull(user.getPhotoUrl()).toString(),
                 likedOrSelectedRestaurant
         );
-        Task<DocumentSnapshot> userData = getUserData();
-        userData.addOnSuccessListener(documentSnapshot -> {
+        getUserData().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.contains("likedOrSelectedRestaurant")) {
                 this.getUsersCollection().document().update("userName", userToCreate.getUserName());
                 this.getUsersCollection().document().update("photoUrl", userToCreate.getPhotoUrl());

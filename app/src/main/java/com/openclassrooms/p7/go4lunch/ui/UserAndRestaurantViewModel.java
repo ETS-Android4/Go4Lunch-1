@@ -1,19 +1,20 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
 import android.content.Context;
-import android.location.Location;
+import android.graphics.Bitmap;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.model.FavoriteOrSelectedRestaurant;
 import com.openclassrooms.p7.go4lunch.repository.CurrenUserRepository;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class UserAndRestaurantViewModel extends androidx.lifecycle.ViewModel {
 
@@ -39,7 +40,14 @@ public class UserAndRestaurantViewModel extends androidx.lifecycle.ViewModel {
     }
 
     // --- GOOGLE MAPS ---
-    public void ConfigureSearchPlace(Location lastKnownLocation, FragmentActivity fragmentActivity) {
-        mapDataSource.ConfigureSearchPlace(lastKnownLocation, fragmentActivity);
+    public String searchPlace(FragmentActivity fragmentActivity) {
+        return mapDataSource.searchPlace(fragmentActivity);
+    }
+    public Place requestForPlaceDetails(String placeId, Context context) {
+        return mapDataSource.requestForPlaceDetails(placeId, context);
+    }
+
+    public Bitmap requestForPlacePhoto(Place place, Context applicationContext) {
+        return mapDataSource.requestForPlacePhoto(place, applicationContext);
     }
 }

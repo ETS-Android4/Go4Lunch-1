@@ -2,22 +2,27 @@ package com.openclassrooms.p7.go4lunch.service;
 
 import static android.content.ContentValues.TAG;
 
+import android.location.Location;
 import android.util.Log;
 
-import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.FavoriteOrSelectedRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
+import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,6 +34,7 @@ public class DummyRestaurantApiService implements RestaurantApiService {
     private final List<Restaurant> mRestaurantList = DummyRestaurant.generateRestaurant();
     private final List<FavoriteOrSelectedRestaurant> mFavoriteOrSelectedRestaurantList = DummyRestaurant.generateFavoriteRestaurant();
     private final List<User> mUserList = DummyRestaurant.generateUsers();
+    private LatLng mCurrentLocation = MapViewFragment.currentLocation;
 
     @Override
     public List<Restaurant> getRestaurant() {
@@ -94,6 +100,18 @@ public class DummyRestaurantApiService implements RestaurantApiService {
             if (favoriteOrSelectedRestaurant != null) {
                 getFavoriteRestaurant().add(favoriteOrSelectedRestaurant);
             }
+        }
+    }
+
+    @Override
+    public String makeStringOpeningHours(OpeningHours openingHours) {
+        Calendar calendar = Calendar.getInstance(Locale.FRANCE);
+        int currentHour = calendar.get(Calendar.HOUR);
+        int hours = Objects.requireNonNull(openingHours.getPeriods().get(0).getOpen()).getTime().getHours();
+        if (currentHour > hours) {
+            return "still closed";
+        }else {
+            return "open until " + (hours - currentHour) + "pm";
         }
     }
 
@@ -225,5 +243,65 @@ public class DummyRestaurantApiService implements RestaurantApiService {
             }
         }
         return R.drawable.baseline_place_orange;
+    }
+
+    @Override
+    public RectangularBounds getRectangularBound(LatLng currentLocation) {
+        RectangularBounds rectangularBounds = RectangularBounds.newInstance(
+                new LatLng(currentLocation.latitude - 0.001000, currentLocation.longitude + 0.025000),
+                new LatLng(currentLocation.latitude + 0.025000, currentLocation.longitude + 0.001000));
+                return rectangularBounds;
+    }
+
+    @Override
+    public Restaurant getPlaceDetails(Place place) {
+        String openingHours = "no details here";
+        double rating = 1.0;
+        String uriWebsite = "";
+        Log.i(TAG, "Place found: " + place.getName());
+
+        if (place.getOpeningHours() != null) {
+            openingHours = makeStringOpeningHours(place.getOpeningHours());
+        }
+
+        if (place.getRating() != null) {
+            rating = place.getRating();
+            Log.i(TAG, "Restaurant name: " + place.getName() + " Rating: " + place.getRating());
+        }
+
+        if (place.getWebsiteUri() != null) {
+            uriWebsite = String.format("%s",place.getWebsiteUri());
+        }
+        float[] distance = new float[10];
+        Location.distanceBetween(
+                mCurrentLocation.latitude,
+                mCurrentLocation.longitude,
+                Objects.requireNonNull(place.getLatLng()).latitude,
+                place.getLatLng().longitude,
+                distance
+        );
+        Restaurant restaurant = new Restaurant(
+                place.getId(),
+                place.getName(),
+                place.getAddress(),
+                openingHours,
+                place.getPhoneNumber(),
+                uriWebsite,
+                distance[0],
+                place.getLatLng().latitude,
+                place.getLatLng().longitude,
+                0,
+                rating,
+                null);
+        return restaurant;
+    }
+
+    public MarkerOptions setInfoOnMarker(Restaurant restaurantFound) {
+        MarkerOptions options = new MarkerOptions();
+        options.icon(BitmapDescriptorFactory.fromResource(setMarker(restaurantFound.getId())));
+        LatLng latLng = new LatLng(restaurantFound.getLatitude(), restaurantFound.getLongitude());
+        options.position(latLng);
+        options.snippet(restaurantFound.getId());
+        return options;
     }
 }
