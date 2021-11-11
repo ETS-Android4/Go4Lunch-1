@@ -74,7 +74,7 @@ public class DetailActivity extends AppCompatActivity {
     private void searchById() {
         mApiService = DI.getRestaurantApiService();
         Intent mainActivityIntent = getIntent();
-        CURRENT_USER_UID = mUserAndRestaurantViewModel.getCurrentUser().getUid();
+        CURRENT_USER_UID = MainActivity.CURRENT_USER_ID;
         CURRENT_RESTAURANT_ID = mainActivityIntent.getStringExtra("restaurantId");
         this.searchRestaurantById();
         this.searchUserById();
@@ -142,8 +142,8 @@ public class DetailActivity extends AppCompatActivity {
     private void callTheRestaurant() {
         String phoneNumber = mCurrentRestaurant.getPhoneNumber();
         Intent phoneIntent = new Intent(Intent.ACTION_CALL);
-        phoneIntent.setData(Uri.parse("tel:" + phoneNumber));
-        startActivity(phoneIntent);
+            phoneIntent.setData(Uri.parse("tel:" + phoneNumber));
+            startActivity(phoneIntent);
     }
 
     private void goToWebsite() {

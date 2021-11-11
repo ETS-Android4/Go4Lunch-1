@@ -7,12 +7,14 @@ import static android.content.ContentValues.TAG;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -23,7 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,16 +39,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
-import com.google.android.libraries.places.api.model.OpeningHours;
-import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.api.net.FetchPhotoRequest;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
-import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
@@ -65,10 +61,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 
@@ -82,7 +76,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private MapView mMapView;
     private GoogleMap mMap = null;
     private Location lastKnownLocation;
-    private PlacesClient mPlacesClient;
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     private final LatLng defaultLocation = new LatLng(43.406656, 3.684383);
@@ -95,7 +88,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     private boolean locationPermissionGranted;
     private RestaurantApiService mApiService;
-    private HashMap<String,Restaurant> mRestaurantList;
+    UserAndRestaurantViewModel mViewModel;
+    AutocompleteSupportFragment autocompleteFragment;
 
     public MapViewFragment(){}
 
@@ -105,17 +99,48 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         View result = inflater.inflate(R.layout.fragment_map_view, container, false);
 
         mApiService = DI.getRestaurantApiService();
-        mRestaurantList = new HashMap<>();
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
         }
-
+        setHasOptionsMenu(true);
         this.createMap(savedInstanceState, result);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity().getApplicationContext());
         Places.initialize(requireActivity().getApplicationContext(), BuildConfig.GMP_KEY);
-        mPlacesClient = Places.createClient(requireActivity().getApplicationContext());
-        UserAndRestaurantViewModel userAndRestaurantViewModel = new ViewModelProvider(this.requireActivity()).get(UserAndRestaurantViewModel.class);
+        mViewModel = new ViewModelProvider(this.requireActivity()).get(UserAndRestaurantViewModel.class);
+        autocompleteFragment = (AutocompleteSupportFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteFragment.getView().setVisibility(View.GONE);
         return result;
+    }
+
+    
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        autocompleteFragment.getView().setVisibility(View.VISIBLE);
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID));
+        autocompleteFragment.setCountries("FR");
+        autocompleteFragment.setHint("Search Restaurant");
+        autocompleteFragment.setLocationBias(mApiService.getRectangularBound(currentLocation));
+        autocompleteFragment.setTypeFilter(TypeFilter.ESTABLISHMENT);
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                // TODO: Get info about the selected place.
+
+                mViewModel.requestForPlaceDetails(place.getId(), requireActivity().getApplicationContext(), true, mMap);
+                autocompleteFragment.getView().setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+
+        });
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -182,10 +207,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onResume() {
         super.onResume();
-        for (Restaurant restaurant : mApiService.getRestaurant()){
-            LatLng latLng = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
-            setInfoOnMarker(latLng, restaurant.getId());
-        }
+        mApiService.setInfoOnMarker(false, mMap);
     }
 
     private void getDeviceLocation() {
@@ -215,16 +237,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    private void nearbySearch() {
-        String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
-                + "?keyword=restaurant"
-                + "&location=" + lastKnownLocation.getLatitude() + "," + lastKnownLocation.getLongitude()
-                + "&radius=1500"
-                + "&sensor=true"
-                + "&key=" + BuildConfig.GMP_KEY;
-        new PlaceTask().execute(url);
-    }
-
     private void createMap(Bundle savedInstanceState, View result) {
         mMapView = result.findViewById(R.id.map);
         mMapView.getMapAsync(this);
@@ -238,121 +250,14 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-
-    // Create a restaurant list with the placeId as the key.
-    private void createRestaurant(
-            String placeId,
-            String name,
-            String adress,
-            double rating,
-            String hours,
-            float distance,
-            String phoneNumber,
-            String uriWebsite,
-            double latitude,
-            double longitude
-    ) {
-        mRestaurantList.put(placeId, new Restaurant(
-                placeId,
-                name,
-                adress,
-                hours,
-                phoneNumber,
-                uriWebsite,
-                distance,
-                latitude,
-                longitude,
-                0,
-                rating,
-                null
-        ));
-        mApiService.getRestaurant().add(mRestaurantList.get(placeId));
-        mApiService.makeLikedOrSelectedRestaurantList(mRestaurantList.get(placeId));
-        LatLng latLng = new LatLng(latitude, longitude);
-        setInfoOnMarker(latLng, placeId);
-    }
-
-    private void requestForPlaceDetails(String placeId) {
-        List<Place.Field> placeFields = Arrays.asList(
-                Place.Field.ID,
-                Place.Field.NAME,
-                Place.Field.ADDRESS,
-                Place.Field.RATING,
-                Place.Field.PHONE_NUMBER,
-                Place.Field.WEBSITE_URI,
-                Place.Field.OPENING_HOURS,
-                Place.Field.LAT_LNG,
-                Place.Field.PHOTO_METADATAS
-        );
-        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
-                .build();
-        mPlacesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-            Place place = response.getPlace();
-            getPlaceDetails(place);
-            requestForPlacePhoto(placeId, place);
-        }).addOnFailureListener((exception) -> {
-            if (exception instanceof ApiException) {
-                Log.e(TAG, "Place not found: " + exception.getMessage());
-            }
-        });
-    }
-
-    private void getPlaceDetails(Place place) {
-        String openingHours = "no details here";
-        double rating = 1.0;
-        String uriWebsite = "";
-        Log.i(TAG, "Place found: " + place.getName());
-
-        if (place.getOpeningHours() != null) {
-            openingHours = mApiService.makeStringOpeningHours(place.getOpeningHours());
-        }
-
-        if (place.getRating() != null) {
-            rating = place.getRating();
-            Log.i(TAG, "Restaurant name: " + place.getName() + " Rating: " + place.getRating());
-        }
-
-        if (place.getWebsiteUri() != null) {
-            uriWebsite = String.format("%s",place.getWebsiteUri());
-        }
-        float[] results = new float[10];
-        Location.distanceBetween(
-                lastKnownLocation.getLatitude(),
-                lastKnownLocation.getLongitude(),
-                Objects.requireNonNull(place.getLatLng()).latitude,
-                place.getLatLng().longitude,
-                results
-        );
-        createRestaurant(
-                place.getId(),
-                place.getName(),
-                place.getAddress(),
-                rating,
-                openingHours,
-                results[0],
-                place.getPhoneNumber(),
-                uriWebsite,
-                place.getLatLng().latitude,
-                place.getLatLng().longitude);
-    }
-
-    private void requestForPlacePhoto(String placeId, Place place) {
-        if (place.getPhotoMetadatas() != null) {
-            PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
-            FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                    .build();
-            mPlacesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) ->
-                    setPlacePhoto(placeId, fetchPhotoResponse.getBitmap())).addOnFailureListener((exception) -> {
-                if (exception instanceof ApiException) {
-                    Log.e(TAG, "Place not found: " + exception.getMessage());
-                }
-            });
-        }
-    }
-
-    // Add the place image in the hashmap and put the Restaurant with full details needed in the static list.
-    private void setPlacePhoto(String placeId, Bitmap placeImage) {
-        Objects.requireNonNull(mRestaurantList.get(placeId)).setPictureUrl(placeImage);
+    private void nearbySearch() {
+        String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+                + "?keyword=restaurant"
+                + "&location=" + lastKnownLocation.getLatitude() + "," + lastKnownLocation.getLongitude()
+                + "&radius=1500"
+                + "&sensor=true"
+                + "&key=" + BuildConfig.GMP_KEY;
+        new PlaceTask().execute(url);
     }
 
     // Read the url and do a request to find nearby restaurants
@@ -370,26 +275,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         String data = builder.toString();
         reader.close();
         return data;
-    }
-
-    private void getNearbyRestaurantsInfos(List<HashMap<String, String>> hashMaps, int index) {
-        HashMap<String, String> hashMapList = hashMaps.get(index);
-        String name = hashMapList.get("placeName");
-        String adress = hashMapList.get("placeAdress");
-        String placeId = hashMapList.get("placeId");
-        double lat = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lat")));
-        double lng = Double.parseDouble(Objects.requireNonNull(hashMapList.get("lng")));
-        LatLng latLng = new LatLng(lat, lng);
-
-        this.requestForPlaceDetails(placeId);
-    }
-
-    private void setInfoOnMarker(LatLng latLng,String placeId) {
-        MarkerOptions options = new MarkerOptions();
-        options.icon(BitmapDescriptorFactory.fromResource(mApiService.setMarker(placeId)));
-        options.position(latLng);
-        options.snippet(placeId);
-        mMap.addMarker(options);
     }
 
     @Override
@@ -442,7 +327,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         protected void onPostExecute(List<HashMap<String, String>> hashMaps) {
             mMap.clear();
             for (int i = 0; i < hashMaps.size(); i++) {
-                getNearbyRestaurantsInfos(hashMaps, i);
+                mViewModel.requestForPlaceDetails(hashMaps.get(i).get("placeId"), requireActivity().getApplicationContext(), false, mMap);
             }
         }
     }

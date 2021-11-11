@@ -1,10 +1,13 @@
 package com.openclassrooms.p7.go4lunch.service;
 
-import static android.content.ContentValues.TAG;
+import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
 
+import android.graphics.Bitmap;
 import android.location.Location;
-import android.util.Log;
+import android.net.Uri;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -109,7 +112,7 @@ public class DummyRestaurantApiService implements RestaurantApiService {
         int currentHour = calendar.get(Calendar.HOUR);
         int hours = Objects.requireNonNull(openingHours.getPeriods().get(0).getOpen()).getTime().getHours();
         if (currentHour > hours) {
-            return "still closed";
+            return "Still closed";
         }else {
             return "open until " + (hours - currentHour) + "pm";
         }
@@ -235,11 +238,15 @@ public class DummyRestaurantApiService implements RestaurantApiService {
         return R.drawable.baseline_check_circle_outline_24;
     }
 
-    @Override
-    public int setMarker(String placeId) {
+    public int setMarker(String placeId, boolean isSearched, LatLng restaurantPosition, GoogleMap mMap) {
         for (FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant : getFavoriteRestaurant()) {
-            if (favoriteOrSelectedRestaurant.getRestaurantId().equals(placeId) && favoriteOrSelectedRestaurant.isSelected()) {
+            if (favoriteOrSelectedRestaurant.getRestaurantId().equals(placeId) && favoriteOrSelectedRestaurant.isSelected() && !isSearched) {
                 return R.drawable.baseline_place_cyan;
+            } else if (isSearched) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(restaurantPosition.latitude,
+                                restaurantPosition.longitude),15));
+                return R.drawable.baseline_place_green;
             }
         }
         return R.drawable.baseline_place_orange;
@@ -254,54 +261,79 @@ public class DummyRestaurantApiService implements RestaurantApiService {
     }
 
     @Override
-    public Restaurant getPlaceDetails(Place place) {
-        String openingHours = "no details here";
-        double rating = 1.0;
-        String uriWebsite = "";
-        Log.i(TAG, "Place found: " + place.getName());
-
-        if (place.getOpeningHours() != null) {
-            openingHours = makeStringOpeningHours(place.getOpeningHours());
+    public String getOpeningHours(OpeningHours openingHours) {
+        String noDetails = String.format("%s", R.string.no_details_here);
+        if (openingHours != null) {
+            return makeStringOpeningHours(openingHours);
         }
+        return noDetails;
+    }
 
-        if (place.getRating() != null) {
-            rating = place.getRating();
-            Log.i(TAG, "Restaurant name: " + place.getName() + " Rating: " + place.getRating());
-        }
-
-        if (place.getWebsiteUri() != null) {
-            uriWebsite = String.format("%s",place.getWebsiteUri());
-        }
+    @Override
+    public float getDistance(LatLng placeLocation, LatLng currentLocation) {
         float[] distance = new float[10];
         Location.distanceBetween(
-                mCurrentLocation.latitude,
-                mCurrentLocation.longitude,
-                Objects.requireNonNull(place.getLatLng()).latitude,
-                place.getLatLng().longitude,
+                currentLocation.latitude,
+                currentLocation.longitude,
+                Objects.requireNonNull(placeLocation).latitude,
+                Objects.requireNonNull(placeLocation).longitude,
                 distance
         );
-        Restaurant restaurant = new Restaurant(
+        return distance[0];
+    }
+
+    @Override
+    public String getWebsiteUri(Uri websiteUri) {
+        String noWebsiteUrl = "";
+        if (websiteUri != null) {
+            return String.format("%s", websiteUri);
+        }
+        return noWebsiteUrl;
+    }
+
+    @Override
+    public double getRating(Double rating) {
+        double noRating = 0.0;
+        if (rating != null) {
+            return rating;
+        }
+        return noRating;
+    }
+
+    @Override
+    public Restaurant createRestaurant(Place place, Bitmap placeImage) {
+        Restaurant restaurant =  new Restaurant(
                 place.getId(),
                 place.getName(),
                 place.getAddress(),
-                openingHours,
+                getOpeningHours(place.getOpeningHours()),
                 place.getPhoneNumber(),
-                uriWebsite,
-                distance[0],
-                place.getLatLng().latitude,
-                place.getLatLng().longitude,
-                0,
-                rating,
-                null);
+                getWebsiteUri(place.getWebsiteUri()),
+                getDistance(place.getLatLng(), currentLocation),
+                getRating(place.getRating()),
+                place.getLatLng(),
+                placeImage
+        );
         return restaurant;
     }
 
-    public MarkerOptions setInfoOnMarker(Restaurant restaurantFound) {
+    public void setInfoOnMarker(boolean isSearched, GoogleMap map) {
+        for (Restaurant restaurantFound : getRestaurant()) {
+            MarkerOptions options = new MarkerOptions();
+            options.icon(BitmapDescriptorFactory.fromResource(setMarker(restaurantFound.getId(), isSearched, restaurantFound.getPosition(), map)));
+            LatLng latLng = new LatLng(restaurantFound.getPosition().latitude, restaurantFound.getPosition().longitude);
+            options.position(latLng);
+            options.snippet(restaurantFound.getId());
+            map.addMarker(options);
+        }
+    }
+
+    public void setInfoOnMarker(Restaurant restaurant ,boolean isSearched, GoogleMap map) {
         MarkerOptions options = new MarkerOptions();
-        options.icon(BitmapDescriptorFactory.fromResource(setMarker(restaurantFound.getId())));
-        LatLng latLng = new LatLng(restaurantFound.getLatitude(), restaurantFound.getLongitude());
+        options.icon(BitmapDescriptorFactory.fromResource(setMarker(restaurant.getId(), isSearched, restaurant.getPosition(), map)));
+        LatLng latLng = new LatLng(restaurant.getPosition().latitude, restaurant.getPosition().longitude);
         options.position(latLng);
-        options.snippet(restaurantFound.getId());
-        return options;
+        options.snippet(restaurant.getId());
+        map.addMarker(options);
     }
 }

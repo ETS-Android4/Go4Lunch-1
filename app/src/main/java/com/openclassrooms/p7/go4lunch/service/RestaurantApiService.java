@@ -1,9 +1,10 @@
 package com.openclassrooms.p7.go4lunch.service;
 
-import android.location.Location;
+import android.graphics.Bitmap;
+import android.net.Uri;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
@@ -48,9 +49,15 @@ public interface RestaurantApiService {
     int setRatingStars(int index, double rating);
     int setFavoriteImage(boolean favorite);
     int setSelectedImage(boolean Selected);
-    int setMarker(String placeId);
+    int setMarker(String placeId, boolean isSearched, LatLng restaurantPosition, GoogleMap mMap);
 
     RectangularBounds getRectangularBound(LatLng currentLocation);
-    Restaurant getPlaceDetails(Place place);
-    MarkerOptions setInfoOnMarker(Restaurant restaurantFound);
+    void setInfoOnMarker(boolean isSearched, GoogleMap map);
+    void setInfoOnMarker(Restaurant restaurant, boolean isSearched, GoogleMap map);
+    String getOpeningHours(OpeningHours openingHours);
+    float getDistance(LatLng latLng, LatLng currentLocation);
+    String getWebsiteUri(Uri websiteUri);
+    double getRating(Double rating);
+
+    Restaurant createRestaurant(Place place, Bitmap placeImage);
 }

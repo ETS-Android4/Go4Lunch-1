@@ -6,7 +6,7 @@
     android:id="@+id/map_view_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.openclassrooms.p7.go4lunch.ui.fragment.MapViewFragment">
+    tools:context="com.openclassrooms.p7.go4lunch.ui.fragment.map_view.">
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"

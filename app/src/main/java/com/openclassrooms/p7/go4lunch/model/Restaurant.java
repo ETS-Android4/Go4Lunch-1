@@ -2,6 +2,8 @@ package com.openclassrooms.p7.go4lunch.model;
 
 import android.graphics.Bitmap;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by lleotraas on 21.
  */
@@ -14,10 +16,8 @@ public class Restaurant {
     private final String phoneNumber;
     private final String uriWebsite;
     private final float distance;
-    private final double latitude;
-    private final double longitude;
-    private final int interestedFriends;
     private final double rating;
+    private final LatLng position;
     private Bitmap pictureUrl;
 
     public Restaurant(
@@ -28,10 +28,8 @@ public class Restaurant {
             String phoneNumber,
             String uriWebsite,
             float distance,
-            double  latitude,
-            double longitude,
-            int interestedFriends,
             double rating,
+            LatLng position,
             Bitmap pictureUrl
     ) {
 
@@ -42,10 +40,8 @@ public class Restaurant {
         this.phoneNumber = phoneNumber;
         this.uriWebsite = uriWebsite;
         this.distance = distance;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.interestedFriends = interestedFriends;
         this.rating = rating;
+        this.position = position;
         this.pictureUrl = pictureUrl;
     }
 
@@ -57,10 +53,10 @@ public class Restaurant {
     public String getPhoneNumber() { return phoneNumber; }
     public String getUriWebsite() { return uriWebsite; }
     public float getDistance() { return distance; }
-    public double getLatitude() { return latitude; }
-    public double getLongitude() { return longitude; }
-    public int getInterestedFriends() { return interestedFriends; }
     public double getRating() { return rating; }
+    public LatLng getPosition() {
+        return position;
+    }
     public Bitmap getPictureUrl() { return pictureUrl; }
 
     // --- SETTERS ---

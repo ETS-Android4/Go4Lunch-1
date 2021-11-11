@@ -2,18 +2,14 @@ package com.openclassrooms.p7.go4lunch.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -23,19 +19,15 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
-import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchPlaceAutoComplete{
 
     private TextView email;
     private TextView username;
@@ -43,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     public static String CURRENT_USER_ID;
     private ActivityMainBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
-    private RestaurantApiService mApiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,30 +78,10 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        LatLng currentLocation = MapViewFragment.currentLocation;
-        // get the placeId
-        String placeId = mViewModel.searchPlace(this);
-        // fetch the details of the place from placeId
-        Place place = mViewModel.requestForPlaceDetails(placeId, getApplicationContext());
-        // get the place details
-        Restaurant restaurantFound = mApiService.getPlaceDetails(place);
-        // get the photos from placeId
-        Bitmap placePhoto = mViewModel.requestForPlacePhoto(place, getApplicationContext());
-        // set the picture in restaurant
-        restaurantFound.setPictureUrl(placePhoto);
-        // put restaurantFound marker
-        mApiService.getRestaurant().add(restaurantFound);
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void configureToolbar() {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.toolbar, null);
         setSupportActionBar(mBinding.activityMainToolbar.toolbar);
-        AutoCompleteTextView textView = (AutoCompleteTextView) view.findViewById(R.id.toolbar_edit_text);
     }
 
     private void configureNavigationDrawer() {
@@ -125,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViewModelAndService() {
         mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
-        mApiService = DI.getRestaurantApiService();
         if (mViewModel.isCurrentUserLogged()) {
             CURRENT_USER_ID = mViewModel.getCurrentUser().getUid();
         }
@@ -225,4 +195,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void search() {
+        System.out.println("wesh la famille");
+    }
 }
