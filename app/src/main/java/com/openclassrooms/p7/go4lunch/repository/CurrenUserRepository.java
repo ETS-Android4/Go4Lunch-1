@@ -17,17 +17,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.model.FavoriteOrSelectedRestaurant;
-import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
+import com.openclassrooms.p7.go4lunch.service.ApiService;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -70,7 +64,7 @@ public final class CurrenUserRepository {
 
     public void createUser() {
         FirebaseUser user = getCurrentUser();
-        HashMap<String, FavoriteOrSelectedRestaurant> likedOrSelectedRestaurant = new HashMap<>();
+        HashMap<String, UserAndRestaurant> likedOrSelectedRestaurant = new HashMap<>();
         assert user != null;
         User userToCreate = new User(
                 user.getUid(),
@@ -99,14 +93,14 @@ public final class CurrenUserRepository {
     }
 
     public void getUsersDataList() {
-        RestaurantApiService apiService = DI.getRestaurantApiService();
+        ApiService apiService = DI.getRestaurantApiService();
         Objects.requireNonNull(this.getUserDataList()).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 apiService.getUsers().clear();
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                         User user = documentSnapshot.toObject(User.class);
-                        for (int index = 0;index < user.getLikedOrSelectedRestaurant().size();index++) {
-                            Log.d(TAG, "getUsersDataList: " + user.getLikedOrSelectedRestaurant().size());
+                        for (int index = 0; index < user.getUserAndRestaurant().size(); index++) {
+                            Log.d(TAG, "getUsersDataList: " + user.getUserAndRestaurant().size());
                         }
                         apiService.getUsers().add(user);
                     }
@@ -114,7 +108,7 @@ public final class CurrenUserRepository {
         });
     }
 
-    public void updateUser(String currentUserID, Map<String, FavoriteOrSelectedRestaurant> likedOrSelectedRestaurant) {
+    public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
         this.getUsersCollection().document(currentUserID).update("likedOrSelectedRestaurant", likedOrSelectedRestaurant);
     }
 

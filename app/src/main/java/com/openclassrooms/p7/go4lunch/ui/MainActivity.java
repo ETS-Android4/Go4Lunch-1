@@ -23,11 +23,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
-import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
-public class MainActivity extends AppCompatActivity implements SearchPlaceAutoComplete{
+public class MainActivity extends AppCompatActivity{
 
     private TextView email;
     private TextView username;
@@ -192,11 +190,5 @@ public class MainActivity extends AppCompatActivity implements SearchPlaceAutoCo
      */
     private void initLists() {
         mViewModel.getUsersDataList();
-    }
-
-
-    @Override
-    public void search() {
-        System.out.println("wesh la famille");
     }
 }

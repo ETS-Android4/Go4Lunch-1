@@ -14,7 +14,7 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ListViewRowBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
-import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
+import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
@@ -57,7 +57,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     public static class ListViewHolder extends RecyclerView.ViewHolder {
         private ListViewRowBinding mBinding;
         private final ImageView[] ratingStarsArray = new ImageView[3];
-        private final RestaurantApiService mApiService;
+        private final ApiService mApiService;
         private UserAndRestaurantViewModel viewModel;
         private String CURRENT_USER_ID = MainActivity.CURRENT_USER_ID;
 
@@ -88,7 +88,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             for (int index = 0; index < ratingStarsArray.length; index++) {
                 ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, restaurant.getRating()));
             }
-            mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",mApiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, restaurant).size()));
+            mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",mApiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, restaurant.getId()).size()));
         }
     }
 }

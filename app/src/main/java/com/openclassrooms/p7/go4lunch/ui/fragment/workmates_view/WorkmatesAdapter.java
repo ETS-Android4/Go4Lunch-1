@@ -11,16 +11,16 @@ import com.bumptech.glide.Glide;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.WorkmatesListRowBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.model.FavoriteOrSelectedRestaurant;
+import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
+import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 import java.util.List;
 
 public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.WorkmatesViewolder> {
 
     private List<User> mUsersList;
-    private RestaurantApiService mApiService;
+    private ApiService mApiService;
 
     public WorkmatesAdapter(List<User> usersList) {
         mUsersList = usersList;
@@ -54,13 +54,13 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
         }
 
         public void bind(User user){
-            FavoriteOrSelectedRestaurant favoriteOrSelectedRestaurant = mApiService.searchSelectedRestaurant(user);
+            UserAndRestaurant userAndRestaurant = mApiService.searchSelectedRestaurant(user);
             Glide.with(itemView)
                     .load(user.getPhotoUrl())
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
-            if (favoriteOrSelectedRestaurant != null) {
-                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s is eating at %s", user.getUserName(), favoriteOrSelectedRestaurant.getRestaurantName()));
+            if (userAndRestaurant != null) {
+                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s is eating at %s", user.getUserName(), userAndRestaurant.getRestaurantName()));
             } else {
                 mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s hasn't decided yet", user.getUserName()));
             }

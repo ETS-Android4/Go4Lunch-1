@@ -12,8 +12,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +31,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -46,8 +42,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.model.Restaurant;
-import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
+import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
@@ -63,7 +58,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -87,7 +81,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
 
     private boolean locationPermissionGranted;
-    private RestaurantApiService mApiService;
+    private ApiService mApiService;
     UserAndRestaurantViewModel mViewModel;
     AutocompleteSupportFragment autocompleteFragment;
 
@@ -112,7 +106,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         return result;
     }
 
-    
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -207,7 +201,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onResume() {
         super.onResume();
-        mApiService.setInfoOnMarker(false, mMap);
+        mApiService.updateMarkerOnMap(false, mMap);
     }
 
     private void getDeviceLocation() {

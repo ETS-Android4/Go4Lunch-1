@@ -14,8 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
-import com.openclassrooms.p7.go4lunch.ui.fragment.workmates_view.WorkmatesAdapter;
+import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 /**
  * Created by lleotraas on 14.
@@ -23,7 +22,7 @@ import com.openclassrooms.p7.go4lunch.ui.fragment.workmates_view.WorkmatesAdapte
 public class WorkmatesFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
-    private RestaurantApiService mApiservice;
+    private ApiService mApiservice;
     private WorkmatesAdapter workmatesAdapter;
     public WorkmatesFragment() { }
 

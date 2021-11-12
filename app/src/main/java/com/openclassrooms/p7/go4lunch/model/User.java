@@ -1,6 +1,5 @@
 package com.openclassrooms.p7.go4lunch.model;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class User {
@@ -8,12 +7,12 @@ public class User {
     private  String uid;
     private  String userName;
     private  String photoUrl;
-    private Map<String, FavoriteOrSelectedRestaurant> likedOrSelectedRestaurant;
+    private Map<String, UserAndRestaurant> likedOrSelectedRestaurant;
 
     public User() {
     }
 
-    public User(String uid, String userName, String photoUrl, Map<String, FavoriteOrSelectedRestaurant> likedOrSelectedRestaurant) {
+    public User(String uid, String userName, String photoUrl, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
         this.uid = uid;
         this.userName = userName;
         this.photoUrl = photoUrl;
@@ -30,7 +29,7 @@ public class User {
     public String getPhotoUrl() {
         return photoUrl;
     }
-    public Map<String, FavoriteOrSelectedRestaurant> getLikedOrSelectedRestaurant() {
+    public Map<String, UserAndRestaurant> getUserAndRestaurant() {
         return likedOrSelectedRestaurant;
     }
 }

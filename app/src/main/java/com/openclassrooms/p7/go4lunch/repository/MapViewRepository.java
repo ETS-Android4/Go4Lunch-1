@@ -27,7 +27,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
-import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
+import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.List;
 public class MapViewRepository {
 
     private static volatile MapViewRepository INSTANCE;
-    private RestaurantApiService mApiService = DI.getRestaurantApiService();
+    private ApiService mApiService = DI.getRestaurantApiService();
 
     private MapViewRepository() { }
 
@@ -97,8 +97,8 @@ public class MapViewRepository {
         getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
             Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap());
             mApiService.getRestaurant().add(restaurant);
-            mApiService.makeLikedOrSelectedRestaurantList(restaurant);
-            mApiService.setInfoOnMarker(restaurant, isSearched, map);
+            mApiService.makeUserAndRestaurantList(restaurant);
+            mApiService.setMarkerOnMap(restaurant, isSearched, map);
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 Log.e(TAG, "Place not found: " + exception.getMessage());

@@ -1,13 +1,13 @@
 package com.openclassrooms.p7.go4lunch.injector;
 
-import com.openclassrooms.p7.go4lunch.service.DummyRestaurantApiService;
-import com.openclassrooms.p7.go4lunch.service.RestaurantApiService;
+import com.openclassrooms.p7.go4lunch.service.DummyApiService;
+import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 /**
  * Created by lleotraas on 21.
  */
 public class DI {
-    private static RestaurantApiService service = new DummyRestaurantApiService();
+    private static ApiService service = new DummyApiService();
 
-    public static RestaurantApiService getRestaurantApiService(){ return service;}
+    public static ApiService getRestaurantApiService(){ return service;}
 }
