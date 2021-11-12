@@ -1,9 +1,6 @@
 package com.openclassrooms.p7.go4lunch.repository;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -25,22 +22,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class CurrenUserRepository {
+public final class UserRepository {
 
-    private static volatile CurrenUserRepository INSTANCE;
+    private static volatile UserRepository INSTANCE;
     private static final String USERS_COLLECTION_NAME = "users";
-    private static final String RESTAURANT_COLLECTION_NAME = "favorite_or_selected_restaurants";
 
-    private CurrenUserRepository() { }
+    private UserRepository() { }
 
-    public static CurrenUserRepository getInstance() {
-        CurrenUserRepository result = INSTANCE;
+    public static UserRepository getInstance() {
+        UserRepository result = INSTANCE;
         if (result != null) {
             return result;
         }
-        synchronized (CurrenUserRepository.class) {
+        synchronized (UserRepository.class) {
             if (INSTANCE == null) {
-                INSTANCE = new CurrenUserRepository();
+                INSTANCE = new UserRepository();
             }
             return INSTANCE;
         }
@@ -58,8 +54,9 @@ public final class CurrenUserRepository {
         return AuthUI.getInstance().delete(context);
     }
     private CollectionReference getUsersCollection() { return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME); }
-    private CollectionReference getFavoriteOrSelectedRestaurantCollection(String userId) {
-        return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME).document(userId).collection(RESTAURANT_COLLECTION_NAME);
+    public Task<DocumentSnapshot> getUserData() {
+        String uid = Objects.requireNonNull(this.getCurrentUser()).getUid();
+        return this.getUsersCollection().document(uid).get();
     }
 
     public void createUser() {
@@ -73,7 +70,7 @@ public final class CurrenUserRepository {
                 likedOrSelectedRestaurant
         );
         getUserData().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.contains("likedOrSelectedRestaurant")) {
+            if (documentSnapshot.contains("userAndRestaurant")) {
                 this.getUsersCollection().document().update("userName", userToCreate.getUserName());
                 this.getUsersCollection().document().update("photoUrl", userToCreate.getPhotoUrl());
                 this.getUsersCollection().document().update("uid", userToCreate.getUid());
@@ -83,33 +80,25 @@ public final class CurrenUserRepository {
         });
     }
 
-    public Task<DocumentSnapshot> getUserData() {
-        String uid = Objects.requireNonNull(this.getCurrentUser()).getUid();
-        return this.getUsersCollection().document(uid).get();
-    }
-
-    public Task<QuerySnapshot> getUserDataList() {
+    public Task<QuerySnapshot> getUserDataCollection() {
             return this.getUsersCollection().get();
     }
 
     public void getUsersDataList() {
         ApiService apiService = DI.getRestaurantApiService();
-        Objects.requireNonNull(this.getUserDataList()).addOnCompleteListener(task -> {
+        Objects.requireNonNull(this.getUserDataCollection()).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 apiService.getUsers().clear();
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                         User user = documentSnapshot.toObject(User.class);
-                        for (int index = 0; index < user.getUserAndRestaurant().size(); index++) {
-                            Log.d(TAG, "getUsersDataList: " + user.getUserAndRestaurant().size());
-                        }
-                        apiService.getUsers().add(user);
+                        apiService.addUser(user);
                     }
             }
         });
     }
 
     public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
-        this.getUsersCollection().document(currentUserID).update("likedOrSelectedRestaurant", likedOrSelectedRestaurant);
+        this.getUsersCollection().document(currentUserID).update("userAndRestaurant", likedOrSelectedRestaurant);
     }
 
     public void deleteUserFromFirestore() {

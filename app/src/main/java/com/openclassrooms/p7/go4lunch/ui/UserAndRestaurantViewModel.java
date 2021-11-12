@@ -6,14 +6,14 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
-import com.openclassrooms.p7.go4lunch.repository.CurrenUserRepository;
+import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
 
 import java.util.Map;
 
 public class UserAndRestaurantViewModel extends androidx.lifecycle.ViewModel {
 
-    private final CurrenUserRepository userDataSource = CurrenUserRepository.getInstance();
+    private final UserRepository userDataSource = UserRepository.getInstance();
     private final MapViewRepository mapDataSource = MapViewRepository.getInstance();
 
     //                   --- FOR USER ---

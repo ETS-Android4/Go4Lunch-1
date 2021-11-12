@@ -7,16 +7,16 @@ public class User {
     private  String uid;
     private  String userName;
     private  String photoUrl;
-    private Map<String, UserAndRestaurant> likedOrSelectedRestaurant;
+    private Map<String, UserAndRestaurant> userAndRestaurant;
 
     public User() {
     }
 
-    public User(String uid, String userName, String photoUrl, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
+    public User(String uid, String userName, String photoUrl, Map<String, UserAndRestaurant> userAndRestaurant) {
         this.uid = uid;
         this.userName = userName;
         this.photoUrl = photoUrl;
-        this.likedOrSelectedRestaurant = likedOrSelectedRestaurant;
+        this.userAndRestaurant = userAndRestaurant;
     }
 
     // --- GETTERS ---
@@ -30,6 +30,6 @@ public class User {
         return photoUrl;
     }
     public Map<String, UserAndRestaurant> getUserAndRestaurant() {
-        return likedOrSelectedRestaurant;
+        return userAndRestaurant;
     }
 }

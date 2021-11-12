@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity{
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.map_view_page)));
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.list_view_page)));
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.workmates_page)));
+        mBinding.activityMainTabs.getTabAt(0).setIcon(R.drawable.com_facebook_button_like_icon_selected);
         this.setTabLayoutListener();
     }
 

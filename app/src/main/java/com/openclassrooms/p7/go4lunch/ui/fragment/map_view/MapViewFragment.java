@@ -201,7 +201,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onResume() {
         super.onResume();
-        mApiService.updateMarkerOnMap(false, mMap);
+        if (mMap != null) {
+            mApiService.updateMarkerOnMap(false, mMap);
+        }
     }
 
     private void getDeviceLocation() {

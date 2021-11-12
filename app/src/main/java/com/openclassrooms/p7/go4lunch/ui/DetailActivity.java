@@ -86,9 +86,11 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void searchFavoriteRestaurantById() {
-        mCurrentUserAndRestaurant = (UserAndRestaurant) mCurrentUser.getUserAndRestaurant().get(CURRENT_RESTAURANT_ID);
-        if (mCurrentUserAndRestaurant != null) {
-            this.setImageAtStart();
+        if (mCurrentUser.getUserAndRestaurant() != null) {
+            mCurrentUserAndRestaurant = (UserAndRestaurant) mCurrentUser.getUserAndRestaurant().get(CURRENT_RESTAURANT_ID);
+            if (mCurrentUserAndRestaurant != null) {
+                this.setImageAtStart();
+            }
         }
     }
 

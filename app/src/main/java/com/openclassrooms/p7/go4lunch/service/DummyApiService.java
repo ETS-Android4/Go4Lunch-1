@@ -22,6 +22,7 @@ import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -90,9 +91,11 @@ public class DummyApiService implements ApiService {
     public void makeUserAndRestaurantList(Restaurant restaurant) {
         UserAndRestaurant userAndRestaurant;
         for (int index = 0;index < getUsers().size();index++) {
-            userAndRestaurant = getUsers().get(index).getUserAndRestaurant ().get(restaurant.getId());
-            if (userAndRestaurant != null) {
-                addUserAndRestaurant(userAndRestaurant);
+            if (getUsers().get(index).getUserAndRestaurant() != null){
+                userAndRestaurant = getUsers().get(index).getUserAndRestaurant().get(restaurant.getId());
+                if (userAndRestaurant != null) {
+                    addUserAndRestaurant(userAndRestaurant);
+                }
             }
         }
     }
@@ -362,7 +365,7 @@ public class DummyApiService implements ApiService {
     }
 
     /**
-     * Create a Restaurant from nearby search.
+     * Create a Restaurant found from nearby search.
      * @param place Restaurant.
      * @param placeImage Restaurant image.
      * @return Restaurant.
@@ -412,9 +415,11 @@ public class DummyApiService implements ApiService {
         LatLng latLng = new LatLng(restaurant.getPosition().latitude, restaurant.getPosition().longitude);
         options.position(latLng);
         options.snippet(restaurant.getId());
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(restaurant.getPosition().latitude,
-                        restaurant.getPosition().longitude),15));
+        if (isSearched) {
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(restaurant.getPosition().latitude,
+                            restaurant.getPosition().longitude), 15));
+        }
         map.addMarker(options);
     }
 }
