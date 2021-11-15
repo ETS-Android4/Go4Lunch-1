@@ -1,5 +1,6 @@
 package com.openclassrooms.p7.go4lunch.model;
 
+import java.util.Comparator;
 import java.util.Map;
 
 public class User {
@@ -31,5 +32,13 @@ public class User {
     }
     public Map<String, UserAndRestaurant> getUserAndRestaurant() {
         return userAndRestaurant;
+    }
+
+    public static class UserSelectedComparator implements Comparator<User> {
+
+        @Override
+        public int compare(User userLeft, User userRight) {
+            return 0;
+        }
     }
 }

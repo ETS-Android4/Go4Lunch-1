@@ -20,20 +20,28 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${GMP_KEY}" /> <!-- Main Activity -->
+            android:value="${GMP_KEY}" />
+
+        <!-- Main Activity -->
         <activity
             android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Login Activity -->
+        </activity>
+
+        <!-- Login Activity -->
         <activity
             android:name=".ui.login.LoginActivity"
-            android:parentActivityName=".ui.MainActivity" /> <!-- Facebook Sign In Activity -->
+            android:parentActivityName=".ui.MainActivity" />
+
+        <!-- Facebook Sign In Activity -->
         <activity
             android:name=".ui.sign_in.FacebookSignInActivity"
-            android:parentActivityName=".ui.MainActivity" /> <!-- Google Sign In Activity -->
+            android:parentActivityName=".ui.MainActivity" />
+
+        <!-- Google Sign In Activity -->
         <activity
             android:name=".ui.sign_in.GoogleSignInActivity"
             android:parentActivityName=".ui.MainActivity" />

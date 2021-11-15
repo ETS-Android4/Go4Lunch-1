@@ -59,6 +59,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
                     .load(user.getPhotoUrl())
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
+            //TODO filter needed
             if (userAndRestaurant != null) {
                 mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s is eating at %s", user.getUserName(), userAndRestaurant.getRestaurantName()));
             } else {

@@ -2,6 +2,8 @@ package com.openclassrooms.p7.go4lunch.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,6 +26,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -111,7 +115,10 @@ public class MainActivity extends AppCompatActivity{
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.map_view_page)));
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.list_view_page)));
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.workmates_page)));
-        mBinding.activityMainTabs.getTabAt(0).setIcon(R.drawable.com_facebook_button_like_icon_selected);
+        mBinding.activityMainTabs.getTabAt(0).setIcon(R.drawable.baseline_map_black_24);
+        mBinding.activityMainTabs.getTabAt(0).getIcon().setColorFilter(getResources().getColor(R.color.drawerlayout_color), PorterDuff.Mode.SRC_IN);
+        mBinding.activityMainTabs.getTabAt(1).setIcon(R.drawable.baseline_list_black_24);
+        mBinding.activityMainTabs.getTabAt(2).setIcon(R.drawable.baseline_people_alt_black_24);
         this.setTabLayoutListener();
     }
 
@@ -120,17 +127,16 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mBinding.activityMainViewpager.setCurrentItem(tab.getPosition());
+                Objects.requireNonNull(tab.getIcon()).setColorFilter(getResources().getColor(R.color.drawerlayout_color), PorterDuff.Mode.SRC_IN);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
+                Objects.requireNonNull(tab.getIcon()).setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_IN);
             }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
+            public void onTabReselected(TabLayout.Tab tab) { }
         });
 
         mBinding.activityMainViewpager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

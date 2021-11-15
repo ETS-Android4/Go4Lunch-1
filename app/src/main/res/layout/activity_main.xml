@@ -36,11 +36,11 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/activity_main_tabs"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#B6C9F1"
-                app:tabIndicatorColor="@color/design_default_color_primary"
-                app:tabTextColor="#D4E0F8"
-                app:tabSelectedTextColor="#fff" />
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:tabTextColor="@color/black"
+                app:tabSelectedTextColor="@color/drawerlayout_color"
+                app:tabIndicator="@color/fui_transparent"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

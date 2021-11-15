@@ -267,7 +267,7 @@ public class DummyApiService implements ApiService {
     @Override
     public int setSelectedImage(boolean selected) {
         if (selected) {
-            return R.drawable.baseline_check_circle_black_24;
+            return R.drawable.baseline_check_circle_24;
         }
         return R.drawable.baseline_check_circle_outline_24;
     }
