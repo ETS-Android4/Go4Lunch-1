@@ -10,9 +10,9 @@ public class User {
     private  String photoUrl;
     private Map<String, UserAndRestaurant> userAndRestaurant;
 
+    // --- CONSTRUCTOR ---
     public User() {
     }
-
     public User(String uid, String userName, String photoUrl, Map<String, UserAndRestaurant> userAndRestaurant) {
         this.uid = uid;
         this.userName = userName;
@@ -34,10 +34,12 @@ public class User {
         return userAndRestaurant;
     }
 
-    public static class UserSelectedComparator implements Comparator<User> {
+    // --- COMPARATOR ---
+    public static class UserComparator implements Comparator<User> {
 
         @Override
-        public int compare(User userLeft, User userRight) {
+        public int compare(User userLeft, User UserRight) {
+//            userLeft.getUserAndRestaurant().g
             return 0;
         }
     }

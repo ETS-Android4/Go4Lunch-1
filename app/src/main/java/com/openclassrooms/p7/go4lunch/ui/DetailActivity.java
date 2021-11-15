@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
+import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityDetailBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
@@ -37,6 +38,7 @@ public class DetailActivity extends AppCompatActivity {
     private String CURRENT_RESTAURANT_ID;
     public static int LIKE_BTN_TAG;
     private User mCurrentUser;
+    private DetailActivityAdapter mAdapter;
 
 
     @Override
@@ -48,6 +50,12 @@ public class DetailActivity extends AppCompatActivity {
         this.configureView();
         this.initRecyclerView();
         this.configureListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
     }
 
     private void configureViewBinding() {
@@ -62,11 +70,6 @@ public class DetailActivity extends AppCompatActivity {
 
     private void initViewModel() {
         mUserAndRestaurantViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
     }
 
     private void searchById() {
@@ -87,7 +90,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void searchFavoriteRestaurantById() {
         if (mCurrentUser.getUserAndRestaurant() != null) {
-            mCurrentUserAndRestaurant = (UserAndRestaurant) mCurrentUser.getUserAndRestaurant().get(CURRENT_RESTAURANT_ID);
+            mCurrentUserAndRestaurant = mCurrentUser.getUserAndRestaurant().get(CURRENT_RESTAURANT_ID);
             if (mCurrentUserAndRestaurant != null) {
                 this.setImageAtStart();
             }
@@ -118,7 +121,7 @@ public class DetailActivity extends AppCompatActivity {
     private void initRecyclerView() {
         mBinding.activityDetailRecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mBinding.activityDetailRecyclerview.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-        DetailActivityAdapter mAdapter = new DetailActivityAdapter(mCurrentRestaurant);
+        mAdapter = new DetailActivityAdapter(mCurrentRestaurant);
         mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
     }
 
@@ -137,7 +140,9 @@ public class DetailActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(DetailActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(DetailActivity.this, new String[]{Manifest.permission.CALL_PHONE}, PERMISSION_CODE);
         }
-        callTheRestaurant();
+        if (ContextCompat.checkSelfPermission(DetailActivity.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            callTheRestaurant();
+        }
     }
     private void callTheRestaurant() {
         String phoneNumber = mCurrentRestaurant.getPhoneNumber();
@@ -212,5 +217,8 @@ public class DetailActivity extends AppCompatActivity {
 
     private void setSelectedImage(boolean selected) {
         mBinding.activityDetailFab.setImageResource(mApiService.setSelectedImage(selected));
+        if (selected) {
+            mBinding.activityDetailFab.setColorFilter(ContextCompat.getColor(this, R.color.map_marker_favorite));
+        }
     }
 }

@@ -21,10 +21,11 @@ public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAd
 
     private List<User> mUsers;
     private final String CURRENT_USER_ID = MainActivity.CURRENT_USER_ID;
+    ApiService mApiService;
 
     public DetailActivityAdapter(Restaurant restaurant) {
-        ApiService apiService = DI.getRestaurantApiService();
-        this.mUsers = apiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, restaurant.getId());
+        mApiService = DI.getRestaurantApiService();
+        this.mUsers = mApiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, restaurant);
     }
 
     @NonNull

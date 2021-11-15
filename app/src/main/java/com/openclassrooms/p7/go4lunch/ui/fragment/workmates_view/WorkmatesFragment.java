@@ -46,6 +46,7 @@ public class WorkmatesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        mApiservice.workmatesComparator();
         mRecyclerView.setAdapter(workmatesAdapter);
     }
 }

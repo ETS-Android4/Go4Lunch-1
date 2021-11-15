@@ -41,7 +41,7 @@ public interface ApiService {
     void likeOrSelectRestaurant(String currentUserId, String currentRestaurantId, int buttonId);
     UserAndRestaurant searchSelectedRestaurant(User user);
 
-    List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, String currentRestaurantId);
+    List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurantId);
 
     int setRatingStars(int index, double rating);
     int setFavoriteImage(boolean favorite);
@@ -57,4 +57,7 @@ public interface ApiService {
     double getRating(Double rating);
 
     Restaurant createRestaurant(Place place, Bitmap placeImage);
+
+    void listViewComparator();
+    void workmatesComparator();
 }

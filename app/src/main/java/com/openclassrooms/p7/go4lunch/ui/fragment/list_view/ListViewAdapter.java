@@ -26,6 +26,7 @@ import java.util.Locale;
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListViewHolder> {
 
     private final List<Restaurant> mRestaurantList;
+    private final String CURRENT_USER_ID = MainActivity.CURRENT_USER_ID;
 
     public ListViewAdapter(List<Restaurant> restaurantList) {
         mRestaurantList = restaurantList;
@@ -41,6 +42,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     @Override
     public void onBindViewHolder(@NonNull ListViewAdapter.ListViewHolder holder, int position) {
         holder.bind(mRestaurantList.get(position));
+        holder.mApiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, mRestaurantList.get(position));
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
             String id = mRestaurantList.get(position).getId();
@@ -58,9 +60,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         private ListViewRowBinding mBinding;
         private final ImageView[] ratingStarsArray = new ImageView[3];
         private final ApiService mApiService;
-        private UserAndRestaurantViewModel viewModel;
-        private String CURRENT_USER_ID = MainActivity.CURRENT_USER_ID;
-
 
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -88,7 +87,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             for (int index = 0; index < ratingStarsArray.length; index++) {
                 ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, restaurant.getRating()));
             }
-            mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",mApiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, restaurant.getId()).size()));
+            mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",restaurant.getNumberOfFriendInterested()));
         }
     }
 }

@@ -14,7 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
+
+import java.util.Collections;
 
 /**
  * Created by lleotraas on 14.
@@ -47,6 +50,7 @@ public class ListViewFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        mApiService.listViewComparator();
         mRecyclerView.setAdapter(listViewAdapter);
     }
 }

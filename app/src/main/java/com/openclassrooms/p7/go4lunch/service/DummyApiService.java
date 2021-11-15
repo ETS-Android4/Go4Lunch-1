@@ -209,22 +209,23 @@ public class DummyApiService implements ApiService {
     /**
      * Call to know how many users are interested at current Restaurant for the ListViewFragment and the DetailsActivity RecyclerView.
      * @param currentUserId current User id.
-     * @param restaurantId Restaurant to compare with UserAndRestaurant.
+     * @param currentRestaurant Restaurant to compare with UserAndRestaurant.
      * @return List of User interested at the Restaurant.
      */
     @Override
-    public List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, String restaurantId) {
+    public List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurant) {
         List<User> userList = new ArrayList<>();
         for (UserAndRestaurant userAndRestaurants : getUserAndRestaurant()) {
             if (
                     userAndRestaurants.isSelected() &&
                     !currentUserId.equals(userAndRestaurants.getUserId()) &&
-                    restaurantId.equals(userAndRestaurants.getRestaurantId())
+                    currentRestaurant.getId().equals(userAndRestaurants.getRestaurantId())
             ) {
                 User user = searchUserById(userAndRestaurants.getUserId());
                 userList.add(user);
             }
         }
+        currentRestaurant.setNumberOfFriendInterested(userList.size());
         return userList;
     }
 
@@ -269,7 +270,7 @@ public class DummyApiService implements ApiService {
         if (selected) {
             return R.drawable.baseline_check_circle_24;
         }
-        return R.drawable.baseline_check_circle_outline_24;
+        return R.drawable.baseline_check_circle_outline_black_24;
     }
 
     /**
@@ -382,8 +383,8 @@ public class DummyApiService implements ApiService {
                 getDistance(place.getLatLng(), currentLocation),
                 getRating(place.getRating()),
                 place.getLatLng(),
-                placeImage
-        );
+                placeImage,
+                0);
     }
 
     /**
@@ -421,5 +422,15 @@ public class DummyApiService implements ApiService {
                             restaurant.getPosition().longitude), 15));
         }
         map.addMarker(options);
+    }
+
+    @Override
+    public void listViewComparator() {
+        Collections.sort(getRestaurant(), new Restaurant.RestaurantComparator());
+    }
+
+    @Override
+    public void workmatesComparator() {
+        Collections.sort(getUserAndRestaurant(), new UserAndRestaurant.Comparator());
     }
 }

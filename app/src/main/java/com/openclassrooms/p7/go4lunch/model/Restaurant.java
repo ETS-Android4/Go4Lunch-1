@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Comparator;
+
 /**
  * Created by lleotraas on 21.
  */
@@ -18,8 +20,10 @@ public class Restaurant {
     private final float distance;
     private final double rating;
     private final LatLng position;
-    private Bitmap pictureUrl;
+    private final Bitmap pictureUrl;
+    private Integer numberOfFriendInterested;
 
+    // --- CONSTRUCTOR ---
     public Restaurant(
             String id,
             String name,
@@ -30,8 +34,8 @@ public class Restaurant {
             float distance,
             double rating,
             LatLng position,
-            Bitmap pictureUrl
-    ) {
+            Bitmap pictureUrl,
+            Integer numberOfFriendInterested) {
 
         this.id = id;
         this.name = name;
@@ -43,6 +47,7 @@ public class Restaurant {
         this.rating = rating;
         this.position = position;
         this.pictureUrl = pictureUrl;
+        this.numberOfFriendInterested = numberOfFriendInterested;
     }
 
     // --- GETTERS ---
@@ -58,7 +63,20 @@ public class Restaurant {
         return position;
     }
     public Bitmap getPictureUrl() { return pictureUrl; }
+    public Integer getNumberOfFriendInterested() {
+        return numberOfFriendInterested;
+    }
 
     // --- SETTERS ---
-    public void setPictureUrl(Bitmap pictureUrl){ this.pictureUrl = pictureUrl;}
+    public void setNumberOfFriendInterested(int numberOfFriendInterested) {
+        this.numberOfFriendInterested = numberOfFriendInterested;
+    }
+
+    // --- COMPARATOR CLASS ---
+    public static class RestaurantComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return restaurantRight.numberOfFriendInterested.compareTo(restaurantLeft.numberOfFriendInterested);
+        }
+    }
 }

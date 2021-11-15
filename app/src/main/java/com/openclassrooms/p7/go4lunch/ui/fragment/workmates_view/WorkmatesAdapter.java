@@ -61,9 +61,9 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
                     .into(mBinding.workmatesListRowProfileImg);
             //TODO filter needed
             if (userAndRestaurant != null) {
-                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s is eating at %s", user.getUserName(), userAndRestaurant.getRestaurantName()));
+                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s %s", user.getUserName(), R.string.is_eating_at, userAndRestaurant.getRestaurantName()));
             } else {
-                mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s hasn't decided yet", user.getUserName()));
+                mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s %s",R.string.not_decided , user.getUserName()));
             }
         }
     }

@@ -30,5 +30,7 @@
     <string name="activity_detail_website_text">WEBSITE</string>
     <string name="search_button">Search</string>
     <string name="no_details_here">No details here</string>
+    <string name="not_decided">hasn\'t decided yet</string>
+    <string name="is_eating_at">is eating at</string>
 
 </resources>

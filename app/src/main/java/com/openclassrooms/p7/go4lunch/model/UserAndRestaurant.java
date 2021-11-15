@@ -1,5 +1,7 @@
 package com.openclassrooms.p7.go4lunch.model;
 
+import java.util.Comparator;
+
 public class UserAndRestaurant {
 
     private String userId;
@@ -40,5 +42,13 @@ public class UserAndRestaurant {
     }
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    // --- COMPARATOR ---
+    public static class UserAndRestaurantComparator implements Comparator<UserAndRestaurant> {
+        @Override
+        public int compare(UserAndRestaurant userAndRestaurantLeft, UserAndRestaurant userAndRestaurantRight) {
+            return 0;
+        }
     }
 }
