@@ -8,11 +8,11 @@ public class UserAndRestaurant {
     private String restaurantId;
     private String restaurantName;
     private boolean isFavorite;
-    private boolean isSelected;
+    private Boolean isSelected;
 
     public UserAndRestaurant() { }
 
-    public UserAndRestaurant(String userId, String restaurantId, String restaurantName, boolean isFavorite, boolean isSelected) {
+    public UserAndRestaurant(String userId, String restaurantId, String restaurantName, boolean isFavorite, Boolean isSelected) {
         this.userId = userId;
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
@@ -32,7 +32,7 @@ public class UserAndRestaurant {
     public boolean isFavorite() {
         return isFavorite;
     }
-    public boolean isSelected() {
+    public Boolean isSelected() {
         return isSelected;
     }
 
@@ -40,15 +40,7 @@ public class UserAndRestaurant {
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
     }
-    public void setSelected(boolean selected) {
+    public void setSelected(Boolean selected) {
         isSelected = selected;
-    }
-
-    // --- COMPARATOR ---
-    public static class UserAndRestaurantComparator implements Comparator<UserAndRestaurant> {
-        @Override
-        public int compare(UserAndRestaurant userAndRestaurantLeft, UserAndRestaurant userAndRestaurantRight) {
-            return 0;
-        }
     }
 }

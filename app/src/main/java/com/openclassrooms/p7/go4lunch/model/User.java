@@ -11,8 +11,7 @@ public class User {
     private Map<String, UserAndRestaurant> userAndRestaurant;
 
     // --- CONSTRUCTOR ---
-    public User() {
-    }
+    public User() { }
     public User(String uid, String userName, String photoUrl, Map<String, UserAndRestaurant> userAndRestaurant) {
         this.uid = uid;
         this.userName = userName;
@@ -34,12 +33,11 @@ public class User {
         return userAndRestaurant;
     }
 
-    // --- COMPARATOR ---
     public static class UserComparator implements Comparator<User> {
 
         @Override
-        public int compare(User userLeft, User UserRight) {
-//            userLeft.getUserAndRestaurant().g
+        public int compare(User user, User t1) {
+
             return 0;
         }
     }

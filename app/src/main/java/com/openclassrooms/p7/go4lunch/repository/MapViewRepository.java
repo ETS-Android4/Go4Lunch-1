@@ -25,10 +25,19 @@ import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
+import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,22 +59,6 @@ public class MapViewRepository {
             }
             return INSTANCE;
         }
-    }
-
-    public Task<FindAutocompletePredictionsResponse> getPlaceData(FragmentActivity activity){
-        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-        PlacesClient placesClient = Places.createClient(activity);
-        RectangularBounds rectangularBounds = mApiService.getRectangularBound(currentLocation);
-        String query = "restaurant";
-        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
-                .setLocationRestriction(rectangularBounds)
-                .setOrigin(new LatLng(currentLocation.latitude, currentLocation.longitude))
-                .setCountry("FR")
-                .setTypeFilter(TypeFilter.ADDRESS)
-                .setSessionToken(token)
-                .setQuery(query)
-                .build();
-        return placesClient.findAutocompletePredictions(request);
     }
 
     public void requestForPlaceDetails(String placeId, Context context, boolean isSearched, GoogleMap map) {
@@ -116,6 +109,32 @@ public class MapViewRepository {
             placesClient = Places.createClient(context);
         }
         return placesClient.fetchPhoto(photoRequest);
+    }
+
+    public String nearbySearch(LatLng currentLocation) {
+        String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+                + "?keyword=restaurant"
+                + "&location=" + currentLocation.latitude + "," + currentLocation.longitude
+                + "&radius=1500"
+                + "&sensor=true"
+                + "&key=" + BuildConfig.GMP_KEY;
+        return url;
+    }
+
+    private String downloadUrl (String string) throws IOException {
+        URL url = new URL(string);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.connect();
+        InputStream stream = connection.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        StringBuilder builder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            builder.append(line);
+        }
+        String data = builder.toString();
+        reader.close();
+        return data;
     }
 
 

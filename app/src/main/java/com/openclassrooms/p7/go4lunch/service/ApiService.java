@@ -29,7 +29,7 @@ public interface ApiService {
     void addUserAndRestaurant(UserAndRestaurant userAndRestaurant);
     void addRestaurant(Restaurant restaurant);
     void addUser(User user);
-
+    void deleteUser(User user);
 
     Map<String, UserAndRestaurant> makeUserAndRestaurantMap(String currentUserId);
     void makeUserAndRestaurantList(Restaurant restaurant);
@@ -42,6 +42,7 @@ public interface ApiService {
     UserAndRestaurant searchSelectedRestaurant(User user);
 
     List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurantId);
+    void filterUsersInterestedAtCurrentRestaurant();
 
     int setRatingStars(int index, double rating);
     int setFavoriteImage(boolean favorite);
@@ -59,5 +60,6 @@ public interface ApiService {
     Restaurant createRestaurant(Place place, Bitmap placeImage);
 
     void listViewComparator();
-    void workmatesComparator();
+
+    String makeUserFirstName(String userName);
 }

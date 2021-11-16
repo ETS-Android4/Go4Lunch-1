@@ -98,6 +98,7 @@ public final class UserRepository {
     }
 
     public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
+        //TODO modify the method, update don't have to erase previous data.
         this.getUsersCollection().document(currentUserID).update("userAndRestaurant", likedOrSelectedRestaurant);
     }
 

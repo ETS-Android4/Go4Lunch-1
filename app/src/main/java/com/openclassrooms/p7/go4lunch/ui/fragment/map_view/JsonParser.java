@@ -17,16 +17,8 @@ public class JsonParser {
     private HashMap<String, String> parseJsonObject(JSONObject object){
         HashMap<String,String> dataList = new HashMap<>();
         try {
-            String placeName = object.getString("name");
-            String placeAdress = object.getString("vicinity");
             String placeId = object.getString("place_id");
-            String latitude = object.getJSONObject("geometry").getJSONObject("location").getString("lat");
-            String longitude = object.getJSONObject("geometry").getJSONObject("location").getString("lng");
-            dataList.put("placeName", placeName);
-            dataList.put("placeAdress", placeAdress);
             dataList.put("placeId", placeId);
-            dataList.put("lat", latitude);
-            dataList.put("lng", longitude);
         }catch (JSONException e) {
             e.printStackTrace();
         }

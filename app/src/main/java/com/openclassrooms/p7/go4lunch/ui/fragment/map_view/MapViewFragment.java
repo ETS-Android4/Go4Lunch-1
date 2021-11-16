@@ -110,6 +110,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        //TODO put in viewmodel
         autocompleteFragment.getView().setVisibility(View.VISIBLE);
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID));
@@ -117,22 +118,18 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         autocompleteFragment.setHint("Search Restaurant");
         autocompleteFragment.setLocationBias(mApiService.getRectangularBound(currentLocation));
         autocompleteFragment.setTypeFilter(TypeFilter.ESTABLISHMENT);
-        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.getEnterTransition();
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
-                // TODO: Get info about the selected place.
-
                 mViewModel.requestForPlaceDetails(place.getId(), requireActivity().getApplicationContext(), true, mMap);
                 autocompleteFragment.getView().setVisibility(View.GONE);
             }
 
             @Override
             public void onError(@NonNull Status status) {
-                // TODO: Handle the error.
                 Log.i(TAG, "An error occurred: " + status);
             }
-
         });
         return super.onOptionsItemSelected(item);
     }
@@ -246,6 +243,15 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        String restaurantId = marker.getSnippet();
+        Intent detailIntent = new Intent(requireActivity(), DetailActivity.class);
+        detailIntent.putExtra("restaurantId", restaurantId);
+        startActivity(detailIntent);
+        return false;
+    }
+
     private void nearbySearch() {
         String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
                 + "?keyword=restaurant"
@@ -271,15 +277,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         String data = builder.toString();
         reader.close();
         return data;
-    }
-
-    @Override
-    public boolean onMarkerClick(@NonNull Marker marker) {
-        String restaurantId = marker.getSnippet();
-        Intent detailIntent = new Intent(requireActivity(), DetailActivity.class);
-        detailIntent.putExtra("restaurantId", restaurantId);
-        startActivity(detailIntent);
-        return false;
     }
 
     private class PlaceTask extends AsyncTask<String, Integer, String> {

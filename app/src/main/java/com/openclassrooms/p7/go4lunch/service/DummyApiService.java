@@ -66,6 +66,10 @@ public class DummyApiService implements ApiService {
     public void addUser(User user) {
         mUserList.add(user);
     }
+    @Override
+    public void deleteUser(User user) {
+        mUserList.remove(user);
+    }
 
     /**
      * Make a Map to copy it in the currentUser and send it to the Database.
@@ -107,10 +111,11 @@ public class DummyApiService implements ApiService {
      */
     @Override
     public String makeStringOpeningHours(OpeningHours openingHours) {
-        Calendar calendar = Calendar.getInstance(Locale.FRANCE);
+        //TODO check for get if phone is in 12h or 24h format.
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
         int currentHour = calendar.get(Calendar.HOUR);
-        int hours = Objects.requireNonNull(openingHours.getPeriods().get(0).getOpen()).getTime().getHours();
-        //TODO modify
+        int hours = Objects.requireNonNull(openingHours.getPeriods().get(day).getOpen()).getTime().getHours();
         if (currentHour > hours) {
             return "Still closed";
         }else {
@@ -230,6 +235,20 @@ public class DummyApiService implements ApiService {
     }
 
     /**
+     * Call to found user have selected a restaurant and set it to the top of userList.
+     */
+    @Override
+    public void filterUsersInterestedAtCurrentRestaurant() {
+        for (UserAndRestaurant userAndRestaurants : getUserAndRestaurant()) {
+            if (userAndRestaurants.isSelected()) {
+                User userFound = searchUserById(userAndRestaurants.getUserId());
+                deleteUser(userFound);
+                getUsers().add(0, userFound);
+            }
+        }
+    }
+
+    /**
      * Call three time to show the rating of Restaurant in ListViewFragment and DetailsActivity.
      * @param index Loop index.
      * @param rating Restaurant rating.
@@ -239,7 +258,7 @@ public class DummyApiService implements ApiService {
     public int setRatingStars(int index, double rating) {
         int convertedRating = (int) rating;
             if (convertedRating == 2 && index == 1|| convertedRating == 4 && index == 2) {
-              return R.drawable.baseline_star_half_black_24;
+                return R.drawable.baseline_star_half_black_24;
             }
             if (convertedRating < 4 && index == 2 || convertedRating < 2 && index == 1) {
                return R.drawable.baseline_star_border_black_24;
@@ -305,8 +324,8 @@ public class DummyApiService implements ApiService {
     }
 
     /**
-     * Format openning hour for show it.
-     * @param openingHours
+     * Format opening hour for show it.
+     * @param openingHours place opening hours
      * @return opening hours if available
      */
     @Override
@@ -424,13 +443,25 @@ public class DummyApiService implements ApiService {
         map.addMarker(options);
     }
 
+    /**
+     * Call to sort restaurantList with most users interested first.
+     */
     @Override
     public void listViewComparator() {
         Collections.sort(getRestaurant(), new Restaurant.RestaurantComparator());
     }
 
+    /**
+     * Used to format username with his first name and put a uppercase on the first letter.
+     * @param userName name of the user.
+     * @return first name format.
+     */
     @Override
-    public void workmatesComparator() {
-        Collections.sort(getUserAndRestaurant(), new UserAndRestaurant.Comparator());
+    public String makeUserFirstName(String userName) {
+        int i = userName.indexOf(' ');
+        String firstName = userName.substring(0, i);
+        char[] firstNameArray = firstName.toCharArray();
+        firstNameArray[0] = Character.toUpperCase(firstNameArray[0]);
+        return new String(firstNameArray);
     }
 }

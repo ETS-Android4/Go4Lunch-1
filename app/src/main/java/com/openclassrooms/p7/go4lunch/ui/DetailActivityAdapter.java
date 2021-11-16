@@ -16,15 +16,16 @@ import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 import java.util.List;
+import java.util.Map;
 
 public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAdapter.DetailActivityViewHolder> {
 
-    private List<User> mUsers;
-    private final String CURRENT_USER_ID = MainActivity.CURRENT_USER_ID;
+    private final List<User> mUsers;
     ApiService mApiService;
 
     public DetailActivityAdapter(Restaurant restaurant) {
         mApiService = DI.getRestaurantApiService();
+        String CURRENT_USER_ID = MainActivity.CURRENT_USER_ID;
         this.mUsers = mApiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, restaurant);
     }
 
@@ -45,10 +46,9 @@ public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAd
         return mUsers.size();
     }
 
-    public static class DetailActivityViewHolder extends RecyclerView.ViewHolder {
+    public class DetailActivityViewHolder extends RecyclerView.ViewHolder {
 
         private final WorkmatesListRowBinding mBinding;
-
 
         public DetailActivityViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,7 +60,7 @@ public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAd
                     .load(user.getPhotoUrl())
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
-            mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s is joining", user.getUserName()));
+            mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s is joining", mApiService.makeUserFirstName(user.getUserName())));
         }
     }
 }

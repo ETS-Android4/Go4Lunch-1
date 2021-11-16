@@ -17,7 +17,7 @@ import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 import java.util.List;
 
-public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.WorkmatesViewolder> {
+public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.WorkmatesViewHolder> {
 
     private List<User> mUsersList;
     private ApiService mApiService;
@@ -28,14 +28,14 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
     @NonNull
     @Override
-    public WorkmatesViewolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public WorkmatesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.workmates_list_row, parent, false);
         mApiService = DI.getRestaurantApiService();
-        return new WorkmatesViewolder(view);
+        return new WorkmatesViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WorkmatesViewolder holder, int position) {
+    public void onBindViewHolder(@NonNull WorkmatesViewHolder holder, int position) {
         holder.bind(mUsersList.get(position));
     }
 
@@ -44,11 +44,11 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
         return mUsersList.size();
     }
 
-    public class WorkmatesViewolder extends RecyclerView.ViewHolder {
+    public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
 
         private WorkmatesListRowBinding mBinding;
 
-        public WorkmatesViewolder(@NonNull View itemView) {
+        public WorkmatesViewHolder(@NonNull View itemView) {
             super(itemView);
             mBinding = WorkmatesListRowBinding.bind(itemView);
         }
@@ -59,11 +59,10 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
                     .load(user.getPhotoUrl())
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
-            //TODO filter needed
             if (userAndRestaurant != null) {
-                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s %s", user.getUserName(), R.string.is_eating_at, userAndRestaurant.getRestaurantName()));
+                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.is_eating_at), userAndRestaurant.getRestaurantName()));
             } else {
-                mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s %s",R.string.not_decided , user.getUserName()));
+                mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.not_decided)));
             }
         }
     }
