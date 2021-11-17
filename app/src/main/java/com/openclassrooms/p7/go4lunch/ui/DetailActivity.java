@@ -45,7 +45,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.configureViewBinding();
-        this.initViewModel();
+        this.initServiceAndViewModel();
         this.searchById();
         this.configureView();
         this.initRecyclerView();
@@ -68,12 +68,12 @@ public class DetailActivity extends AppCompatActivity {
         LIKE_BTN_TAG = mBinding.activityDetailLikeBtn.getId();
     }
 
-    private void initViewModel() {
+    private void initServiceAndViewModel() {
+        mApiService = DI.getRestaurantApiService();
         mUserAndRestaurantViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
     }
 
     private void searchById() {
-        mApiService = DI.getRestaurantApiService();
         Intent mainActivityIntent = getIntent();
         CURRENT_USER_UID = MainActivity.CURRENT_USER_ID;
         CURRENT_RESTAURANT_ID = mainActivityIntent.getStringExtra("restaurantId");

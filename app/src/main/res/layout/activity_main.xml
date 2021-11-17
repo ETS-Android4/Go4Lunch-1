@@ -21,12 +21,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <fragment
-            android:id="@+id/autocomplete_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment" />
-
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/activity_main_viewpager"
                 android:layout_width="match_parent"

@@ -25,7 +25,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,6 +35,7 @@ public class DummyApiService implements ApiService {
 
     // --- LIST ---
     private final List<Restaurant> mRestaurantList = DummyUserAndRestaurant.generateRestaurant();
+    private List<Restaurant> mSearchedRestaurant = new ArrayList<>();
     private final List<UserAndRestaurant> mUserAndRestaurantList = DummyUserAndRestaurant.generateUserAndRestaurant();
     private final List<User> mUserList = DummyUserAndRestaurant.generateUsers();
 
@@ -52,6 +52,8 @@ public class DummyApiService implements ApiService {
     public List<User> getUsers() {
         return mUserList;
     }
+    @Override
+    public List<Restaurant> getSearchedRestaurant() { return mSearchedRestaurant; }
 
     // --- ADD TO LIST ---
     @Override
@@ -131,6 +133,9 @@ public class DummyApiService implements ApiService {
     @Override
     public Restaurant searchCurrentRestaurantById(String restaurantId) {
         Restaurant restaurantFound = null;
+        if (restaurantId.equals(getSearchedRestaurant().get(0).getId())) {
+            restaurantFound = getSearchedRestaurant().get(0);
+        }
         for (Restaurant restaurant : getRestaurant()) {
             if (restaurantId.equals(restaurant.getId())){
                 restaurantFound = restaurant;
@@ -304,7 +309,8 @@ public class DummyApiService implements ApiService {
         for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
             if (userAndRestaurant.getRestaurantId().equals(placeId) && userAndRestaurant.isSelected() && !isSearched) {
                 return R.drawable.baseline_place_cyan;
-            } else if (isSearched) {
+            }
+            if (isSearched) {
                 return R.drawable.baseline_place_green;
             }
         }
@@ -319,8 +325,8 @@ public class DummyApiService implements ApiService {
     @Override
     public RectangularBounds getRectangularBound(LatLng currentLocation) {
         return RectangularBounds.newInstance(
-                new LatLng(currentLocation.latitude - 0.001000, currentLocation.longitude + 0.025000),
-                new LatLng(currentLocation.latitude + 0.025000, currentLocation.longitude + 0.001000));
+                new LatLng(currentLocation.latitude - 0.050000, currentLocation.longitude + 0.050000),
+                new LatLng(currentLocation.latitude + 0.050000, currentLocation.longitude + 0.050000));
     }
 
     /**
@@ -426,10 +432,9 @@ public class DummyApiService implements ApiService {
     /**
      * Put markers on map for each Restaurant found after a nearby search or a search.
      * @param restaurant Restaurant to set a marker on.
-     * @param isSearched to define if it's a nearby search or a search.
      * @param map current Google Maps
      */
-    public void setMarkerOnMap(Restaurant restaurant , boolean isSearched, GoogleMap map) {
+    public void setMarkerOnMap(Restaurant restaurant, GoogleMap map, boolean isSearched) {
         MarkerOptions options = new MarkerOptions();
         options.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), isSearched, restaurant.getPosition(), map)));
         LatLng latLng = new LatLng(restaurant.getPosition().latitude, restaurant.getPosition().longitude);

@@ -22,6 +22,7 @@ public interface ApiService {
 
     // --- GET LIST ---
     List<Restaurant> getRestaurant();
+    List<Restaurant> getSearchedRestaurant();
     List<UserAndRestaurant> getUserAndRestaurant();
     List<User> getUsers();
 
@@ -51,7 +52,7 @@ public interface ApiService {
 
     RectangularBounds getRectangularBound(LatLng currentLocation);
     void updateMarkerOnMap(boolean isSearched, GoogleMap map);
-    void setMarkerOnMap(Restaurant restaurant, boolean isSearched, GoogleMap map);
+    void setMarkerOnMap(Restaurant restaurant, GoogleMap map, boolean isSearched);
     String getOpeningHours(OpeningHours openingHours);
     float getDistance(LatLng latLng, LatLng currentLocation);
     String getWebsiteUri(Uri websiteUri);

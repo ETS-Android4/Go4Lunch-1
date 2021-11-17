@@ -1,17 +1,22 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -21,22 +26,34 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
+import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.service.ApiService;
+import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity{
 
+    public static final int AUTOCOMPLETE_REQUEST_CODE = 23;
     private TextView email;
     private TextView username;
     private ImageView userPicture;
     public static String CURRENT_USER_ID;
     private ActivityMainBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
+    private HandleData mHandleData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,10 +132,10 @@ public class MainActivity extends AppCompatActivity{
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.map_view_page)));
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.list_view_page)));
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.workmates_page)));
-        mBinding.activityMainTabs.getTabAt(0).setIcon(R.drawable.baseline_map_black_24);
-        mBinding.activityMainTabs.getTabAt(0).getIcon().setColorFilter(getResources().getColor(R.color.drawerlayout_color), PorterDuff.Mode.SRC_IN);
-        mBinding.activityMainTabs.getTabAt(1).setIcon(R.drawable.baseline_list_black_24);
-        mBinding.activityMainTabs.getTabAt(2).setIcon(R.drawable.baseline_people_alt_black_24);
+        Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).setIcon(R.drawable.baseline_map_black_24);
+        Objects.requireNonNull(Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).getIcon()).setColorFilter(getResources().getColor(R.color.drawerlayout_color), PorterDuff.Mode.SRC_IN);
+        Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(1)).setIcon(R.drawable.baseline_list_black_24);
+        Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(2)).setIcon(R.drawable.baseline_people_alt_black_24);
         this.setTabLayoutListener();
     }
 
@@ -197,5 +214,40 @@ public class MainActivity extends AppCompatActivity{
      */
     private void initLists() {
         mViewModel.getUsersDataList();
+    }
+
+    public void startAutocompleteActivity(MenuItem item) {
+        ApiService apiService = DI.getRestaurantApiService();
+        Intent intent = new Autocomplete.IntentBuilder(
+                AutocompleteActivityMode.OVERLAY,
+                Arrays.asList(Place.Field.ID))
+                .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                .setLocationBias(apiService.getRectangularBound(MapViewFragment.currentLocation))
+                .setCountry("FR")
+                .build(this);
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MainActivity.AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                mHandleData.onDataSelect(place);
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+
+            }
+        }
+    }
+
+    public void setOnDataSelected(HandleData handleData) {
+        mHandleData = handleData;
+    }
+
+    public interface HandleData {
+        void onDataSelect(Place place);
     }
 }
