@@ -98,8 +98,15 @@ public final class UserRepository {
     }
 
     public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
-        //TODO modify the method, update don't have to erase previous data.
-        this.getUsersCollection().document(currentUserID).update("userAndRestaurant", likedOrSelectedRestaurant);
+        getUsersCollection().document(currentUserID).get().addOnCompleteListener(task -> {
+           if (task.isSuccessful()) {
+               DocumentSnapshot documentSnapshot = task.getResult();
+               User user = documentSnapshot.toObject(User.class);
+               user.getUserAndRestaurant().putAll(likedOrSelectedRestaurant);
+               this.getUsersCollection().document(currentUserID).update("userAndRestaurant", user.getUserAndRestaurant());
+           }
+        });
+
     }
 
     public void deleteUserFromFirestore() {

@@ -133,8 +133,10 @@ public class DummyApiService implements ApiService {
     @Override
     public Restaurant searchCurrentRestaurantById(String restaurantId) {
         Restaurant restaurantFound = null;
-        if (restaurantId.equals(getSearchedRestaurant().get(0).getId())) {
-            restaurantFound = getSearchedRestaurant().get(0);
+        if ( !getSearchedRestaurant().isEmpty()) {
+            if (restaurantId.equals(getSearchedRestaurant().get(0).getId())) {
+                restaurantFound = getSearchedRestaurant().get(0);
+            }
         }
         for (Restaurant restaurant : getRestaurant()) {
             if (restaurantId.equals(restaurant.getId())){
