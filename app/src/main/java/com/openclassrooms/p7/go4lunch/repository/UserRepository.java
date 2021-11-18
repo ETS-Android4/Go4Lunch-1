@@ -42,23 +42,59 @@ public final class UserRepository {
         }
     }
 
-
+    /**
+     * Get current user from Firebase.
+     * @return current User.
+     */
     @Nullable
     public FirebaseUser getCurrentUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
+
+    /**
+     * Call to signOut the current user.
+     * @param context context of the activity.
+     * @return a task to signOut.
+     */
     public Task<Void> signOut(Context context) {
         return AuthUI.getInstance().signOut(context);
     }
+
+    /**
+     * Call to delete user account from Firestore.
+     * @param context context of the activity.
+     * @return a task to delete user.
+     */
     public Task<Void> deleteUser(Context context) {
         return AuthUI.getInstance().delete(context);
     }
+
+    /**
+     * Call to get the collection where user is store in Firestore.
+     * @return Collection reference.
+     */
     private CollectionReference getUsersCollection() { return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME); }
-    public Task<DocumentSnapshot> getUserData() {
+
+    /**
+     * Call a task to do a request to the collection where current user.
+     * @return A query task.
+     */
+    private Task<DocumentSnapshot> getUserData() {
         String uid = Objects.requireNonNull(this.getCurrentUser()).getUid();
         return this.getUsersCollection().document(uid).get();
     }
 
+    /**
+     * Call a task to do a request to get all users in Firestore.
+     * @return A query task.
+     */
+    public Task<QuerySnapshot> getUserDataCollection() {
+        return this.getUsersCollection().get();
+    }
+
+    /**
+     * Create user in Firestore
+     */
     public void createUser() {
         FirebaseUser user = getCurrentUser();
         HashMap<String, UserAndRestaurant> likedOrSelectedRestaurant = new HashMap<>();
@@ -80,10 +116,9 @@ public final class UserRepository {
         });
     }
 
-    public Task<QuerySnapshot> getUserDataCollection() {
-            return this.getUsersCollection().get();
-    }
-
+    /**
+     * Get userList from Firestore and store it in DUMMY_USER.
+     */
     public void getUsersDataList() {
         ApiService apiService = DI.getRestaurantApiService();
         Objects.requireNonNull(this.getUserDataCollection()).addOnCompleteListener(task -> {
@@ -97,6 +132,11 @@ public final class UserRepository {
         });
     }
 
+    /**
+     * Update current user Map. Fetch Stored Map , add new content to the previous map and update user Map to avoid erase previous content.
+     * @param currentUserID Id of the current user.
+     * @param likedOrSelectedRestaurant Map with the new content.
+     */
     public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
         getUsersCollection().document(currentUserID).get().addOnCompleteListener(task -> {
            if (task.isSuccessful()) {
@@ -109,6 +149,9 @@ public final class UserRepository {
 
     }
 
+    /**
+     * Delete user from Firestore.
+     */
     public void deleteUserFromFirestore() {
         String uid = this.getCurrentUser().getUid();
         if (uid != null) {
