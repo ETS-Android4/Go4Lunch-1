@@ -1,8 +1,11 @@
 package com.openclassrooms.p7.go4lunch.service;
 
+import static com.google.common.io.Resources.getResource;
 import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 
@@ -111,12 +114,12 @@ public class DummyApiService implements ApiService {
     /**
      * Get the current hour and openingHour of the currentDay and calculate the remaining time before Restaurant close.
      * @param openingHours Restaurant openingHours.
+     * @param context
      * @return String with remaining time before restaurant close.
      */
     @Override
-    public String makeStringOpeningHours(OpeningHours openingHours) {
+    public String makeStringOpeningHours(OpeningHours openingHours, Context context) {
         //TODO check for get if phone is in 12h or 24h format.
-        //TODO check place open/close to show it in list view
         Calendar calendar = Calendar.getInstance(Locale.FRANCE);
         int day = calendar.get(Calendar.DAY_OF_WEEK);
         int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -144,16 +147,26 @@ public class DummyApiService implements ApiService {
                 currentDays = "SATURDAY";
                 break;
         }
-        int closeHour = 0;
         for (Period openingDay : openingHours.getPeriods()) {
             if (Objects.requireNonNull(openingDay.getOpen()).getDay().toString().equals(currentDays)) {
-                closeHour = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
-                if (closeHour > currentHour && closeHour < 16 && closeHour > 3) {
-                   return String.format("still open until %s pm", closeHour - currentHour);
-
+                int closeHour = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
+                int closeMinute = Objects.requireNonNull(openingDay.getClose()).getTime().getMinutes();
+                int openHour = Objects.requireNonNull(openingDay.getOpen()).getTime().getHours();
+                int openMinute = Objects.requireNonNull(openingDay.getOpen()).getTime().getMinutes();
+                String closeTime = String.format("%s", closeHour);
+                String openTime = String.format("%s", openHour);
+                if (closeMinute > 0) {
+                    closeTime = String.format("%s:%s", closeHour, closeMinute);
                 }
-                if (closeHour < currentHour && closeHour < 3) {
-                    return String.format("open until %s pm", currentHour - closeHour);
+                if (openMinute > 0) {
+                    openTime = String.format("%s:%s", openHour, openMinute);
+                }
+
+                if (openingDay.getOpen().getTime().getHours() > currentHour) {
+                    return String.format("%s %spm %s %spm",context.getResources().getString(R.string.open_at), openTime,context.getResources().getString(R.string.until), closeTime);
+                }
+                if (openingDay.getClose().getTime().getHours() > currentHour || openingDay.getClose().getTime().getHours() < 3) {
+                    return String.format("%s %s pm",context.getResources().getString(R.string.still_open_until), Math.abs(closeHour - currentHour));
                 }
             }
         }
@@ -369,13 +382,14 @@ public class DummyApiService implements ApiService {
     /**
      * Format opening hour for show it.
      * @param openingHours place opening hours
+     * @param context
      * @return opening hours if available
      */
     @Override
-    public String getOpeningHours(OpeningHours openingHours) {
+    public String getOpeningHours(OpeningHours openingHours, Context context) {
         String noDetails = String.format("%s", R.string.no_details_here);
         if (openingHours != null) {
-            return makeStringOpeningHours(openingHours);
+            return makeStringOpeningHours(openingHours, context);
         }
         return noDetails;
     }
@@ -431,15 +445,17 @@ public class DummyApiService implements ApiService {
      * Create a Restaurant found from nearby search.
      * @param place Restaurant.
      * @param placeImage Restaurant image.
+     * @param context
      * @return Restaurant.
      */
     @Override
-    public Restaurant createRestaurant(Place place, Bitmap placeImage) {
+    public Restaurant createRestaurant(Place place, Bitmap placeImage, Context context) {
+        //TODO if photo = null change it by noImage.
         return new Restaurant(
                 place.getId(),
                 place.getName(),
                 place.getAddress(),
-                getOpeningHours(place.getOpeningHours()),
+                getOpeningHours(place.getOpeningHours(), context),
                 place.getPhoneNumber(),
                 getWebsiteUri(place.getWebsiteUri()),
                 getDistance(place.getLatLng(), currentLocation),

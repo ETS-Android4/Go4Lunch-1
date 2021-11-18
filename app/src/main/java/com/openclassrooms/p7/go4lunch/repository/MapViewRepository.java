@@ -121,7 +121,7 @@ public class MapViewRepository {
      */
     public void requestForPlacePhoto(Place place, Context context, GoogleMap map) {
         getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
-            Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap());
+            Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
             mApiService.getRestaurant().add(restaurant);
             mApiService.makeUserAndRestaurantList(restaurant);
             mApiService.setMarkerOnMap(restaurant, map, false);
@@ -141,7 +141,7 @@ public class MapViewRepository {
      */
     public void requestForPlacePhoto(Place place, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
         getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
-            Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap());
+            Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
             mApiService.getSearchedRestaurant().clear();
             mApiService.getSearchedRestaurant().add(restaurant);
             listViewAdapter.notifyDataSetChanged();
@@ -162,7 +162,7 @@ public class MapViewRepository {
      */
     public void requestForPlacePhoto(Place place, Context context, GoogleMap map, boolean isSearched) {
         getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
-            Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap());
+            Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
             mApiService.getSearchedRestaurant().clear();
             mApiService.getSearchedRestaurant().add(restaurant);
             mApiService.setMarkerOnMap(restaurant, map, isSearched);

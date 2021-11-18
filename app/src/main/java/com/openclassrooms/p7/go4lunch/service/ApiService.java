@@ -1,5 +1,6 @@
 package com.openclassrooms.p7.go4lunch.service;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
@@ -34,7 +35,7 @@ public interface ApiService {
 
     Map<String, UserAndRestaurant> makeUserAndRestaurantMap(String currentUserId);
     void makeUserAndRestaurantList(Restaurant restaurant);
-    String makeStringOpeningHours(OpeningHours openingHours);
+    String makeStringOpeningHours(OpeningHours openingHours, Context context);
 
     Restaurant searchCurrentRestaurantById(String id);
     User searchUserById(String uid);
@@ -53,12 +54,12 @@ public interface ApiService {
     RectangularBounds getRectangularBound(LatLng currentLocation);
     void updateMarkerOnMap(boolean isSearched, GoogleMap map);
     void setMarkerOnMap(Restaurant restaurant, GoogleMap map, boolean isSearched);
-    String getOpeningHours(OpeningHours openingHours);
+    String getOpeningHours(OpeningHours openingHours, Context context);
     float getDistance(LatLng latLng, LatLng currentLocation);
     String getWebsiteUri(Uri websiteUri);
     double getRating(Double rating);
 
-    Restaurant createRestaurant(Place place, Bitmap placeImage);
+    Restaurant createRestaurant(Place place, Bitmap placeImage, Context context);
 
     void listViewComparator();
 
