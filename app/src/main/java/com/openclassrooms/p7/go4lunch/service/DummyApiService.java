@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.model.OpeningHours;
+import com.google.android.libraries.places.api.model.Period;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.R;
@@ -25,6 +26,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -114,15 +116,48 @@ public class DummyApiService implements ApiService {
     @Override
     public String makeStringOpeningHours(OpeningHours openingHours) {
         //TODO check for get if phone is in 12h or 24h format.
-        Calendar calendar = Calendar.getInstance();
+        //TODO check place open/close to show it in list view
+        Calendar calendar = Calendar.getInstance(Locale.FRANCE);
         int day = calendar.get(Calendar.DAY_OF_WEEK);
-        int currentHour = calendar.get(Calendar.HOUR);
-        int hours = Objects.requireNonNull(openingHours.getPeriods().get(day).getOpen()).getTime().getHours();
-        if (currentHour > hours) {
-            return "Still closed";
-        }else {
-            return "open until " + (hours - currentHour) + "pm";
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        String currentDays = "";
+        switch (day - 1) {
+            case 0:
+                currentDays = "SUNDAY";
+                break;
+            case 1:
+                currentDays = "MONDAY";
+                break;
+            case 2:
+                currentDays = "TUESDAY";
+                break;
+            case 3:
+                currentDays = "WEDNESDAY";
+                break;
+            case 4:
+                currentDays = "THURSDAY";
+                break;
+            case 5:
+                currentDays = "FRIDAY";
+                break;
+            case 6:
+                currentDays = "SATURDAY";
+                break;
         }
+        int closeHour = 0;
+        for (Period openingDay : openingHours.getPeriods()) {
+            if (Objects.requireNonNull(openingDay.getOpen()).getDay().toString().equals(currentDays)) {
+                closeHour = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
+                if (closeHour > currentHour && closeHour < 16 && closeHour > 3) {
+                   return String.format("still open until %s pm", closeHour - currentHour);
+
+                }
+                if (closeHour < currentHour && closeHour < 3) {
+                    return String.format("open until %s pm", currentHour - closeHour);
+                }
+            }
+        }
+        return "still closed";
     }
 
     /**
