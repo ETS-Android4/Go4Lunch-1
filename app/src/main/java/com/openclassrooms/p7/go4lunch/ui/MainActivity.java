@@ -37,6 +37,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.repository.PushNotificationService;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;

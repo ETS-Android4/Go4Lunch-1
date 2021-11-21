@@ -3,6 +3,8 @@ package com.openclassrooms.p7.go4lunch.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -107,10 +109,17 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void configureView() {
-        Glide.with(this)
-                .load(mCurrentRestaurant.getPictureUrl())
-                .centerCrop()
-                .into(mBinding.activityDetailImageHeader);
+        if (mCurrentRestaurant.getPictureUrl() != null) {
+            Glide.with(this)
+                    .load(mCurrentRestaurant.getPictureUrl())
+                    .centerCrop()
+                    .into(mBinding.activityDetailImageHeader);
+        } else {
+            Glide.with(this)
+                    .load(getDrawable(R.drawable.no_image))
+                    .centerCrop()
+                    .into(mBinding.activityDetailImageHeader);
+        }
         mBinding.activityDetailRestaurantNameTv.setText(mCurrentRestaurant.getName());
         mBinding.activityDetailRestaurantTypeAndAdressTv.setText(mCurrentRestaurant.getAdress());
         for (int index = 0; index < ratingStarsArray.length; index++) {

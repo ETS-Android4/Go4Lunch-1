@@ -3,6 +3,7 @@ package com.openclassrooms.p7.go4lunch.repository;
 import static android.content.ContentValues.TAG;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +31,7 @@ import com.openclassrooms.p7.go4lunch.ui.fragment.list_view.ListViewAdapter;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class MapViewRepository {
 
@@ -140,17 +142,27 @@ public class MapViewRepository {
      * @param listViewAdapter adapter of the fragment.
      */
     public void requestForPlacePhoto(Place place, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
-        getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
-            Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
-            mApiService.getSearchedRestaurant().clear();
-            mApiService.getSearchedRestaurant().add(restaurant);
-            listViewAdapter.notifyDataSetChanged();
-            mRecyclerView.setAdapter(listViewAdapter);
-        }).addOnFailureListener((exception) -> {
-            if (exception instanceof ApiException) {
-                Log.e(TAG, "Place not found: " + exception.getMessage());
-            }
-        });
+        // Place have a photo.
+        if (getPhotoData(place, context) != null) {
+            getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
+                createRestaurantAndShowIt(place, fetchPhotoResponse, context, mRecyclerView, listViewAdapter);
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    Log.e(TAG, "Place not found: " + exception.getMessage());
+                }
+            });
+        // Place don't have a photo.
+        } else {
+            createRestaurantAndShowIt(place, null, context, mRecyclerView, listViewAdapter);
+        }
+    }
+
+    private void createRestaurantAndShowIt(Place place, FetchPhotoResponse fetchPhotoResponse, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
+        Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
+        mApiService.getSearchedRestaurant().clear();
+        mApiService.getSearchedRestaurant().add(restaurant);
+        listViewAdapter.notifyDataSetChanged();
+        mRecyclerView.setAdapter(listViewAdapter);
     }
 
     /**
@@ -188,8 +200,12 @@ public class MapViewRepository {
                     .build();
             placesClient = Places.createClient(context);
         }
-        return placesClient.fetchPhoto(photoRequest);
-    }
+        if (placesClient != null) {
+            return placesClient.fetchPhoto(photoRequest);
+        } else {
+            return null;
+        }
+        }
 
 
 

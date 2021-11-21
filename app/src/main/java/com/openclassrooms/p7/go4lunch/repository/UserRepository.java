@@ -127,6 +127,7 @@ public final class UserRepository {
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                         User user = documentSnapshot.toObject(User.class);
                         apiService.addUser(user);
+
                     }
             }
         });

@@ -1,11 +1,9 @@
 package com.openclassrooms.p7.go4lunch.service;
 
-import static com.google.common.io.Resources.getResource;
 import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 
@@ -29,7 +27,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -40,7 +37,7 @@ public class DummyApiService implements ApiService {
 
     // --- LIST ---
     private final List<Restaurant> mRestaurantList = DummyUserAndRestaurant.generateRestaurant();
-    private List<Restaurant> mSearchedRestaurant = new ArrayList<>();
+    private final List<Restaurant> mSearchedRestaurant = new ArrayList<>();
     private final List<UserAndRestaurant> mUserAndRestaurantList = DummyUserAndRestaurant.generateUserAndRestaurant();
     private final List<User> mUserList = DummyUserAndRestaurant.generateUsers();
 
@@ -114,39 +111,14 @@ public class DummyApiService implements ApiService {
     /**
      * Get the current hour and openingHour of the currentDay and calculate the remaining time before Restaurant close.
      * @param openingHours Restaurant openingHours.
-     * @param context
+     * @param context context of the fragment.
      * @return String with remaining time before restaurant close.
      */
     @Override
     public String makeStringOpeningHours(OpeningHours openingHours, Context context) {
-        //TODO check for get if phone is in 12h or 24h format.
-        Calendar calendar = Calendar.getInstance(Locale.FRANCE);
-        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        Calendar calendar = Calendar.getInstance();
         int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-        String currentDays = "";
-        switch (day - 1) {
-            case 0:
-                currentDays = "SUNDAY";
-                break;
-            case 1:
-                currentDays = "MONDAY";
-                break;
-            case 2:
-                currentDays = "TUESDAY";
-                break;
-            case 3:
-                currentDays = "WEDNESDAY";
-                break;
-            case 4:
-                currentDays = "THURSDAY";
-                break;
-            case 5:
-                currentDays = "FRIDAY";
-                break;
-            case 6:
-                currentDays = "SATURDAY";
-                break;
-        }
+        String currentDays = this.getCurrentDay(calendar);
         for (Period openingDay : openingHours.getPeriods()) {
             if (Objects.requireNonNull(openingDay.getOpen()).getDay().toString().equals(currentDays)) {
                 int closeHour = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
@@ -171,6 +143,35 @@ public class DummyApiService implements ApiService {
             }
         }
         return "still closed";
+    }
+
+    private String getCurrentDay(Calendar calendar) {
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        String currentDays = "";
+        switch (day - 1) {
+            case 0:
+                currentDays = "SUNDAY";
+                break;
+            case 1:
+                currentDays = "MONDAY";
+                break;
+            case 2:
+                currentDays = "TUESDAY";
+                break;
+            case 3:
+                currentDays = "WEDNESDAY";
+                break;
+            case 4:
+                currentDays = "THURSDAY";
+                break;
+            case 5:
+                currentDays = "FRIDAY";
+                break;
+            case 6:
+                currentDays = "SATURDAY";
+                break;
+        }
+        return currentDays;
     }
 
     /**
@@ -323,7 +324,7 @@ public class DummyApiService implements ApiService {
 
     /**
      * Call if Restaurant is liked or not.
-     * @param isFavorite
+     * @param isFavorite if restaurant is favorite or not.
      * @return liked image to set.
      */
     @Override
@@ -336,7 +337,7 @@ public class DummyApiService implements ApiService {
 
     /**
      * Call if Restaurant is selected or not.
-     * @param selected
+     * @param selected if restaurant is selected or not.
      * @return selected image to set.
      */
     @Override
@@ -351,8 +352,8 @@ public class DummyApiService implements ApiService {
      * Call to set marker at Restaurant Location default return red marker, selected Restaurant return green marker, searched Restaurant return blue marker.
      * @param placeId place id.
      * @param isSearched to define if it's a nearby search or a search.
-     * @param restaurantPosition
-     * @param mMap the current GoogleMap
+     * @param restaurantPosition restaurant location.
+     * @param mMap the current GoogleMap.
      * @return marker image to set.
      */
     public int setMarkerIcon(String placeId, boolean isSearched, LatLng restaurantPosition, GoogleMap mMap) {
@@ -381,9 +382,9 @@ public class DummyApiService implements ApiService {
 
     /**
      * Format opening hour for show it.
-     * @param openingHours place opening hours
-     * @param context
-     * @return opening hours if available
+     * @param openingHours place opening hours.
+     * @param context context of the fragment.
+     * @return opening hours if available.
      */
     @Override
     public String getOpeningHours(OpeningHours openingHours, Context context) {
@@ -398,7 +399,7 @@ public class DummyApiService implements ApiService {
      * Calculate the distance between User and Restaurant.
      * @param placeLocation Restaurant location.
      * @param currentLocation User Location.
-     * @return distance between User and Restaurant
+     * @return distance between User and Restaurant.
      */
     @Override
     public float getDistance(LatLng placeLocation, LatLng currentLocation) {
@@ -445,7 +446,7 @@ public class DummyApiService implements ApiService {
      * Create a Restaurant found from nearby search.
      * @param place Restaurant.
      * @param placeImage Restaurant image.
-     * @param context
+     * @param context context of the fragment.
      * @return Restaurant.
      */
     @Override
@@ -470,7 +471,6 @@ public class DummyApiService implements ApiService {
      * @param isSearched to define if it's a nearby search or a search.
      * @param map current Google Maps
      */
-    //TODO isSearched maybe useless.
     public void updateMarkerOnMap(boolean isSearched, GoogleMap map) {
         for (Restaurant restaurantFound : getRestaurant()) {
             MarkerOptions options = new MarkerOptions();
