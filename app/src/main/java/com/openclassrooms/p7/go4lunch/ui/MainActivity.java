@@ -2,9 +2,9 @@ package com.openclassrooms.p7.go4lunch.ui;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,10 +19,17 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -37,13 +44,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.repository.PushNotificationService;
+import com.openclassrooms.p7.go4lunch.notification.PushNotificationService;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -55,6 +63,7 @@ public class MainActivity extends AppCompatActivity{
     private ActivityMainBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
     private HandleData mHandleData;
+    private NotificationManagerCompat notificationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +77,17 @@ public class MainActivity extends AppCompatActivity{
         this.configureListeners();
         this.updateHeader();
         this.initViewModelAndService();
+        notificationManager = NotificationManagerCompat.from(this);
+
+        Data data = new Data.Builder()
+                .putString("user_id", mViewModel.getCurrentUser().getUid())
+                .build();
+
+        PushNotificationService.periodicRequest(data, this);
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
     }
 
     private void configureViewBinding() {

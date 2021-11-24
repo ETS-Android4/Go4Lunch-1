@@ -308,6 +308,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         @Override
         protected void onPostExecute(List<HashMap<String, String>> hashMaps) {
             mMap.clear();
+            mApiService.getRestaurant().clear();
 //            for (int i = 0; i < hashMaps.size(); i++) {
             //TODO just for save some request.
             for (int i = 0; i < 3; i++) {

@@ -1,5 +1,7 @@
 package com.openclassrooms.p7.go4lunch.service;
 
+import static com.openclassrooms.p7.go4lunch.ui.DetailActivity.LIKE_BTN_TAG;
+import static com.openclassrooms.p7.go4lunch.ui.MainActivity.CURRENT_USER_ID;
 import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
 
 import android.content.Context;
@@ -20,7 +22,6 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
-import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -93,19 +94,22 @@ public class DummyApiService implements ApiService {
 
     /**
      * Make a UserAndRestaurantList with all User contains Restaurant found nearby.
-     * @param restaurant restaurant found in nearby search.
+     * @param userId current user id.
+     * @param restaurantId current restaurant id.
+     * @return current userAndRestaurant.
      */
     @Override
-    public void makeUserAndRestaurantList(Restaurant restaurant) {
-        UserAndRestaurant userAndRestaurant;
-        for (int index = 0;index < getUsers().size();index++) {
-            if (getUsers().get(index).getUserAndRestaurant() != null){
-                userAndRestaurant = getUsers().get(index).getUserAndRestaurant().get(restaurant.getId());
-                if (userAndRestaurant != null) {
-                    addUserAndRestaurant(userAndRestaurant);
-                }
+    public UserAndRestaurant searchUserAndRestaurantById(String userId, String restaurantId) {
+        UserAndRestaurant userAndRestaurantFound = null;
+        for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
+            if (
+                    userAndRestaurant.getUserId().equals(userId) &&
+                    userAndRestaurant.getRestaurantId().equals(restaurantId)
+            ) {
+                userAndRestaurantFound = userAndRestaurant;
             }
         }
+        return userAndRestaurantFound;
     }
 
     /**
@@ -242,7 +246,7 @@ public class DummyApiService implements ApiService {
                     currentRestaurantId.equals(getUserAndRestaurant().get(index).getRestaurantId()) &&
                             currentUserId.equals(getUserAndRestaurant().get(index).getUserId())
             ) {
-                if (buttonId == DetailActivity.LIKE_BTN_TAG) {
+                if (buttonId == LIKE_BTN_TAG) {
                     getUserAndRestaurant().get(index).setFavorite(!getUserAndRestaurant().get(index).isFavorite());
                 } else {
                     getUserAndRestaurant().get(index).setSelected(!getUserAndRestaurant().get(index).isSelected());
@@ -269,25 +273,27 @@ public class DummyApiService implements ApiService {
 
     /**
      * Call to know how many users are interested at current Restaurant for the ListViewFragment and the DetailsActivity RecyclerView.
+     * First we search the userId corresponding to the restaurant selected.
+     * Second we looking for the user with his id and add him to the list.
      * @param currentUserId current User id.
      * @param currentRestaurant Restaurant to compare with UserAndRestaurant.
      * @return List of User interested at the Restaurant.
      */
     @Override
     public List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurant) {
-        List<User> userList = new ArrayList<>();
-        for (UserAndRestaurant userAndRestaurants : getUserAndRestaurant()) {
-            if (
-                    userAndRestaurants.isSelected() &&
-                    !currentUserId.equals(userAndRestaurants.getUserId()) &&
-                    currentRestaurant.getId().equals(userAndRestaurants.getRestaurantId())
+        List<User> usersInterested = new ArrayList<>();
+        for (UserAndRestaurant restaurantSelected : getUserAndRestaurant()) {
+            if ( // restaurant est selectionné, != userId, == restaurantId
+                    restaurantSelected.isSelected() &&
+                    !currentUserId.equals(restaurantSelected.getUserId()) &&
+                    currentRestaurant.getId().equals(restaurantSelected.getRestaurantId())
             ) {
-                User user = searchUserById(userAndRestaurants.getUserId());
-                userList.add(user);
+                User user = searchUserById(restaurantSelected.getUserId());
+                usersInterested.add(user);
             }
         }
-        currentRestaurant.setNumberOfFriendInterested(userList.size());
-        return userList;
+        currentRestaurant.setNumberOfFriendInterested(usersInterested.size());
+        return usersInterested;
     }
 
     /**
@@ -517,9 +523,13 @@ public class DummyApiService implements ApiService {
     @Override
     public String makeUserFirstName(String userName) {
         int i = userName.indexOf(' ');
-        String firstName = userName.substring(0, i);
-        char[] firstNameArray = firstName.toCharArray();
-        firstNameArray[0] = Character.toUpperCase(firstNameArray[0]);
-        return new String(firstNameArray);
+        if (i > 0) {
+            String firstName = userName.substring(0, i);
+            char[] firstNameArray = firstName.toCharArray();
+            firstNameArray[0] = Character.toUpperCase(firstNameArray[0]);
+            return new String(firstNameArray);
+        } else {
+            return userName;
+        }
     }
 }

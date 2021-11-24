@@ -34,7 +34,7 @@ public interface ApiService {
     void deleteUser(User user);
 
     Map<String, UserAndRestaurant> makeUserAndRestaurantMap(String currentUserId);
-    void makeUserAndRestaurantList(Restaurant restaurant);
+    UserAndRestaurant searchUserAndRestaurantById(String userId, String RestaurantId);
     String makeStringOpeningHours(OpeningHours openingHours, Context context);
 
     Restaurant searchCurrentRestaurantById(String id);
