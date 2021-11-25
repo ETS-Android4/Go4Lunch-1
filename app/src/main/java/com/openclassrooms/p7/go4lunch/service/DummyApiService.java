@@ -522,4 +522,13 @@ public class DummyApiService implements ApiService {
         firstNameArray[0] = Character.toUpperCase(firstNameArray[0]);
         return new String(firstNameArray);
     }
+
+    @Override
+    public String makeInterestedFriendsString(List<User> interestedFriendList) {
+        String friendsInterested = "";
+        for (User user : interestedFriendList) {
+            friendsInterested = user.getUserName() + "\n";
+        }
+        return friendsInterested;
+    }
 }

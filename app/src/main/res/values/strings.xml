@@ -35,5 +35,7 @@
     <string name="open_at">open at</string>
     <string name="until">until</string>
     <string name="still_open_until">still open until</string>
+    <string name="channel_Name">lunch channel</string>
+    <string name="channel_description">show to user where to lunch</string>
 
 </resources>

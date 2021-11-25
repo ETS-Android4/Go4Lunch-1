@@ -2,11 +2,15 @@ package com.openclassrooms.p7.go4lunch.ui;
 
 import static android.content.ContentValues.TAG;
 
+import static com.openclassrooms.p7.go4lunch.repository.PushNotificationService.CHANNEL_ID;
+
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,9 +20,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
@@ -27,6 +35,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -34,14 +44,17 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.repository.PushNotificationService;
+import com.openclassrooms.p7.go4lunch.repository.Go4LunchWorker;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -55,7 +68,9 @@ public class MainActivity extends AppCompatActivity{
     private ActivityMainBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
     private HandleData mHandleData;
+    private NotificationManagerCompat mNotificationManager;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,11 +78,13 @@ public class MainActivity extends AppCompatActivity{
         this.configureToolbar();
         this.configureNavigationDrawer();
         this.initViewModelAndService();
+        mNotificationManager = NotificationManagerCompat.from(this);
         this.startSignActivity();
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
         this.initViewModelAndService();
+        Go4LunchWorker.uploadWorkRequest();
     }
 
     private void configureViewBinding() {
@@ -251,4 +268,5 @@ public class MainActivity extends AppCompatActivity{
     public interface HandleData {
         void onDataSelect(Place place);
     }
+
 }

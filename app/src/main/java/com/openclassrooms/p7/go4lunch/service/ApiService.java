@@ -64,4 +64,6 @@ public interface ApiService {
     void listViewComparator();
 
     String makeUserFirstName(String userName);
+
+    String makeInterestedFriendsString(List<User> interestedFriendList);
 }
