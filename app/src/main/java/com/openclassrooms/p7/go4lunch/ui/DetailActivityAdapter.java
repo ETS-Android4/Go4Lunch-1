@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAdapter.DetailActivityViewHolder> {
 
-    private final List<User> mUsers;
+    private List<User> mUsers = null;
     ApiService mApiService;
 
     public DetailActivityAdapter(Restaurant restaurant) {

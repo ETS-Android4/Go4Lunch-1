@@ -3,8 +3,6 @@ package com.openclassrooms.p7.go4lunch.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -92,7 +90,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void searchFavoriteRestaurantById() {
         if (mCurrentUser.getUserAndRestaurant() != null) {
-            mCurrentUserAndRestaurant = mCurrentUser.getUserAndRestaurant().get(CURRENT_RESTAURANT_ID);
+            mCurrentUserAndRestaurant = mApiService.searchUserAndRestaurantById(CURRENT_USER_UID, CURRENT_RESTAURANT_ID);
             if (mCurrentUserAndRestaurant != null) {
                 this.setImageAtStart();
             }
@@ -195,8 +193,8 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             setSelectedImage(!mCurrentUserAndRestaurant.isSelected());
         }
-        mApiService.likeOrSelectRestaurant(CURRENT_USER_UID, CURRENT_RESTAURANT_ID, buttonId);
-        mUserAndRestaurantViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID));
+            mApiService.likeOrSelectRestaurant(CURRENT_USER_UID, CURRENT_RESTAURANT_ID, buttonId);
+            mUserAndRestaurantViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID));
     }
 
     private void createFavoriteOrSelectedRestaurant(int buttonId) {

@@ -1,6 +1,11 @@
 package com.openclassrooms.p7.go4lunch.repository;
 
+import static android.content.ContentValues.TAG;
+
+import static com.openclassrooms.p7.go4lunch.ui.DetailActivity.LIKE_BTN_TAG;
+
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -18,7 +23,9 @@ import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -73,7 +80,7 @@ public final class UserRepository {
      * Call to get the collection where user is store in Firestore.
      * @return Collection reference.
      */
-    private CollectionReference getUsersCollection() { return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME); }
+    public CollectionReference getUsersCollection() { return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME); }
 
     /**
      * Call a task to do a request to the collection where current user.
@@ -82,6 +89,10 @@ public final class UserRepository {
     private Task<DocumentSnapshot> getUserData() {
         String uid = Objects.requireNonNull(this.getCurrentUser()).getUid();
         return this.getUsersCollection().document(uid).get();
+    }
+
+    public Task<DocumentSnapshot> getUserData(String userId) {
+        return this.getUsersCollection().document(userId).get();
     }
 
     /**
@@ -124,10 +135,13 @@ public final class UserRepository {
         Objects.requireNonNull(this.getUserDataCollection()).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 apiService.getUsers().clear();
+                apiService.getUserAndRestaurant().clear();
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                         User user = documentSnapshot.toObject(User.class);
                         apiService.addUser(user);
-
+                        for (Map.Entry<String, UserAndRestaurant> mapEntry : user.getUserAndRestaurant().entrySet()) {
+                            apiService.addUserAndRestaurant(mapEntry.getValue());
+                        }
                     }
             }
         });
@@ -139,15 +153,7 @@ public final class UserRepository {
      * @param likedOrSelectedRestaurant Map with the new content.
      */
     public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
-        getUsersCollection().document(currentUserID).get().addOnCompleteListener(task -> {
-           if (task.isSuccessful()) {
-               DocumentSnapshot documentSnapshot = task.getResult();
-               User user = documentSnapshot.toObject(User.class);
-               user.getUserAndRestaurant().putAll(likedOrSelectedRestaurant);
-               this.getUsersCollection().document(currentUserID).update("userAndRestaurant", user.getUserAndRestaurant());
-           }
-        });
-
+               this.getUsersCollection().document(currentUserID).update("userAndRestaurant", likedOrSelectedRestaurant);
     }
 
     /**

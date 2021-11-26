@@ -2,15 +2,11 @@ package com.openclassrooms.p7.go4lunch.ui;
 
 import static android.content.ContentValues.TAG;
 
-import static com.openclassrooms.p7.go4lunch.repository.PushNotificationService.CHANNEL_ID;
-
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,24 +15,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
+import androidx.work.Data;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -44,19 +38,17 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.repository.Go4LunchWorker;
+import com.openclassrooms.p7.go4lunch.notification.PushNotificationService;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
-import java.time.Duration;
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Objects;
+
 
 public class MainActivity extends AppCompatActivity{
 
@@ -68,9 +60,8 @@ public class MainActivity extends AppCompatActivity{
     private ActivityMainBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
     private HandleData mHandleData;
-    private NotificationManagerCompat mNotificationManager;
+    private NotificationManagerCompat notificationManager;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,19 +69,11 @@ public class MainActivity extends AppCompatActivity{
         this.configureToolbar();
         this.configureNavigationDrawer();
         this.initViewModelAndService();
-        mNotificationManager = NotificationManagerCompat.from(this);
         this.startSignActivity();
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
-        this.initViewModelAndService();
-        Go4LunchWorker.uploadWorkRequest();
-    }
-
-    private void configureViewBinding() {
-        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
-        View root = mBinding.getRoot();
-        setContentView(root);
+        this.initNotification();
     }
 
     @Override
@@ -113,6 +96,12 @@ public class MainActivity extends AppCompatActivity{
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
+    }
+
+    private void configureViewBinding() {
+        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        View root = mBinding.getRoot();
+        setContentView(root);
     }
 
     private void configureToolbar() {
@@ -138,12 +127,63 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    private void startSignActivity() {
+        if (!mViewModel.isCurrentUserLogged()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+
     private void configureViewPager() {
         mBinding.activityMainViewpager.setUserInputEnabled(false);
         FragmentManager fragmentManager = getSupportFragmentManager();
         PageAdapter mAdapter = new PageAdapter(fragmentManager, getLifecycle());
         mBinding.activityMainViewpager.setAdapter(mAdapter);
         this.setTabLayoutName();
+    }
+
+    private void configureListeners() {
+        mBinding.activityMainNavigationView.setNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.your_lunch:
+
+                case R.id.settings:
+                    openSettingPopup();
+                    break;
+                case R.id.logout:
+                    mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
+                    break;
+            }
+            return true;
+        });
+    }
+
+    private void openSettingPopup() {
+        AlertDialog.Builder settingPopup = new AlertDialog.Builder(MainActivity.this);
+        settingPopup
+                .setView(R.layout.setting_popup)
+                .setIcon(R.drawable.login_meal_icon)
+                .setPositiveButton("YES", (dialog, which) -> {
+                    Toast.makeText(this, "tu as validé", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("NO", (dialog, which) -> {
+                    Toast.makeText(this, "tu n'as pas validé", Toast.LENGTH_SHORT).show();
+                })
+                .show();
+    }
+
+    private void updateHeader() {
+        if (mViewModel.isCurrentUserLogged()) {
+            FirebaseUser user = mViewModel.getCurrentUser();
+            if (user.getPhotoUrl() != null) {
+                setUserPicture(user.getPhotoUrl());
+            }
+            this.setTextUserData(user);
+        }
+    }
+
+    private void initNotification() {
+        PushNotificationService.oneTimeRequest(getApplicationContext());
     }
 
     private void setTabLayoutName() {
@@ -182,39 +222,6 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
-    private void configureListeners() {
-        mBinding.activityMainNavigationView.setNavigationItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.your_lunch:
-
-                case R.id.settings:
-
-                case R.id.logout:
-                    mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
-
-                default: return true;
-            }
-
-        });
-    }
-
-    private void startSignActivity() {
-        if (!mViewModel.isCurrentUserLogged()) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        }
-    }
-
-    private void updateHeader() {
-        if (mViewModel.isCurrentUserLogged()) {
-            FirebaseUser user = mViewModel.getCurrentUser();
-            if (user.getPhotoUrl() != null) {
-                setUserPicture(user.getPhotoUrl());
-            }
-            this.setTextUserData(user);
-        }
-    }
-
     private void setUserPicture(Uri photoUrl) {
         Glide.with(this)
                 .load(photoUrl)
@@ -233,6 +240,7 @@ public class MainActivity extends AppCompatActivity{
     private void initLists() {
         mViewModel.getUsersDataList();
     }
+
 
     public void startAutocompleteActivity(MenuItem item) {
         ApiService apiService = DI.getRestaurantApiService();
