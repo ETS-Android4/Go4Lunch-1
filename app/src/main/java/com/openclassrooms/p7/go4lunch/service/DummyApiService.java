@@ -1,5 +1,7 @@
 package com.openclassrooms.p7.go4lunch.service;
 
+import static com.openclassrooms.p7.go4lunch.ui.DetailActivity.LIKE_BTN_TAG;
+import static com.openclassrooms.p7.go4lunch.ui.MainActivity.CURRENT_USER_ID;
 import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
 
 import android.content.Context;
@@ -20,7 +22,6 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
-import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -91,21 +92,43 @@ public class DummyApiService implements ApiService {
         return userAndRestaurantMap;
     }
 
+    @Override
+    public Map<String, UserAndRestaurant> makeUserAndRestaurantMap(Restaurant restaurant, int buttonId) {
+        Map<String, UserAndRestaurant> userAndRestaurantMap = new HashMap<>();
+        boolean isFavorite = false, isSelected = false;
+        if (buttonId == LIKE_BTN_TAG){
+            isFavorite = true;
+        } else {
+            isSelected = true;
+        }
+        userAndRestaurantMap.put(restaurant.getId(), new UserAndRestaurant(
+                CURRENT_USER_ID,
+                restaurant.getId(),
+                restaurant.getName(),
+                isFavorite,
+                isSelected
+        ));
+        return userAndRestaurantMap;
+    }
+
     /**
      * Make a UserAndRestaurantList with all User contains Restaurant found nearby.
-     * @param restaurant restaurant found in nearby search.
+     * @param userId current user id.
+     * @param restaurantId current restaurant id.
+     * @return current userAndRestaurant.
      */
     @Override
-    public void makeUserAndRestaurantList(Restaurant restaurant) {
-        UserAndRestaurant userAndRestaurant;
-        for (int index = 0;index < getUsers().size();index++) {
-            if (getUsers().get(index).getUserAndRestaurant() != null){
-                userAndRestaurant = getUsers().get(index).getUserAndRestaurant().get(restaurant.getId());
-                if (userAndRestaurant != null) {
-                    addUserAndRestaurant(userAndRestaurant);
-                }
+    public UserAndRestaurant searchUserAndRestaurantById(String userId, String restaurantId) {
+        UserAndRestaurant userAndRestaurantFound = null;
+        for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
+            if (
+                    userAndRestaurant.getUserId().equals(userId) &&
+                    userAndRestaurant.getRestaurantId().equals(restaurantId)
+            ) {
+                userAndRestaurantFound = userAndRestaurant;
             }
         }
+        return userAndRestaurantFound;
     }
 
     /**
@@ -242,7 +265,7 @@ public class DummyApiService implements ApiService {
                     currentRestaurantId.equals(getUserAndRestaurant().get(index).getRestaurantId()) &&
                             currentUserId.equals(getUserAndRestaurant().get(index).getUserId())
             ) {
-                if (buttonId == DetailActivity.LIKE_BTN_TAG) {
+                if (buttonId == LIKE_BTN_TAG) {
                     getUserAndRestaurant().get(index).setFavorite(!getUserAndRestaurant().get(index).isFavorite());
                 } else {
                     getUserAndRestaurant().get(index).setSelected(!getUserAndRestaurant().get(index).isSelected());

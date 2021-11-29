@@ -1,6 +1,11 @@
 package com.openclassrooms.p7.go4lunch.repository;
 
+import static android.content.ContentValues.TAG;
+
+import static com.openclassrooms.p7.go4lunch.ui.DetailActivity.LIKE_BTN_TAG;
+
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -18,7 +23,9 @@ import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -84,6 +91,10 @@ public final class UserRepository {
         return this.getUsersCollection().document(uid).get();
     }
 
+    public Task<DocumentSnapshot> getUserData(String userId) {
+        return this.getUsersCollection().document(userId).get();
+    }
+
     /**
      * Call a task to do a request to get all users in Firestore.
      * @return A query task.
@@ -127,7 +138,9 @@ public final class UserRepository {
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                         User user = documentSnapshot.toObject(User.class);
                         apiService.addUser(user);
-
+                        for (Map.Entry<String, UserAndRestaurant> mapEntry : user.getUserAndRestaurant().entrySet()) {
+                            apiService.addUserAndRestaurant(mapEntry.getValue());
+                        }
                     }
             }
         });
@@ -137,12 +150,19 @@ public final class UserRepository {
      * Update current user Map. Fetch Stored Map , add new content to the previous map and update user Map to avoid erase previous content.
      * @param currentUserID Id of the current user.
      * @param likedOrSelectedRestaurant Map with the new content.
+     * @param buttonId
      */
-    public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
+    public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant, int buttonId) {
+        ApiService apiService = DI.getRestaurantApiService();
         getUsersCollection().document(currentUserID).get().addOnCompleteListener(task -> {
            if (task.isSuccessful()) {
                DocumentSnapshot documentSnapshot = task.getResult();
                User user = documentSnapshot.toObject(User.class);
+               if (buttonId != LIKE_BTN_TAG) {
+                   for (Map.Entry<String, UserAndRestaurant> entry : user.getUserAndRestaurant().entrySet()) {
+                       user.getUserAndRestaurant().get(entry.getKey()).setSelected(false);
+                   }
+               }
                user.getUserAndRestaurant().putAll(likedOrSelectedRestaurant);
                this.getUsersCollection().document(currentUserID).update("userAndRestaurant", user.getUserAndRestaurant());
            }

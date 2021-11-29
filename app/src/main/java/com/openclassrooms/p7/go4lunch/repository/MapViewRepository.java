@@ -125,7 +125,7 @@ public class MapViewRepository {
         getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
             Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
             mApiService.getRestaurant().add(restaurant);
-            mApiService.makeUserAndRestaurantList(restaurant);
+//            mApiService.makeUserAndRestaurantList(restaurant);
             mApiService.setMarkerOnMap(restaurant, map, false);
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {

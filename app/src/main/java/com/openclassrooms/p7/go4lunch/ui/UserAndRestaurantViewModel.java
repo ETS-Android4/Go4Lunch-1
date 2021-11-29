@@ -25,7 +25,7 @@ public class UserAndRestaurantViewModel extends androidx.lifecycle.ViewModel {
     }
     public FirebaseUser getCurrentUser() { return userDataSource.getCurrentUser(); }
     public void getUsersDataList() { userDataSource.getUsersDataList(); }
-    public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) { userDataSource.updateUser(currentUserID, likedOrSelectedRestaurant);}
+    public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant, int buttonId) { userDataSource.updateUser(currentUserID, likedOrSelectedRestaurant, buttonId);}
     public Task<Void> deleteUser(Context context) { return userDataSource.deleteUser(context); }
     public Boolean isCurrentUserLogged() {
         return (this.getCurrentUser() != null);
