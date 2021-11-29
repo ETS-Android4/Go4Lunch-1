@@ -1,8 +1,7 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
-import static android.content.ContentValues.TAG;
+    import static android.content.ContentValues.TAG;
 
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -15,21 +14,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
-import androidx.work.Constraints;
-import androidx.work.Data;
-import androidx.work.NetworkType;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -51,7 +46,7 @@ import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
+
 
 public class MainActivity extends AppCompatActivity{
 
@@ -76,24 +71,8 @@ public class MainActivity extends AppCompatActivity{
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
-        this.initViewModelAndService();
-        notificationManager = NotificationManagerCompat.from(this);
+        this.initNotification();
 
-        Data data = new Data.Builder()
-                .putString("user_id", mViewModel.getCurrentUser().getUid())
-                .build();
-
-        PushNotificationService.periodicRequest(data, this);
-
-        Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-    }
-
-    private void configureViewBinding() {
-        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
-        View root = mBinding.getRoot();
-        setContentView(root);
     }
 
     @Override
@@ -116,6 +95,12 @@ public class MainActivity extends AppCompatActivity{
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
+    }
+
+    private void configureViewBinding() {
+        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        View root = mBinding.getRoot();
+        setContentView(root);
     }
 
     private void configureToolbar() {
@@ -141,12 +126,65 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    private void startSignActivity() {
+        if (!mViewModel.isCurrentUserLogged()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+
     private void configureViewPager() {
         mBinding.activityMainViewpager.setUserInputEnabled(false);
         FragmentManager fragmentManager = getSupportFragmentManager();
         PageAdapter mAdapter = new PageAdapter(fragmentManager, getLifecycle());
         mBinding.activityMainViewpager.setAdapter(mAdapter);
         this.setTabLayoutName();
+    }
+
+    private void configureListeners() {
+        mBinding.activityMainNavigationView.setNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.your_lunch:
+
+                case R.id.settings:
+                    openSettingPopup();
+                    break;
+                case R.id.logout:
+                    mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
+                    break;
+            }
+            return true;
+        });
+    }
+
+    private void openSettingPopup() {
+        AlertDialog.Builder settingPopup = new AlertDialog.Builder(MainActivity.this);
+        settingPopup
+                .setView(R.layout.setting_popup)
+                .setIcon(R.drawable.login_meal_icon)
+                .setPositiveButton("Save & exit", (dialog, which) -> {
+                    Toast.makeText(this, "tu as validé", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    Toast.makeText(this, "tu n'as pas validé", Toast.LENGTH_SHORT).show();
+                })
+                .show();
+    }
+
+
+
+    private void updateHeader() {
+        if (mViewModel.isCurrentUserLogged()) {
+            FirebaseUser user = mViewModel.getCurrentUser();
+            if (user.getPhotoUrl() != null) {
+                setUserPicture(user.getPhotoUrl());
+            }
+            this.setTextUserData(user);
+        }
+    }
+
+    private void initNotification() {
+        PushNotificationService.oneTimeRequest(getApplicationContext());
     }
 
     private void setTabLayoutName() {
@@ -185,39 +223,6 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
-    private void configureListeners() {
-        mBinding.activityMainNavigationView.setNavigationItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.your_lunch:
-
-                case R.id.settings:
-
-                case R.id.logout:
-                    mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
-
-                default: return true;
-            }
-
-        });
-    }
-
-    private void startSignActivity() {
-        if (!mViewModel.isCurrentUserLogged()) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        }
-    }
-
-    private void updateHeader() {
-        if (mViewModel.isCurrentUserLogged()) {
-            FirebaseUser user = mViewModel.getCurrentUser();
-            if (user.getPhotoUrl() != null) {
-                setUserPicture(user.getPhotoUrl());
-            }
-            this.setTextUserData(user);
-        }
-    }
-
     private void setUserPicture(Uri photoUrl) {
         Glide.with(this)
                 .load(photoUrl)
@@ -236,6 +241,7 @@ public class MainActivity extends AppCompatActivity{
     private void initLists() {
         mViewModel.getUsersDataList();
     }
+
 
     public void startAutocompleteActivity(MenuItem item) {
         ApiService apiService = DI.getRestaurantApiService();
@@ -271,4 +277,5 @@ public class MainActivity extends AppCompatActivity{
     public interface HandleData {
         void onDataSelect(Place place);
     }
+
 }

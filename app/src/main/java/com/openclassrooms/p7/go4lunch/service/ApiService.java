@@ -34,7 +34,6 @@ public interface ApiService {
     void deleteUser(User user);
 
     Map<String, UserAndRestaurant> makeUserAndRestaurantMap(String currentUserId);
-    Map<String, UserAndRestaurant> makeUserAndRestaurantMap(Restaurant restaurant, int buttonId);
     UserAndRestaurant searchUserAndRestaurantById(String userId, String RestaurantId);
     String makeStringOpeningHours(OpeningHours openingHours, Context context);
 
@@ -45,6 +44,8 @@ public interface ApiService {
     UserAndRestaurant searchSelectedRestaurant(User user);
 
     List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurantId);
+    List<User> getUsersInterestedAtCurrentRestaurant(String uid);
+    UserAndRestaurant getCurrentuserSelectedRestaurant(User currentUserId);
     void filterUsersInterestedAtCurrentRestaurant();
 
     int setRatingStars(int index, double rating);
@@ -65,4 +66,8 @@ public interface ApiService {
     void listViewComparator();
 
     String makeUserFirstName(String userName);
+
+    String makeInterestedFriendsString(List<User> interestedFriendList);
+
+
 }

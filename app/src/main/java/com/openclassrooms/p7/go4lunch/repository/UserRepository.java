@@ -80,7 +80,7 @@ public final class UserRepository {
      * Call to get the collection where user is store in Firestore.
      * @return Collection reference.
      */
-    private CollectionReference getUsersCollection() { return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME); }
+    public CollectionReference getUsersCollection() { return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME); }
 
     /**
      * Call a task to do a request to the collection where current user.
@@ -135,6 +135,7 @@ public final class UserRepository {
         Objects.requireNonNull(this.getUserDataCollection()).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 apiService.getUsers().clear();
+                apiService.getUserAndRestaurant().clear();
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                         User user = documentSnapshot.toObject(User.class);
                         apiService.addUser(user);
@@ -150,24 +151,9 @@ public final class UserRepository {
      * Update current user Map. Fetch Stored Map , add new content to the previous map and update user Map to avoid erase previous content.
      * @param currentUserID Id of the current user.
      * @param likedOrSelectedRestaurant Map with the new content.
-     * @param buttonId
      */
-    public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant, int buttonId) {
-        ApiService apiService = DI.getRestaurantApiService();
-        getUsersCollection().document(currentUserID).get().addOnCompleteListener(task -> {
-           if (task.isSuccessful()) {
-               DocumentSnapshot documentSnapshot = task.getResult();
-               User user = documentSnapshot.toObject(User.class);
-               if (buttonId != LIKE_BTN_TAG) {
-                   for (Map.Entry<String, UserAndRestaurant> entry : user.getUserAndRestaurant().entrySet()) {
-                       user.getUserAndRestaurant().get(entry.getKey()).setSelected(false);
-                   }
-               }
-               user.getUserAndRestaurant().putAll(likedOrSelectedRestaurant);
-               this.getUsersCollection().document(currentUserID).update("userAndRestaurant", user.getUserAndRestaurant());
-           }
-        });
-
+    public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
+               this.getUsersCollection().document(currentUserID).update("userAndRestaurant", likedOrSelectedRestaurant);
     }
 
     /**

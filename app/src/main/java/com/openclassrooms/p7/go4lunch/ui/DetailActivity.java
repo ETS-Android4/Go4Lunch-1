@@ -194,7 +194,8 @@ public class DetailActivity extends AppCompatActivity {
             setSelectedImage(!mCurrentUserAndRestaurant.isSelected());
         }
             mApiService.likeOrSelectRestaurant(CURRENT_USER_UID, CURRENT_RESTAURANT_ID, buttonId);
-            mUserAndRestaurantViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID), buttonId);
+            mUserAndRestaurantViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID));
+
     }
 
     private void createFavoriteOrSelectedRestaurant(int buttonId) {
@@ -212,7 +213,7 @@ public class DetailActivity extends AppCompatActivity {
                 selected
         );
         mApiService.getUserAndRestaurant().add(userAndRestaurant);
-        mUserAndRestaurantViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID), buttonId);
+        mUserAndRestaurantViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID));
         mCurrentUserAndRestaurant = userAndRestaurant;
         setFavoriteImage(favorite);
         setSelectedImage(selected);

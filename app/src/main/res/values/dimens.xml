@@ -15,4 +15,5 @@
     <dimen name="nav_drawer_meal_icon_margin_horizontal">90dp</dimen>
     <dimen name="nav_drawer_meal_icon_width">120dp</dimen>
     <dimen name="nav_drawer_meal_icon_height">@dimen/nav_drawer_meal_icon_width</dimen>
+    <dimen name="setting_popup_text_normal_size">20sp</dimen>
 </resources>

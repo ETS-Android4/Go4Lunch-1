@@ -1,7 +1,6 @@
 package com.openclassrooms.p7.go4lunch.service;
 
 import static com.openclassrooms.p7.go4lunch.ui.DetailActivity.LIKE_BTN_TAG;
-import static com.openclassrooms.p7.go4lunch.ui.MainActivity.CURRENT_USER_ID;
 import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
 
 import android.content.Context;
@@ -89,25 +88,6 @@ public class DummyApiService implements ApiService {
                 userAndRestaurantMap.put(userAndRestaurant.getRestaurantId(), userAndRestaurant);
             }
         }
-        return userAndRestaurantMap;
-    }
-
-    @Override
-    public Map<String, UserAndRestaurant> makeUserAndRestaurantMap(Restaurant restaurant, int buttonId) {
-        Map<String, UserAndRestaurant> userAndRestaurantMap = new HashMap<>();
-        boolean isFavorite = false, isSelected = false;
-        if (buttonId == LIKE_BTN_TAG){
-            isFavorite = true;
-        } else {
-            isSelected = true;
-        }
-        userAndRestaurantMap.put(restaurant.getId(), new UserAndRestaurant(
-                CURRENT_USER_ID,
-                restaurant.getId(),
-                restaurant.getName(),
-                isFavorite,
-                isSelected
-        ));
         return userAndRestaurantMap;
     }
 
@@ -292,25 +272,55 @@ public class DummyApiService implements ApiService {
 
     /**
      * Call to know how many users are interested at current Restaurant for the ListViewFragment and the DetailsActivity RecyclerView.
+     * First we search the userId corresponding to the restaurant selected.
+     * Second we looking for the user with his id and add him to the list.
      * @param currentUserId current User id.
      * @param currentRestaurant Restaurant to compare with UserAndRestaurant.
      * @return List of User interested at the Restaurant.
      */
     @Override
     public List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurant) {
-        List<User> userList = new ArrayList<>();
-        for (UserAndRestaurant userAndRestaurants : getUserAndRestaurant()) {
+        List<User> usersInterested = new ArrayList<>();
+        for (UserAndRestaurant restaurantSelected : getUserAndRestaurant()) {
             if (
-                    userAndRestaurants.isSelected() &&
-                    !currentUserId.equals(userAndRestaurants.getUserId()) &&
-                    currentRestaurant.getId().equals(userAndRestaurants.getRestaurantId())
+                    restaurantSelected.isSelected() &&
+                    !currentUserId.equals(restaurantSelected.getUserId()) &&
+                    currentRestaurant.getId().equals(restaurantSelected.getRestaurantId())
             ) {
-                User user = searchUserById(userAndRestaurants.getUserId());
-                userList.add(user);
+                User user = searchUserById(restaurantSelected.getUserId());
+                usersInterested.add(user);
             }
         }
-        currentRestaurant.setNumberOfFriendInterested(userList.size());
-        return userList;
+        currentRestaurant.setNumberOfFriendInterested(usersInterested.size());
+        return usersInterested;
+    }
+
+    public List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId) {
+        List<User> usersInterested = new ArrayList<>();
+        for (UserAndRestaurant restaurantSelected : getUserAndRestaurant()) {
+            if (
+                    restaurantSelected.isSelected() &&
+                            !currentUserId.equals(restaurantSelected.getUserId())
+            ) {
+                User user = searchUserById(restaurantSelected.getUserId());
+                usersInterested.add(user);
+            }
+        }
+        return usersInterested;
+    }
+
+    //TODO comments
+    @Override
+    public UserAndRestaurant getCurrentuserSelectedRestaurant(User user) {
+        for (Map.Entry<String, UserAndRestaurant> userAndRestaurant : user.getUserAndRestaurant().entrySet()) {
+            if (
+                    userAndRestaurant.getValue().getUserId().equals(user.getUid()) &&
+                    userAndRestaurant.getValue().isSelected()
+            ) {
+                return userAndRestaurant.getValue();
+            }
+        }
+        return null;
     }
 
     /**
@@ -382,6 +392,7 @@ public class DummyApiService implements ApiService {
     public int setMarkerIcon(String placeId, boolean isSearched, LatLng restaurantPosition, GoogleMap mMap) {
         for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
             if (userAndRestaurant.getRestaurantId().equals(placeId) && userAndRestaurant.isSelected() && !isSearched) {
+                //TODO these marker still here even the restaurant is deselected.
                 return R.drawable.baseline_place_cyan;
             }
             if (isSearched) {
@@ -540,9 +551,22 @@ public class DummyApiService implements ApiService {
     @Override
     public String makeUserFirstName(String userName) {
         int i = userName.indexOf(' ');
-        String firstName = userName.substring(0, i);
-        char[] firstNameArray = firstName.toCharArray();
-        firstNameArray[0] = Character.toUpperCase(firstNameArray[0]);
-        return new String(firstNameArray);
+        if (i > 0) {
+            String firstName = userName.substring(0, i);
+            char[] firstNameArray = firstName.toCharArray();
+            firstNameArray[0] = Character.toUpperCase(firstNameArray[0]);
+            return new String(firstNameArray);
+        } else {
+            return userName;
+        }
+    }
+
+    @Override
+    public String makeInterestedFriendsString(List<User> interestedFriendList) {
+        String friendsInterested = "";
+        for (User user : interestedFriendList) {
+            friendsInterested = friendsInterested + "\n" + makeUserFirstName(user.getUserName());
+        }
+        return friendsInterested;
     }
 }

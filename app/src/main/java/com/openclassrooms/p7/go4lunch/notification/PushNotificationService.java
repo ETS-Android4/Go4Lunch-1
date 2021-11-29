@@ -1,11 +1,7 @@
 package com.openclassrooms.p7.go4lunch.notification;
 
-import static android.app.Application.getProcessName;
-import static android.content.ContentValues.TAG;
-
 import static com.openclassrooms.p7.go4lunch.notification.Notification.CHANNEL_ID;
 
-import android.app.Application;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -15,62 +11,74 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.lifecycle.ViewModelProvider;
+
 import androidx.work.Constraints;
-import androidx.work.Data;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
-import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
+import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
-import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
+import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 
-public class PushNotificationService extends Worker {
+
+public class PushNotificationService extends Worker{
+
+    private static final String ONE_TIME_WORK_TAG = "lunch_alert";
+    private static final String TAG = PushNotificationService.class.getName();
+    private Context mContext;
+    private WorkManager mWorkManager;
+    private UserRepository mUserDataSource = UserRepository.getInstance();
+
 
     public PushNotificationService(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        mContext = context;
+        mWorkManager = WorkManager.getInstance(context);
+
     }
 
     @NonNull
     @Override
     public Result doWork() {
-        Data inputData = getInputData();
-        String userId = inputData.getString("user_id");
-        UserRepository userDataSource = UserRepository.getInstance();
-        userDataSource.getUserData(userId).addOnCompleteListener(task -> {
-            DocumentSnapshot documentSnapshot = task.getResult();
-            User user = documentSnapshot.toObject(User.class);
-            createNotification(Objects.requireNonNull(user));
-        });
+        String userId = Objects.requireNonNull(mUserDataSource.getCurrentUser()).getUid();
+//        Task task = mUserDataSource.getUsersCollection().document(Objects.requireNonNull(userId)).get();
+//        DocumentSnapshot documentSnapshot = (DocumentSnapshot) task.getResult();
+//        User user = documentSnapshot.toObject(User.class);
+        mUserDataSource.getUsersDataList();
+        createNotification(userId);
         return Result.success();
     }
 
-    private void createNotification(User user) {
+    private void createNotification(String userId) {
         ApiService apiService = DI.getRestaurantApiService();
+        User user = apiService.searchUserById(userId);
         String userName = apiService.makeUserFirstName(user.getUserName());
+        UserAndRestaurant userAndRestaurantSelected = apiService.getCurrentuserSelectedRestaurant(user);
+        List<User> interestedFriends = apiService.getUsersInterestedAtCurrentRestaurant(user.getUid());
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
         Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.drawable.meal_v2_half_size)
-                .setContentTitle("il est midi " + user.getUserName())
-                .setContentText("l'index actuel est le: ")
+                .setContentTitle("It's 12am " + userName)
+                .setContentText("you have chosen to eat at " + userAndRestaurantSelected.getRestaurantName())
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText( "Friends that come with you:" + apiService.makeInterestedFriendsString(interestedFriends))
+                        .setBigContentTitle("It's 12am"))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setContentIntent(pendingIntent)
@@ -79,20 +87,32 @@ public class PushNotificationService extends Worker {
         notificationManagerCompat.notify(1, notification);
     }
 
-    public static void periodicRequest(Data data, Context context) {
-        PeriodicWorkRequest downloadRequest = new PeriodicWorkRequest.Builder(PushNotificationService.class, 15, TimeUnit.MINUTES)
-                .setInputData(data)
-//                .setConstraints(setConstraints)
-//                .setInitialDelay(10, TimeUnit.SECONDS)
-                .addTag("download")
+    public static void oneTimeRequest(Context context) {
+        long timeDiff = setTimeUntilBeginWork();
+        OneTimeWorkRequest timeToLunch = new OneTimeWorkRequest.Builder(PushNotificationService.class)
+                .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
+                .addTag(ONE_TIME_WORK_TAG)
                 .build();
+        WorkManager.getInstance(context).enqueue(timeToLunch);
+        }
 
-        WorkManager.getInstance(context).enqueue(downloadRequest);
+    public static long setTimeUntilBeginWork() {
+        Calendar calendar = Calendar.getInstance();
+        Calendar currentDate = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        if (calendar.before(currentDate)) {
+            calendar.add(Calendar.HOUR_OF_DAY,24);
+        }
+        return calendar.getTimeInMillis() - currentDate.getTimeInMillis();
     }
 
-    public Constraints setConstrains() {
+
+    public static Constraints setConstrains() {
         Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresBatteryNotLow(true)
                 .build();
 
         return constraints;

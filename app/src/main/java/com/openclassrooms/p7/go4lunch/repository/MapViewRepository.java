@@ -2,6 +2,8 @@ package com.openclassrooms.p7.go4lunch.repository;
 
 import static android.content.ContentValues.TAG;
 
+import static com.openclassrooms.p7.go4lunch.ui.MainActivity.CURRENT_USER_ID;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -26,6 +28,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.fragment.list_view.ListViewAdapter;
 
@@ -91,6 +94,13 @@ public class MapViewRepository {
         });
     }
 
+    //TODO comments
+    public void requestForPlaceDetails(String placeId, Context context, boolean isSearched) {
+        getPlaceData(context, placeId).addOnSuccessListener((response) -> {
+            requestForPlacePhoto(response.getPlace(), context, isSearched);
+        });
+    }
+
     /**
      * Call to get a request for data
      * @param context context of the fragment.
@@ -125,7 +135,6 @@ public class MapViewRepository {
         getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
             Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
             mApiService.getRestaurant().add(restaurant);
-//            mApiService.makeUserAndRestaurantList(restaurant);
             mApiService.setMarkerOnMap(restaurant, map, false);
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
@@ -157,9 +166,23 @@ public class MapViewRepository {
         }
     }
 
+    //TODO comments
+    public void requestForPlacePhoto(Place place, Context context, boolean isSearched) {
+            getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
+                Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
+                mApiService.getRestaurant().add(restaurant);
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    Log.e(TAG, "Place not found: " + exception.getMessage());
+                }
+            });
+    }
+
+    //TODO comments
     private void createRestaurantAndShowIt(Place place, FetchPhotoResponse fetchPhotoResponse, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
         Restaurant restaurant = mApiService.createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
         mApiService.getSearchedRestaurant().clear();
+        restaurant.setNumberOfFriendInterested(mApiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, restaurant).size());
         mApiService.getSearchedRestaurant().add(restaurant);
         listViewAdapter.notifyDataSetChanged();
         mRecyclerView.setAdapter(listViewAdapter);
