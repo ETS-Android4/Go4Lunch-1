@@ -60,9 +60,9 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
             if (userAndRestaurant != null) {
-                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.is_eating_at), userAndRestaurant.getRestaurantName()));
+                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_is_eating_at), mApiService.removeRestaurantWord(userAndRestaurant.getRestaurantName())));
             } else {
-                mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.not_decided)));
+                mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_not_decided)));
             }
         }
     }

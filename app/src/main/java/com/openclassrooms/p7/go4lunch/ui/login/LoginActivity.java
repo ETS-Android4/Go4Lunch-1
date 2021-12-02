@@ -93,16 +93,16 @@ public class LoginActivity extends AppCompatActivity {
             // SUCCESS
             if (resultCode == RESULT_OK) {
 //                userManager.createUser();
-                showToastMessage(getString(R.string.connection_succeed));
+                showToastMessage(getString(R.string.login_activity_connection_succeed));
             }else {
                 // ERRORS
                 if (response == null) {
-                    showToastMessage(getString(R.string.error_authentication_canceled));
+                    showToastMessage(getString(R.string.login_activity_error_authentication_canceled));
                 } else if (response.getError() != null) {
                     if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                        showToastMessage(getString(R.string.error_no_internet));
+                        showToastMessage(getString(R.string.login_activity_error_no_internet));
                     } else if (response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                        showToastMessage(getString(R.string.error_unknow_error));
+                        showToastMessage(getString(R.string.login_activity_error_unknow_error));
                     }
                 }
             }

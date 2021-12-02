@@ -6,20 +6,21 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
 import androidx.work.Constraints;
-import androidx.work.OneTimeWorkRequest;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
@@ -29,10 +30,9 @@ import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 
 import java.util.Calendar;
-import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
 
 
 public class PushNotificationService extends Worker{
@@ -40,14 +40,12 @@ public class PushNotificationService extends Worker{
     private static final String ONE_TIME_WORK_TAG = "lunch_alert";
     private static final String TAG = PushNotificationService.class.getName();
     private Context mContext;
-    private WorkManager mWorkManager;
     private UserRepository mUserDataSource = UserRepository.getInstance();
 
 
     public PushNotificationService(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         mContext = context;
-        mWorkManager = WorkManager.getInstance(context);
 
     }
 
@@ -55,30 +53,39 @@ public class PushNotificationService extends Worker{
     @Override
     public Result doWork() {
         String userId = Objects.requireNonNull(mUserDataSource.getCurrentUser()).getUid();
-//        Task task = mUserDataSource.getUsersCollection().document(Objects.requireNonNull(userId)).get();
-//        DocumentSnapshot documentSnapshot = (DocumentSnapshot) task.getResult();
-//        User user = documentSnapshot.toObject(User.class);
-        mUserDataSource.getUsersDataList();
-        createNotification(userId);
-        return Result.success();
+        Task task = FirebaseFirestore.getInstance().collection("users").document(userId).get();
+        try {
+            DocumentSnapshot documentSnapshot = (DocumentSnapshot) Tasks.await(task);
+            User user = documentSnapshot.toObject(User.class);
+            createNotification(user);
+            return Result.success();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return Result.failure();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return Result.failure();
+        }
+
+
     }
 
-    private void createNotification(String userId) {
+    private void createNotification(User user) {
         ApiService apiService = DI.getRestaurantApiService();
-        User user = apiService.searchUserById(userId);
+//        User user = apiService.searchUserById(userId);
         String userName = apiService.makeUserFirstName(user.getUserName());
         UserAndRestaurant userAndRestaurantSelected = apiService.getCurrentuserSelectedRestaurant(user);
-        List<User> interestedFriends = apiService.getUsersInterestedAtCurrentRestaurant(user.getUid());
+//        List<User> interestedFriends = apiService.getUsersInterestedAtCurrentRestaurant(user.getUid());
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
         Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.drawable.meal_v2_half_size)
-                .setContentTitle("It's 12am " + userName)
-                .setContentText("you have chosen to eat at " + userAndRestaurantSelected.getRestaurantName())
+                .setContentTitle(String.format("%s %s", mContext.getString(R.string.push_notification_service_alert), userName))
+                .setContentText(String.format("%s %s", mContext.getString(R.string.push_notification_service_restaurant_choice), userAndRestaurantSelected.getRestaurantName()))
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText( "Friends that come with you:" + apiService.makeInterestedFriendsString(interestedFriends))
-                        .setBigContentTitle("It's 12am"))
+//                        .bigText( "Friends that come with you:" + apiService.makeInterestedFriendsString(interestedFriends))
+                        .setBigContentTitle(mContext.getString(R.string.push_notification_service_alert)))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setContentIntent(pendingIntent)
@@ -87,13 +94,13 @@ public class PushNotificationService extends Worker{
         notificationManagerCompat.notify(1, notification);
     }
 
-    public static void oneTimeRequest(Context context) {
+    public static void periodicTimeRequest(Context context) {
         long timeDiff = setTimeUntilBeginWork();
-        OneTimeWorkRequest timeToLunch = new OneTimeWorkRequest.Builder(PushNotificationService.class)
+        PeriodicWorkRequest timeToLunch = new PeriodicWorkRequest.Builder(PushNotificationService.class, 24,TimeUnit.HOURS)
                 .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
                 .addTag(ONE_TIME_WORK_TAG)
                 .build();
-        WorkManager.getInstance(context).enqueue(timeToLunch);
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork("lunch time", ExistingPeriodicWorkPolicy.REPLACE, timeToLunch);
         }
 
     public static long setTimeUntilBeginWork() {
@@ -102,7 +109,6 @@ public class PushNotificationService extends Worker{
         calendar.set(Calendar.HOUR_OF_DAY, 12);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-
         if (calendar.before(currentDate)) {
             calendar.add(Calendar.HOUR_OF_DAY,24);
         }
@@ -114,7 +120,6 @@ public class PushNotificationService extends Worker{
         Constraints constraints = new Constraints.Builder()
                 .setRequiresBatteryNotLow(true)
                 .build();
-
         return constraints;
     }
 }

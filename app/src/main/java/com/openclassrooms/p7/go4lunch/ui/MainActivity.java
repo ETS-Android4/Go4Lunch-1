@@ -1,6 +1,6 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
-    import static android.content.ContentValues.TAG;
+import static android.content.ContentValues.TAG;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -22,6 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
@@ -39,9 +39,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.notification.PushNotificationService;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
+import com.openclassrooms.p7.go4lunch.ui.fragment.preference.PreferenceFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 import java.util.Arrays;
@@ -72,7 +74,6 @@ public class MainActivity extends AppCompatActivity{
         this.configureListeners();
         this.updateHeader();
         this.initNotification();
-
     }
 
     @Override
@@ -141,13 +142,28 @@ public class MainActivity extends AppCompatActivity{
         this.setTabLayoutName();
     }
 
+    //TODO refactor this
     private void configureListeners() {
         mBinding.activityMainNavigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.your_lunch:
-
+                    showRestaurantSelected();
+                    break;
                 case R.id.settings:
-                    openSettingPopup();
+                    clearToolbarAndTabs();
+
+                    mBinding.activityMainToolbar.getRoot().setNavigationOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            configureViewBinding();
+                            configureToolbar();
+                            configureListeners();
+                            configureViewPager();
+                            configureNavigationDrawer();
+                            updateHeader();
+                        }
+                    });
+
                     break;
                 case R.id.logout:
                     mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
@@ -157,21 +173,28 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
-    private void openSettingPopup() {
-        AlertDialog.Builder settingPopup = new AlertDialog.Builder(MainActivity.this);
-        settingPopup
-                .setView(R.layout.setting_popup)
-                .setIcon(R.drawable.login_meal_icon)
-                .setPositiveButton("Save & exit", (dialog, which) -> {
-                    Toast.makeText(this, "tu as validé", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> {
-                    Toast.makeText(this, "tu n'as pas validé", Toast.LENGTH_SHORT).show();
-                })
-                .show();
+    private void clearToolbarAndTabs() {
+        mBinding.activityMainTabs.setVisibility(View.GONE);
+        mBinding.activityMainToolbar.getRoot().setTitle(getString(R.string.main_activity_settings_title));
+        mBinding.activityMainToolbar.getRoot().getMenu().clear();
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.linear_layout, new PreferenceFragment())
+                .commit();
+        mBinding.activityMainDrawerLayout.closeDrawer(GravityCompat.START);
+        mBinding.activityMainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
-
+    private void showRestaurantSelected() {
+        AlertDialog.Builder restaurantSelectedPopup = new AlertDialog.Builder(this);
+        ApiService apiService = DI.getRestaurantApiService();
+        User currentUser = apiService.searchUserById(CURRENT_USER_ID);
+        restaurantSelectedPopup
+                .setTitle(getString(R.string.main_activity_selected_restaurant_dialog))
+                .setMessage(apiService.removeRestaurantWord(apiService.getCurrentuserSelectedRestaurant(currentUser).getRestaurantName()))
+                .show();
+    }
 
     private void updateHeader() {
         if (mViewModel.isCurrentUserLogged()) {
@@ -184,13 +207,13 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void initNotification() {
-        PushNotificationService.oneTimeRequest(getApplicationContext());
+        PushNotificationService.periodicTimeRequest(getApplicationContext());
     }
 
     private void setTabLayoutName() {
-        mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.map_view_page)));
-        mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.list_view_page)));
-        mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.workmates_page)));
+        mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.main_activity_map_view_page)));
+        mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.main_activity_list_view_page)));
+        mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.main_activity_workmates_page)));
         Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).setIcon(R.drawable.baseline_map_black_24);
         Objects.requireNonNull(Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).getIcon()).setColorFilter(getResources().getColor(R.color.drawerlayout_color), PorterDuff.Mode.SRC_IN);
         Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(1)).setIcon(R.drawable.baseline_list_black_24);
@@ -241,7 +264,6 @@ public class MainActivity extends AppCompatActivity{
     private void initLists() {
         mViewModel.getUsersDataList();
     }
-
 
     public void startAutocompleteActivity(MenuItem item) {
         ApiService apiService = DI.getRestaurantApiService();

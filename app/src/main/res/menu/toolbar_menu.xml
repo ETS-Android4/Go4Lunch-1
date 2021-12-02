@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/toolbar_search_btn"
-        android:title="@string/search_button"
+        android:title="@string/tooblar_menu_search_button"
         android:icon="@drawable/baseline_search_white_24"
         android:onClick="startAutocompleteActivity"
         app:showAsAction="ifRoom">

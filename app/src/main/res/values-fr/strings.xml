@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Go4Lunch</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Facebook application id -->
+    <string name="facebook_application_id">590265162119569</string>
+    <string name="fb_login_protocol_scheme">fb590265162119569</string>
+
+    <!-- MainActivity id -->
+    <string name="main_activity_map_view_page">Carte</string>
+    <string name="main_activity_list_view_page">Restaurants</string>
+    <string name="main_activity_workmates_page">Collègues</string>
+    <string name="main_activity_selected_restaurant_dialog">Ton choix de restaurant est: </string>
+    <string name="main_activity_settings_title">Réglages</string>
+
+    <!-- LoginActivity strings -->
+    <string name="login_activity_facebook_sign_in">S\'identifier avec Facebook</string>
+    <string name="login_activity_google_sign_in">S\'identifier avec Google</string>
+
+    <!-- Navigation drawer menu strings -->
+    <string name="navigation_drawer_menu_lunch">TON RESTAURANT</string>
+    <string name="navigation_drawer_menu_settings">REGLAGES</string>
+    <string name="navigation_drawer_menu_logout">SE DECONNECTER</string>
+
+    <!-- Toolbar title strings -->
+    <string name="toolbar_title_hungry">J\'AI FAIM!</string>
+
+    <!-- Toolbar menu strings -->
+    <string name="tooblar_menu_search_button">Chercher</string>
+
+    <!-- LoginActivity strings -->
+    <string name="login_activity_error_authentication_canceled">Authentification annulée</string>
+    <string name="login_activity_connection_succeed">Connexion réussie</string>
+    <string name="login_activity_error_no_internet">Erreur pas de réseau</string>
+    <string name="login_activity_error_unknow_error">Erreur inconnue</string>
+
+    <!-- DetailActivity strings -->
+    <string name="detail_activity_fab_content_description">Choisis un restaurant</string>
+    <string name="detail_activityl_call_text">APELLER</string>
+    <string name="detail_activityl_like_text">LIKER</string>
+    <string name="detail_activityl_website_text">SITE WEB</string>
+
+    <!-- DetailViewHolder strings -->
+    <string name="detail_viewHolder_is_joining">y va</string>
+
+    <!-- WorkmatesViewHolder strings -->
+    <string name="workmates_list_view_holder_no_details_here">Pas de détails</string>
+    <string name="workmates_list_view_holder_not_decided">n\'a pas encore décidé</string>
+    <string name="workmates_list_view_holder_is_eating_at">mange à</string>
+
+    <!-- ListViewHolder strings -->
+    <string name="list_view_holder_open_at">ouvre à</string>
+    <string name="list_view_holder_until">jusqu\'à</string>
+    <string name="list_view_holder_still_open_until">est ouvert jusqu\'à </string>
+
+    <!-- Preference strings -->
+    <string name="preference_notifications">notifications</string>
+    <string name="preference_enable_notifications">Activer les notifications</string>
+    <string name="preference_night_mode">night_mode</string>
+    <string name="preference_enable_Night_mode">Activer le mode nuit</string>
+
+    <!-- PushNotificationService strings -->
+    <string name="push_notification_service_alert">Il est midi</string>
+    <string name="push_notification_service_restaurant_choice">Tu as choisi ded manger à</string>
+
+    <!-- Unused -->
+    <string name="channel_Name">lunch channel</string>
+    <string name="channel_description">show to user where to lunch</string>
+    <string name="language_select">Language Select:</string>
+    <string name="delete_account">Delete your account:</string>
+
+</resources>

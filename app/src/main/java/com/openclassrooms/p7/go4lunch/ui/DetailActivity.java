@@ -118,7 +118,7 @@ public class DetailActivity extends AppCompatActivity {
                     .centerCrop()
                     .into(mBinding.activityDetailImageHeader);
         }
-        mBinding.activityDetailRestaurantNameTv.setText(mCurrentRestaurant.getName());
+        mBinding.activityDetailRestaurantNameTv.setText(mApiService.removeRestaurantWord(mCurrentRestaurant.getName()));
         mBinding.activityDetailRestaurantTypeAndAdressTv.setText(mCurrentRestaurant.getAdress());
         for (int index = 0; index < ratingStarsArray.length; index++) {
             ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, mCurrentRestaurant.getRating()));

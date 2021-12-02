@@ -7,6 +7,6 @@
     android:layout_height="wrap_content"
     android:background="@color/map_marker"
     app:titleTextColor="@color/white"
-    app:title="@string/hungry">
+    app:title="@string/toolbar_title_hungry">
 
 </androidx.appcompat.widget.Toolbar>

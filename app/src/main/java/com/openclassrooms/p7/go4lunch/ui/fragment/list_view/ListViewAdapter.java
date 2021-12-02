@@ -72,7 +72,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         }
 
         public void bind(Restaurant restaurant){
-            mBinding.listViewRowRestaurantNameTv.setText(restaurant.getName());
+            mBinding.listViewRowRestaurantNameTv.setText(mApiService.removeRestaurantWord(restaurant.getName()));
             mBinding.listViewRowRestaurantAdressTv.setText(restaurant.getAdress());
             mBinding.listViewRowRestaurantIsOpenTv.setText(restaurant.getOpenningHours());
             mBinding.listViewRowDistanceTv.setText(String.format(Locale.ENGLISH,"%4.0fm",restaurant.getDistance()));

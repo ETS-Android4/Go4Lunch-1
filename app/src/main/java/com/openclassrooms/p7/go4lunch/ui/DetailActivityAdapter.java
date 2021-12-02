@@ -16,7 +16,6 @@ import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 import java.util.List;
-import java.util.Map;
 
 public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAdapter.DetailActivityViewHolder> {
 
@@ -49,10 +48,12 @@ public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAd
     public class DetailActivityViewHolder extends RecyclerView.ViewHolder {
 
         private final WorkmatesListRowBinding mBinding;
+        private final View view;
 
         public DetailActivityViewHolder(@NonNull View itemView) {
             super(itemView);
             mBinding = WorkmatesListRowBinding.bind(itemView);
+            view = itemView;
         }
 
         public void bind(User user) {
@@ -60,7 +61,7 @@ public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAd
                     .load(user.getPhotoUrl())
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
-            mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s is joining", mApiService.makeUserFirstName(user.getUserName())));
+            mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s", mApiService.makeUserFirstName(user.getUserName()), view.getResources().getString(R.string.detail_viewHolder_is_joining)));
         }
     }
 }

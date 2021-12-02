@@ -138,10 +138,10 @@ public class DummyApiService implements ApiService {
                 }
 
                 if (openingDay.getOpen().getTime().getHours() > currentHour) {
-                    return String.format("%s %spm %s %spm",context.getResources().getString(R.string.open_at), openTime,context.getResources().getString(R.string.until), closeTime);
+                    return String.format("%s %spm %s %spm",context.getResources().getString(R.string.list_view_holder_open_at), openTime,context.getResources().getString(R.string.list_view_holder_until), closeTime);
                 }
                 if (openingDay.getClose().getTime().getHours() > currentHour || openingDay.getClose().getTime().getHours() < 3) {
-                    return String.format("%s %s pm",context.getResources().getString(R.string.still_open_until), Math.abs(closeHour - currentHour));
+                    return String.format("%s %s pm",context.getResources().getString(R.string.list_view_holder_still_open_until), Math.abs(closeHour - currentHour));
                 }
             }
         }
@@ -422,7 +422,7 @@ public class DummyApiService implements ApiService {
      */
     @Override
     public String getOpeningHours(OpeningHours openingHours, Context context) {
-        String noDetails = String.format("%s", R.string.no_details_here);
+        String noDetails = String.format("%s", R.string.workmates_list_view_holder_no_details_here);
         if (openingHours != null) {
             return makeStringOpeningHours(openingHours, context);
         }
@@ -558,6 +558,22 @@ public class DummyApiService implements ApiService {
             return new String(firstNameArray);
         } else {
             return userName;
+        }
+    }
+
+    @Override
+    public String removeRestaurantWord(String restaurantName) {
+       restaurantName = restaurantName.replace("RESTAURANT ", "");
+        restaurantName = restaurantName.replace("Restaurant ", "");
+        restaurantName = restaurantName.replace("restaurant ", "");
+        int i = restaurantName.indexOf(' ');
+        if (i > 0) {
+            String restaurant = restaurantName.toLowerCase();
+            char[] restaurantNameArray = restaurant.toCharArray();
+            restaurantNameArray[0] = Character.toUpperCase(restaurantNameArray[0]);
+            return new String(restaurantNameArray);
+        } else {
+            return restaurantName;
         }
     }
 

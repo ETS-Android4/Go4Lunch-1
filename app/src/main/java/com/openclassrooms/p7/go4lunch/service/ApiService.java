@@ -68,6 +68,5 @@ public interface ApiService {
     String makeUserFirstName(String userName);
 
     String makeInterestedFriendsString(List<User> interestedFriendList);
-
-
+    String removeRestaurantWord(String restaurantName);
 }
