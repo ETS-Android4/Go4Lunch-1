@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/workmates_container"
-    tools:context=".ui.fragment.WorkmatesFragment">
+    android:background="?attr/background_color"
+    tools:context=".ui.fragment.workmates_view.WorkmatesFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/workmates_fragment_recycler_view"

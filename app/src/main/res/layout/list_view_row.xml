@@ -2,6 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/outline"
+    android:layout_margin="4dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -25,7 +27,8 @@
                 android:layout_height="wrap_content"
                 android:text="Le Zinc"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textColor="?attr/text_color"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/list_view_row_restaurant_adress_tv"
@@ -33,6 +36,7 @@
                 android:layout_height="wrap_content"
                 android:text="9 Boulevard chevalier de clerville"
                 android:textSize="14sp"
+                android:textColor="?attr/text_color"
                 android:maxLines="1"
                 android:layout_marginVertical="4dp"/>
 
@@ -42,7 +46,8 @@
                 android:layout_height="wrap_content"
                 android:text="est ouvert"
                 android:textSize="14sp"
-                android:textStyle="italic"/>
+                android:textStyle="italic"
+                android:textColor="?attr/text_color"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -59,7 +64,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="250m"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:textColor="?attr/text_color"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/list_view_row_interested_friend_tv"
@@ -68,7 +74,9 @@
                 android:layout_marginVertical="8dp"
                 android:text="(3)"
                 android:textSize="16sp"
-                android:drawableLeft="@drawable/baseline_person_outline_24"/>
+                android:drawableLeft="@drawable/baseline_person_outline_24"
+                android:drawableTint="?attr/text_color"
+                android:textColor="?attr/text_color"/>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"

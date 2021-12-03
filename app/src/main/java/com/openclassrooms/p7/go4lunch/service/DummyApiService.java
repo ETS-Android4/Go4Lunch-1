@@ -3,7 +3,9 @@ package com.openclassrooms.p7.go4lunch.service;
 import static com.openclassrooms.p7.go4lunch.ui.DetailActivity.LIKE_BTN_TAG;
 import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
@@ -21,6 +23,7 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
+import com.openclassrooms.p7.go4lunch.model.UserSettings;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -566,15 +569,10 @@ public class DummyApiService implements ApiService {
        restaurantName = restaurantName.replace("RESTAURANT ", "");
         restaurantName = restaurantName.replace("Restaurant ", "");
         restaurantName = restaurantName.replace("restaurant ", "");
-        int i = restaurantName.indexOf(' ');
-        if (i > 0) {
-            String restaurant = restaurantName.toLowerCase();
-            char[] restaurantNameArray = restaurant.toCharArray();
-            restaurantNameArray[0] = Character.toUpperCase(restaurantNameArray[0]);
-            return new String(restaurantNameArray);
-        } else {
-            return restaurantName;
-        }
+        String restaurant = restaurantName.toLowerCase();
+        char[] restaurantNameArray = restaurant.toCharArray();
+        restaurantNameArray[0] = Character.toUpperCase(restaurantNameArray[0]);
+        return new String(restaurantNameArray);
     }
 
     @Override
@@ -584,5 +582,16 @@ public class DummyApiService implements ApiService {
             friendsInterested = friendsInterested + "\n" + makeUserFirstName(user.getUserName());
         }
         return friendsInterested;
+    }
+
+    @Override
+    public void setTheme(Activity activity) {
+        SharedPreferences mSharedPreferences = activity.getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE);
+        String theme = mSharedPreferences.getString(UserSettings.CUSTOM_THEME, UserSettings.LIGHT_THEME);
+        if (theme.equals("darkTheme")) {
+            activity.setTheme(R.style.dark_theme);
+        } else {
+            activity.setTheme(R.style.light_theme);
+        }
     }
 }

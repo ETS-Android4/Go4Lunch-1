@@ -19,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -50,7 +49,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     public static final int AUTOCOMPLETE_REQUEST_CODE = 23;
     private TextView email;
@@ -59,8 +58,8 @@ public class MainActivity extends AppCompatActivity{
     public static String CURRENT_USER_ID;
     private ActivityMainBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
+    private ApiService mApiService;
     private HandleData mHandleData;
-    private NotificationManagerCompat notificationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +73,10 @@ public class MainActivity extends AppCompatActivity{
         this.configureListeners();
         this.updateHeader();
         this.initNotification();
+        this.setTheme();
     }
+
+
 
     @Override
     protected void onResume() {
@@ -125,6 +127,7 @@ public class MainActivity extends AppCompatActivity{
         if (mViewModel.isCurrentUserLogged()) {
             CURRENT_USER_ID = mViewModel.getCurrentUser().getUid();
         }
+        mApiService = DI.getRestaurantApiService();
     }
 
     private void startSignActivity() {
@@ -151,16 +154,16 @@ public class MainActivity extends AppCompatActivity{
                     break;
                 case R.id.settings:
                     clearToolbarAndTabs();
-
                     mBinding.activityMainToolbar.getRoot().setNavigationOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             configureViewBinding();
                             configureToolbar();
+                            configureNavigationDrawer();
                             configureListeners();
                             configureViewPager();
-                            configureNavigationDrawer();
                             updateHeader();
+                            setTheme();
                         }
                     });
 
@@ -208,6 +211,10 @@ public class MainActivity extends AppCompatActivity{
 
     private void initNotification() {
         PushNotificationService.periodicTimeRequest(getApplicationContext());
+    }
+
+    private void setTheme() {
+        mApiService.setTheme(this);
     }
 
     private void setTabLayoutName() {

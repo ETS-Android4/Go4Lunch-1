@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/list_view_container"
-    tools:context=".ui.fragment.ListViewFragment">
+    android:background="?attr/background_color"
+    tools:context=".ui.fragment.list_view.ListViewFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_view_recycler_view"

@@ -1,5 +1,6 @@
 package com.openclassrooms.p7.go4lunch.service;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -69,4 +70,6 @@ public interface ApiService {
 
     String makeInterestedFriendsString(List<User> interestedFriendList);
     String removeRestaurantWord(String restaurantName);
+
+    void setTheme(Activity activity);
 }

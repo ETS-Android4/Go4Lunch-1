@@ -5,8 +5,8 @@
     android:minHeight="?attr/actionBarSize"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/map_marker"
-    app:titleTextColor="@color/white"
+    android:background="?attr/decoration_color"
+    app:titleTextColor="?attr/decoration_text_color"
     app:title="@string/toolbar_title_hungry">
 
 </androidx.appcompat.widget.Toolbar>

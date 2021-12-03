@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="light_theme" parent="Theme.AppCompat.DayNight.NoActionBar">
+
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/map_marker</item>
+        <item name="colorPrimaryVariant">@color/system_bar_color</item>
+        <item name="background_color">@color/white</item>
+        <item name="text_color">@color/light_text_color</item>
+        <item name="decoration_color">@color/map_marker</item>
+        <item name="decoration_text_color">@color/white</item>
+        <item name="row_background_color">@color/light_row_background_color</item>
+        <item name="outline_color">@color/light_row_background_color</item>
+
+    </style>
+
+    <style name="dark_theme" parent="Theme.AppCompat.DayNight.NoActionBar">
+
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/map_marker</item>
+        <item name="colorPrimaryVariant">@color/system_bar_color</item>
+        <item name="background_color">@color/light_text_color</item>
+        <item name="text_color">@color/white</item>
+        <item name="decoration_color">@color/dark_decoration_color</item>
+        <item name="decoration_text_color">@color/dark_decoration_text_color</item>
+        <item name="row_background_color">@color/dark_row_background_decoration_color</item>
+        <item name="outline_color">@color/dark_row_background_decoration_color</item>
+
+    </style>
+
+</resources>

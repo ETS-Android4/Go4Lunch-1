@@ -1,9 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Go4Lunch" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Go4Lunch" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/map_marker</item>
-        <item name="colorPrimaryVariant">@color/system_bar_color</item>
+
+        <item name="background_color">#FFFFFF</item>
+        <item name="text_color">#000000</item>
 
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>

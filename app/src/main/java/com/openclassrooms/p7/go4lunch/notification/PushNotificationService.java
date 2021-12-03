@@ -46,7 +46,6 @@ public class PushNotificationService extends Worker{
     public PushNotificationService(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         mContext = context;
-
     }
 
     @NonNull

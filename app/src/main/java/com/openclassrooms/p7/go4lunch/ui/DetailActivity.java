@@ -1,7 +1,9 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
+import com.openclassrooms.p7.go4lunch.model.UserSettings;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 public class DetailActivity extends AppCompatActivity {
@@ -56,6 +59,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mAdapter.notifyDataSetChanged();
+        this.setTheme();
     }
 
     private void configureViewBinding() {
@@ -141,6 +145,16 @@ public class DetailActivity extends AppCompatActivity {
         mBinding.activityDetailLikeBtn.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
         // Select Restaurant to lunch Button
         mBinding.activityDetailFab.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
+    }
+
+    private void setTheme() {
+//        mApiService.setTheme(DetailActivity.this);
+        mBinding.activityDetailRecyclerview.setBackgroundColor(getResources().getColor(R.color.light_text_color));
+//        mBinding.activityDetailButtonContainer.setBackgroundColor(getResources().getColor(R.color.light_text_color));
+//        mBinding.activityDetailCallTv.setTextColor(getResources().getColor(R.color.white));
+//        mBinding.activityDetailLikeTv.setTextColor(getResources().getColor(R.color.white));
+//        mBinding.activityDetailWebsiteTv.setTextColor(getResources().getColor(R.color.white));
+        setTheme(R.style.dark_theme);
     }
 
     private void permissionToCall() {

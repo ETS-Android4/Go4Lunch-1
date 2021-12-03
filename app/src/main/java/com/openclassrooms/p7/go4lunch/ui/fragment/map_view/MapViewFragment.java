@@ -7,6 +7,8 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -70,7 +72,7 @@ import java.util.Objects;
  * Created by lleotraas on 14.
  */
 public class MapViewFragment extends Fragment implements OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener {
+                                                         GoogleMap.OnMarkerClickListener {
 
 
     private MapView mMapView;
@@ -154,12 +156,15 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this.requireActivity().getApplicationContext(),
-                ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            locationPermissionGranted = true;
-        } else {
-            ActivityCompat.requestPermissions(this.requireActivity(), new String[]{ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_ACCESS_FINE_LOCATION);
+        Context context = this.requireActivity().getApplicationContext();
+        if (context != null) {
+            if (ContextCompat.checkSelfPermission(context,
+                    ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                locationPermissionGranted = true;
+            } else {
+                ActivityCompat.requestPermissions(this.requireActivity(), new String[]{ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_ACCESS_FINE_LOCATION);
+            }
         }
     }
 

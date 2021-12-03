@@ -14,8 +14,18 @@
 
     <color name="facebook">#3A5898</color>
     <color name="google">#F53E28</color>
-    <color name="system_bar_color">#C41B00</color>
+
     <color name="drawerlayout_color">#FF8A50</color>
-    <color name="map_marker">#FF5722</color>
     <color name="map_marker_favorite">#69F0AE</color>
+
+    <!-- Light colors -->
+    <color name="map_marker">#FF5722</color>
+    <color name="system_bar_color">#C41B00</color>
+    <color name="light_text_color">#232222</color>
+    <color name="light_row_background_color">#F7F7F7</color>
+
+    <!-- Dark colors -->
+    <color name="dark_decoration_color">#682813</color>
+    <color name="dark_decoration_text_color">#8A8989</color>
+    <color name="dark_row_background_decoration_color">#403E3E</color>
 </resources>

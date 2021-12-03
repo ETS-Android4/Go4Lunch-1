@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_margin="16dp">
+    android:background="@drawable/outline"
+    android:layout_margin="4dp">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/workmates_list_row_profile_img"
@@ -17,6 +18,7 @@
         android:layout_gravity="center"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:textColor="?attr/text_color"
         android:layout_marginHorizontal="16dp"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

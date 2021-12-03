@@ -21,14 +21,21 @@
         <entry key="..\:/Users/charl/Documents/P7/Go4Lunch/app/src/main/res/menu/toolbar_menu.xml" value="0.1" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/drawable/ic_baseline_delete_24.xml" value="0.26597938144329897" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/drawable/ic_delete.xml" value="0.26597938144329897" />
-        <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/activity_detail.xml" value="0.25532646048109964" />
+        <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/drawable/outline.xml" value="0.1" />
+        <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/activity_detail.xml" value="0.22" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/activity_login.xml" value="0.25798611111111114" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/activity_main.xml" value="0.19" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/custom_info_contents.xml" value="0.25798611111111114" />
+        <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/fragment_list_view.xml" value="0.1" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/fragment_map_view.xml" value="0.1" />
+        <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/fragment_workmates.xml" value="0.25798611111111114" />
+        <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/list_view_row.xml" value="0.22" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/navigation_drawer_header.xml" value="0.25798611111111114" />
+        <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/preference_settings.xml" value="0.25" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/setting_popup.xml" value="0.25798611111111114" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/toolbar.xml" value="0.15590277777777778" />
+        <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/workmates_list_row.xml" value="0.1" />
+        <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/layout/your_lunch_popup.xml" value="0.25798611111111114" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/menu/navigation_drawer_menu.xml" value="0.146875" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/menu/toolbar_menu.xml" value="0.1" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/xml/preference.xml" value="0.18" />

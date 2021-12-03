@@ -72,5 +72,8 @@
     <string name="channel_description">show to user where to lunch</string>
     <string name="language_select">Language Select:</string>
     <string name="delete_account">Delete your account:</string>
+    <string name="MainActivity_dark_mode">Dark Mode</string>
+    <string name="preference_setting_title">Setting menu</string>
+    <string name="preference_setting_enable_night_mode">Enable night mode</string>
 
 </resources>
