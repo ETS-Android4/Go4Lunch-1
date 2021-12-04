@@ -1,29 +1,39 @@
 package com.openclassrooms.p7.go4lunch.service;
 
-import static com.openclassrooms.p7.go4lunch.ui.DetailActivity.LIKE_BTN_TAG;
+
+import static com.openclassrooms.p7.go4lunch.ui.fragment.DetailFragment.LIKE_BTN_TAG;
 import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.net.Uri;
+import android.view.View;
+import android.view.Window;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Period;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.material.tabs.TabLayout;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.model.UserSettings;
+import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -366,9 +376,9 @@ public class DummyApiService implements ApiService {
     @Override
     public int setFavoriteImage(boolean isFavorite) {
             if (isFavorite) {
-                return R.drawable.baseline_star_rate_black_36;
+                return R.drawable.ic_star;
             }
-            return R.drawable.baseline_star_border_black_36;
+            return R.drawable.ic_star_outline;
     }
 
     /**
@@ -565,7 +575,7 @@ public class DummyApiService implements ApiService {
     }
 
     @Override
-    public String removeRestaurantWord(String restaurantName) {
+    public String removeUselessWords(String restaurantName) {
        restaurantName = restaurantName.replace("RESTAURANT ", "");
         restaurantName = restaurantName.replace("Restaurant ", "");
         restaurantName = restaurantName.replace("restaurant ", "");
@@ -586,12 +596,85 @@ public class DummyApiService implements ApiService {
 
     @Override
     public void setTheme(Activity activity) {
-        SharedPreferences mSharedPreferences = activity.getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE);
-        String theme = mSharedPreferences.getString(UserSettings.CUSTOM_THEME, UserSettings.LIGHT_THEME);
-        if (theme.equals("darkTheme")) {
+        if (getCurrentTheme(activity).equals("darkTheme")) {
             activity.setTheme(R.style.dark_theme);
         } else {
             activity.setTheme(R.style.light_theme);
         }
+    }
+
+    @Override
+    public void setMapTheme(FragmentActivity activity, GoogleMap mMap) {
+        if (getCurrentTheme(activity).equals("darkTheme")) {
+            mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(activity.getApplicationContext(), R.raw.mapstyle_night));
+        } else {
+            mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(activity.getApplicationContext(), R.raw.mapstyle_default));
+        }
+    }
+
+    @Override
+    public void setTabColor(TabLayout activityMainTabs, Activity activity) {
+        if (getCurrentTheme(activity).equals("darkTheme")) {
+            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(0)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.dark_icon_color), PorterDuff.Mode.SRC_IN);
+            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(1)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.dark_text_color), PorterDuff.Mode.SRC_IN);
+            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(2)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.dark_text_color), PorterDuff.Mode.SRC_IN);
+            activityMainTabs.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.dark_background_color));
+            activityMainTabs.setSelectedTabIndicatorColor(activity.getApplicationContext().getResources().getColor(R.color.dark_decoration_color));
+            activityMainTabs.setTabTextColors(activity.getApplicationContext().getResources().getColor(R.color.dark_text_color), activity.getApplicationContext().getResources().getColor(R.color.dark_icon_color));
+
+        } else {
+            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(0)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.light_icon_color), PorterDuff.Mode.SRC_IN);
+            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(1)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.light_text_color), PorterDuff.Mode.SRC_IN);
+            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(2)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.light_text_color), PorterDuff.Mode.SRC_IN);
+            activityMainTabs.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.light_background_color));
+            activityMainTabs.setSelectedTabIndicatorColor(activity.getApplicationContext().getResources().getColor(R.color.light_decoration_color));
+            activityMainTabs.setTabTextColors(activity.getApplicationContext().getResources().getColor(R.color.light_text_color), activity.getApplicationContext().getResources().getColor(R.color.light_decoration_color));
+        }
+    }
+
+    @Override
+    public void setSelectedTabColor(TabLayout.Tab tab, MainActivity activity) {
+        if (getCurrentTheme(activity).equals("darkTheme")) {
+            Objects.requireNonNull(tab.getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.dark_icon_color), PorterDuff.Mode.SRC_IN);
+        } else {
+            Objects.requireNonNull(tab.getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.light_icon_color), PorterDuff.Mode.SRC_IN);
+        }
+    }
+
+    @Override
+    public void setUnselectedTabColor(TabLayout.Tab tab, MainActivity activity) {
+        if (getCurrentTheme(activity).equals("darkTheme")) {
+            Objects.requireNonNull(tab.getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.dark_text_color), PorterDuff.Mode.SRC_IN);
+        } else {
+            Objects.requireNonNull(tab.getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.light_text_color), PorterDuff.Mode.SRC_IN);
+        }
+    }
+
+    @Override
+    public void setNavigationDrawerBackground(View navigationView, MainActivity activity) {
+        if (getCurrentTheme(activity).equals("darkTheme")) {
+            navigationView.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.dark_icon_color));
+        } else {
+            navigationView.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.light_icon_color));
+        }
+    }
+
+    @Override
+    public void setToolbarColor(Toolbar toolbar, View childAt, MainActivity activity) {
+        Window window = activity.getWindow();
+        if (getCurrentTheme(activity).equals("darkTheme")) {
+            toolbar.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.dark_decoration_color));
+            window.setStatusBarColor(activity.getApplicationContext().getResources().getColor(R.color.black));
+            childAt.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.dark_decoration_color));
+        } else {
+            toolbar.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.light_decoration_color));
+            window.setStatusBarColor(activity.getApplicationContext().getResources().getColor(R.color.system_bar_color));
+            childAt.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.light_decoration_color));
+        }
+    }
+
+    private String getCurrentTheme(Activity activity) {
+        SharedPreferences mSharedPreferences = activity.getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE);
+        return mSharedPreferences.getString(UserSettings.CUSTOM_THEME, UserSettings.LIGHT_THEME);
     }
 }

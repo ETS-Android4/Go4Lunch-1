@@ -31,8 +31,7 @@
         <!-- Detail Activity -->
         <activity
             android:name=".ui.DetailActivity"
-            android:exported="true"
-            android:theme="@style/light_theme"/>
+            android:exported="true" />
 
         <!-- Google maps api key -->
         <meta-data

@@ -30,11 +30,7 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/activity_main_tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                app:tabTextColor="@color/black"
-                app:tabSelectedTextColor="@color/drawerlayout_color"
-                app:tabIndicator="@color/fui_transparent"/>
+                android:layout_height="wrap_content" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -45,16 +41,16 @@
         app:headerLayout="@layout/navigation_drawer_header"
         app:menu="@menu/navigation_drawer_menu"
         android:layout_gravity="start"
-        android:background="@color/drawerlayout_color"
-        app:itemTextColor="@color/white"
-        app:itemIconTint="@color/white">
+        android:background="?attr/icon_color"
+        app:itemTextColor="?attr/decoration_text_color"
+        app:itemIconTint="?attr/decoration_text_color">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="@dimen/nav_drawer_meal_icon_width"
             android:layout_height="@dimen/nav_drawer_meal_icon_height"
             android:layout_gravity="bottom"
             android:layout_marginHorizontal="@dimen/nav_drawer_meal_icon_margin_horizontal"
-            android:src="@drawable/nav_drawer_meal_icon"/>
+            android:src="@drawable/nav_drawer_meal_icon" />
 
     </com.google.android.material.navigation.NavigationView>
 

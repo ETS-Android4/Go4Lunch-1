@@ -3,9 +3,7 @@
     <style name="Go4Lunch" parent="Theme.AppCompat.DayNight.NoActionBar">
 
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/map_marker</item>
-        <item name="colorPrimaryVariant">@color/system_bar_color</item>
-        <item name="background_color">@color/light_text_color</item>
+
         <item name="text_color">@color/white</item>
         <item name="decoration_color">@color/dark_decoration_color</item>
         <item name="decoration_text_color">@color/dark_decoration_text_color</item>

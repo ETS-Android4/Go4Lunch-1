@@ -40,7 +40,7 @@
 
     <!-- DetailActivity strings -->
     <string name="detail_activity_fab_content_description">Choisis un restaurant</string>
-    <string name="detail_activityl_call_text">APELLER</string>
+    <string name="detail_activityl_call_text">APPELER</string>
     <string name="detail_activityl_like_text">LIKER</string>
     <string name="detail_activityl_website_text">SITE WEB</string>
 

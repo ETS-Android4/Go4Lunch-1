@@ -14,7 +14,9 @@ import androidx.fragment.app.Fragment;
 
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.PreferenceSettingsBinding;
+import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.UserSettings;
+import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 public class PreferenceFragment extends Fragment {
 
@@ -63,6 +65,7 @@ public class PreferenceFragment extends Fragment {
     }
 
     private void updateView() {
+        ApiService apiService = DI.getRestaurantApiService();
         if (settings.getCustomTheme().equals(UserSettings.DARK_THEME)) {
             mBinding.preferenceSettingContainer.setBackgroundColor(getResources().getColor(R.color.light_text_color));
             mBinding.preferenceSettingNightModeTv.setTextColor(getResources().getColor(R.color.white));

@@ -4,6 +4,7 @@
         <attr name="background_color" format="color" />
         <attr name="row_background_color" format="color" />
         <attr name="decoration_color" format="color" />
+        <attr name="icon_color" format="color"/>
         <attr name="text_color" format="color" />
         <attr name="decoration_text_color" format="color" />
         <attr name="outline_color" format="color" />

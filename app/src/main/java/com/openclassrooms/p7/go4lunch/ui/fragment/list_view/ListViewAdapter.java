@@ -17,7 +17,6 @@ import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
-import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 import java.util.List;
 import java.util.Locale;
@@ -72,7 +71,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         }
 
         public void bind(Restaurant restaurant){
-            mBinding.listViewRowRestaurantNameTv.setText(mApiService.removeRestaurantWord(restaurant.getName()));
+            mBinding.listViewRowRestaurantNameTv.setText(mApiService.removeUselessWords(restaurant.getName()));
             mBinding.listViewRowRestaurantAdressTv.setText(restaurant.getAdress());
             mBinding.listViewRowRestaurantIsOpenTv.setText(restaurant.getOpenningHours());
             mBinding.listViewRowDistanceTv.setText(String.format(Locale.ENGLISH,"%4.0fm",restaurant.getDistance()));

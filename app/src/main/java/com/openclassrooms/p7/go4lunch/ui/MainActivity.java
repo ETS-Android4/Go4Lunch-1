@@ -4,7 +4,6 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -180,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
         mBinding.activityMainTabs.setVisibility(View.GONE);
         mBinding.activityMainToolbar.getRoot().setTitle(getString(R.string.main_activity_settings_title));
         mBinding.activityMainToolbar.getRoot().getMenu().clear();
+        mBinding.activityMainToolbar.toolbar.setBackgroundColor(getResources().getColor(R.color.teal_700));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         User currentUser = apiService.searchUserById(CURRENT_USER_ID);
         restaurantSelectedPopup
                 .setTitle(getString(R.string.main_activity_selected_restaurant_dialog))
-                .setMessage(apiService.removeRestaurantWord(apiService.getCurrentuserSelectedRestaurant(currentUser).getRestaurantName()))
+                .setMessage(apiService.removeUselessWords(apiService.getCurrentuserSelectedRestaurant(currentUser).getRestaurantName()))
                 .show();
     }
 
@@ -215,16 +215,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void setTheme() {
         mApiService.setTheme(this);
+        mApiService.setToolbarColor(mBinding.activityMainToolbar.toolbar, mBinding.activityMainNavigationView.getChildAt(0), this);
     }
 
     private void setTabLayoutName() {
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.main_activity_map_view_page)));
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.main_activity_list_view_page)));
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.main_activity_workmates_page)));
-        Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).setIcon(R.drawable.baseline_map_black_24);
-        Objects.requireNonNull(Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).getIcon()).setColorFilter(getResources().getColor(R.color.drawerlayout_color), PorterDuff.Mode.SRC_IN);
-        Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(1)).setIcon(R.drawable.baseline_list_black_24);
-        Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(2)).setIcon(R.drawable.baseline_people_alt_black_24);
+        Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).setIcon(R.drawable.ic_map);
+        Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(1)).setIcon(R.drawable.ic_list);
+        Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(2)).setIcon(R.drawable.ic_people_alt);
+        mApiService.setTabColor(mBinding.activityMainTabs, this);
         this.setTabLayoutListener();
     }
 
@@ -233,12 +234,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mBinding.activityMainViewpager.setCurrentItem(tab.getPosition());
-                Objects.requireNonNull(tab.getIcon()).setColorFilter(getResources().getColor(R.color.drawerlayout_color), PorterDuff.Mode.SRC_IN);
+                mApiService.setSelectedTabColor(tab, MainActivity.this);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                Objects.requireNonNull(tab.getIcon()).setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_IN);
+                mApiService.setUnselectedTabColor(tab, MainActivity.this);
             }
 
             @Override

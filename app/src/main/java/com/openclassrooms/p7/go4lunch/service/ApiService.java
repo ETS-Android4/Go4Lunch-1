@@ -4,15 +4,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.view.View;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.material.tabs.TabLayout;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
+import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 
 import java.util.List;
 import java.util.Map;
@@ -69,7 +75,19 @@ public interface ApiService {
     String makeUserFirstName(String userName);
 
     String makeInterestedFriendsString(List<User> interestedFriendList);
-    String removeRestaurantWord(String restaurantName);
+    String removeUselessWords(String restaurantName);
 
     void setTheme(Activity activity);
+
+    void setMapTheme(FragmentActivity fragmentActivity, GoogleMap mMap);
+
+    void setTabColor(TabLayout activityMainTabs, Activity application);
+
+    void setSelectedTabColor(TabLayout.Tab tab, MainActivity activity);
+
+    void setUnselectedTabColor(TabLayout.Tab tab, MainActivity activity);
+
+    void setNavigationDrawerBackground(View navigationView, MainActivity activity);
+
+    void setToolbarColor(Toolbar toolbar, View childAt, MainActivity activity);
 }
