@@ -89,6 +89,30 @@ public class DummyApiService implements ApiService {
     }
 
     /**
+     * Create a Restaurant found from nearby search.
+     * @param place Restaurant.
+     * @param placeImage Restaurant image.
+     * @param context context of the fragment.
+     * @return Restaurant.
+     */
+    @Override
+    public Restaurant createRestaurant(Place place, Bitmap placeImage, Context context) {
+        //TODO if photo = null change it by noImage.
+        return new Restaurant(
+                place.getId(),
+                place.getName(),
+                place.getAddress(),
+                getOpeningHours(place.getOpeningHours(), context),
+                place.getPhoneNumber(),
+                getWebsiteUri(place.getWebsiteUri()),
+                getDistance(place.getLatLng(), currentLocation),
+                getRating(place.getRating()),
+                place.getLatLng(),
+                placeImage,
+                0);
+    }
+
+    /**
      * Make a Map to copy it in the currentUser and send it to the Database.
      * @param currentUserId th id of the current user.
      * @return a UserAndRestaurant Map.
@@ -188,6 +212,46 @@ public class DummyApiService implements ApiService {
                 break;
         }
         return currentDays;
+    }
+
+    /**
+     * Used to format username with his first name and put a uppercase on the first letter.
+     * @param userName name of the user.
+     * @return first name format.
+     */
+    @Override
+    public String makeUserFirstName(String userName) {
+        int i = userName.indexOf(' ');
+        if (i > 0) {
+            String firstName = userName.substring(0, i);
+            char[] firstNameArray = firstName.toCharArray();
+            firstNameArray[0] = Character.toUpperCase(firstNameArray[0]);
+            return new String(firstNameArray);
+        } else {
+            return userName;
+        }
+    }
+
+    //TODO comment
+    @Override
+    public String makeInterestedFriendsString(List<User> interestedFriendList) {
+        String friendsInterested = "";
+        for (User user : interestedFriendList) {
+            friendsInterested = friendsInterested + "\n" + makeUserFirstName(user.getUserName());
+        }
+        return friendsInterested;
+    }
+
+    //TODO comment
+    @Override
+    public String removeUselessWords(String restaurantName) {
+        restaurantName = restaurantName.replace("RESTAURANT ", "");
+        restaurantName = restaurantName.replace("Restaurant ", "");
+        restaurantName = restaurantName.replace("restaurant ", "");
+        String restaurant = restaurantName.toLowerCase();
+        char[] restaurantNameArray = restaurant.toCharArray();
+        restaurantNameArray[0] = Character.toUpperCase(restaurantNameArray[0]);
+        return new String(restaurantNameArray);
     }
 
     /**
@@ -308,23 +372,9 @@ public class DummyApiService implements ApiService {
         return usersInterested;
     }
 
-    public List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId) {
-        List<User> usersInterested = new ArrayList<>();
-        for (UserAndRestaurant restaurantSelected : getUserAndRestaurant()) {
-            if (
-                    restaurantSelected.isSelected() &&
-                            !currentUserId.equals(restaurantSelected.getUserId())
-            ) {
-                User user = searchUserById(restaurantSelected.getUserId());
-                usersInterested.add(user);
-            }
-        }
-        return usersInterested;
-    }
-
     //TODO comments
     @Override
-    public UserAndRestaurant getCurrentuserSelectedRestaurant(User user) {
+    public UserAndRestaurant getCurrentUserSelectedRestaurant(User user) {
         for (Map.Entry<String, UserAndRestaurant> userAndRestaurant : user.getUserAndRestaurant().entrySet()) {
             if (
                     userAndRestaurant.getValue().getUserId().equals(user.getUid()) &&
@@ -337,17 +387,77 @@ public class DummyApiService implements ApiService {
     }
 
     /**
-     * Call to found user have selected a restaurant and set it to the top of userList.
+     * Format opening hour for show it.
+     * @param openingHours place opening hours.
+     * @param context context of the fragment.
+     * @return opening hours if available.
      */
     @Override
-    public void filterUsersInterestedAtCurrentRestaurant() {
-        for (UserAndRestaurant userAndRestaurants : getUserAndRestaurant()) {
-            if (userAndRestaurants.isSelected()) {
-                User userFound = searchUserById(userAndRestaurants.getUserId());
-                deleteUser(userFound);
-                getUsers().add(0, userFound);
-            }
+    public String getOpeningHours(OpeningHours openingHours, Context context) {
+        String noDetails = String.format("%s", R.string.workmates_list_view_holder_no_details_here);
+        if (openingHours != null) {
+            return makeStringOpeningHours(openingHours, context);
         }
+        return noDetails;
+    }
+
+    /**
+     * Get the Restaurant website if available and format it to a String.
+     * @param websiteUri uri website.
+     * @return String url.
+     */
+    @Override
+    public String getWebsiteUri(Uri websiteUri) {
+        String noWebsiteUrl = "";
+        if (websiteUri != null) {
+            return String.format("%s", websiteUri);
+        }
+        return noWebsiteUrl;
+    }
+
+    /**
+     * Get the Restaurant Rating if available.
+     * @param rating rating.
+     * @return rating or noRating.
+     */
+    @Override
+    public double getRating(Double rating) {
+        double noRating = 0.0;
+        if (rating != null) {
+            return rating;
+        }
+        return noRating;
+    }
+
+    /**
+     * Calculate the distance between User and Restaurant.
+     * @param placeLocation Restaurant location.
+     * @param currentLocation User Location.
+     * @return distance between User and Restaurant.
+     */
+    @Override
+    public float getDistance(LatLng placeLocation, LatLng currentLocation) {
+        float[] distance = new float[10];
+        Location.distanceBetween(
+                currentLocation.latitude,
+                currentLocation.longitude,
+                Objects.requireNonNull(placeLocation).latitude,
+                Objects.requireNonNull(placeLocation).longitude,
+                distance
+        );
+        return distance[0];
+    }
+
+    /**
+     * set a limit zone around the current User location for better search result.
+     * @param currentLocation current User Location.
+     * @return RectangularBound around the User.
+     */
+    @Override
+    public RectangularBounds getRectangularBound(LatLng currentLocation) {
+        return RectangularBounds.newInstance(
+                new LatLng(currentLocation.latitude - 0.050000, currentLocation.longitude + 0.050000),
+                new LatLng(currentLocation.latitude + 0.050000, currentLocation.longitude + 0.050000));
     }
 
     /**
@@ -415,103 +525,7 @@ public class DummyApiService implements ApiService {
         return R.drawable.baseline_place_orange;
     }
 
-    /**
-     * set a limit zone around the current User location for better search result.
-     * @param currentLocation current User Location.
-     * @return RectangularBound around the User.
-     */
-    @Override
-    public RectangularBounds getRectangularBound(LatLng currentLocation) {
-        return RectangularBounds.newInstance(
-                new LatLng(currentLocation.latitude - 0.050000, currentLocation.longitude + 0.050000),
-                new LatLng(currentLocation.latitude + 0.050000, currentLocation.longitude + 0.050000));
-    }
 
-    /**
-     * Format opening hour for show it.
-     * @param openingHours place opening hours.
-     * @param context context of the fragment.
-     * @return opening hours if available.
-     */
-    @Override
-    public String getOpeningHours(OpeningHours openingHours, Context context) {
-        String noDetails = String.format("%s", R.string.workmates_list_view_holder_no_details_here);
-        if (openingHours != null) {
-            return makeStringOpeningHours(openingHours, context);
-        }
-        return noDetails;
-    }
-
-    /**
-     * Calculate the distance between User and Restaurant.
-     * @param placeLocation Restaurant location.
-     * @param currentLocation User Location.
-     * @return distance between User and Restaurant.
-     */
-    @Override
-    public float getDistance(LatLng placeLocation, LatLng currentLocation) {
-        float[] distance = new float[10];
-        Location.distanceBetween(
-                currentLocation.latitude,
-                currentLocation.longitude,
-                Objects.requireNonNull(placeLocation).latitude,
-                Objects.requireNonNull(placeLocation).longitude,
-                distance
-        );
-        return distance[0];
-    }
-
-    /**
-     * Get the Restaurant website if available and format it to a String.
-     * @param websiteUri uri website.
-     * @return String url.
-     */
-    @Override
-    public String getWebsiteUri(Uri websiteUri) {
-        String noWebsiteUrl = "";
-        if (websiteUri != null) {
-            return String.format("%s", websiteUri);
-        }
-        return noWebsiteUrl;
-    }
-
-    /**
-     * Get the Restaurant Rating if available.
-     * @param rating rating.
-     * @return rating or noRating.
-     */
-    @Override
-    public double getRating(Double rating) {
-        double noRating = 0.0;
-        if (rating != null) {
-            return rating;
-        }
-        return noRating;
-    }
-
-    /**
-     * Create a Restaurant found from nearby search.
-     * @param place Restaurant.
-     * @param placeImage Restaurant image.
-     * @param context context of the fragment.
-     * @return Restaurant.
-     */
-    @Override
-    public Restaurant createRestaurant(Place place, Bitmap placeImage, Context context) {
-        //TODO if photo = null change it by noImage.
-        return new Restaurant(
-                place.getId(),
-                place.getName(),
-                place.getAddress(),
-                getOpeningHours(place.getOpeningHours(), context),
-                place.getPhoneNumber(),
-                getWebsiteUri(place.getWebsiteUri()),
-                getDistance(place.getLatLng(), currentLocation),
-                getRating(place.getRating()),
-                place.getLatLng(),
-                placeImage,
-                0);
-    }
 
     /**
      * Update markers on map when the user go back on the MapViewFragment.
@@ -557,43 +571,20 @@ public class DummyApiService implements ApiService {
     }
 
     /**
-     * Used to format username with his first name and put a uppercase on the first letter.
-     * @param userName name of the user.
-     * @return first name format.
+     * Call to found user have selected a restaurant and set it to the top of userList.
      */
     @Override
-    public String makeUserFirstName(String userName) {
-        int i = userName.indexOf(' ');
-        if (i > 0) {
-            String firstName = userName.substring(0, i);
-            char[] firstNameArray = firstName.toCharArray();
-            firstNameArray[0] = Character.toUpperCase(firstNameArray[0]);
-            return new String(firstNameArray);
-        } else {
-            return userName;
+    public void filterUsersInterestedAtCurrentRestaurant() {
+        for (UserAndRestaurant userAndRestaurants : getUserAndRestaurant()) {
+            if (userAndRestaurants.isSelected()) {
+                User userFound = searchUserById(userAndRestaurants.getUserId());
+                deleteUser(userFound);
+                getUsers().add(0, userFound);
+            }
         }
     }
 
-    @Override
-    public String removeUselessWords(String restaurantName) {
-       restaurantName = restaurantName.replace("RESTAURANT ", "");
-        restaurantName = restaurantName.replace("Restaurant ", "");
-        restaurantName = restaurantName.replace("restaurant ", "");
-        String restaurant = restaurantName.toLowerCase();
-        char[] restaurantNameArray = restaurant.toCharArray();
-        restaurantNameArray[0] = Character.toUpperCase(restaurantNameArray[0]);
-        return new String(restaurantNameArray);
-    }
-
-    @Override
-    public String makeInterestedFriendsString(List<User> interestedFriendList) {
-        String friendsInterested = "";
-        for (User user : interestedFriendList) {
-            friendsInterested = friendsInterested + "\n" + makeUserFirstName(user.getUserName());
-        }
-        return friendsInterested;
-    }
-
+    //TODO comment all theme methods
     @Override
     public void setTheme(Activity activity) {
         if (getCurrentTheme(activity).equals("darkTheme")) {
@@ -647,15 +638,6 @@ public class DummyApiService implements ApiService {
             Objects.requireNonNull(tab.getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.dark_text_color), PorterDuff.Mode.SRC_IN);
         } else {
             Objects.requireNonNull(tab.getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.light_text_color), PorterDuff.Mode.SRC_IN);
-        }
-    }
-
-    @Override
-    public void setNavigationDrawerBackground(View navigationView, MainActivity activity) {
-        if (getCurrentTheme(activity).equals("darkTheme")) {
-            navigationView.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.dark_icon_color));
-        } else {
-            navigationView.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.light_icon_color));
         }
     }
 

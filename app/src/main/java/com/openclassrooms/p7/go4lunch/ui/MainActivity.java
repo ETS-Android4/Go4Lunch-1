@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         User currentUser = apiService.searchUserById(CURRENT_USER_ID);
         restaurantSelectedPopup
                 .setTitle(getString(R.string.main_activity_selected_restaurant_dialog))
-                .setMessage(apiService.removeUselessWords(apiService.getCurrentuserSelectedRestaurant(currentUser).getRestaurantName()))
+                .setMessage(apiService.removeUselessWords(apiService.getCurrentUserSelectedRestaurant(currentUser).getRestaurantName()))
                 .show();
     }
 

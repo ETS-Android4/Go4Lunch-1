@@ -73,7 +73,7 @@ public class PushNotificationService extends Worker{
         ApiService apiService = DI.getRestaurantApiService();
 //        User user = apiService.searchUserById(userId);
         String userName = apiService.makeUserFirstName(user.getUserName());
-        UserAndRestaurant userAndRestaurantSelected = apiService.getCurrentuserSelectedRestaurant(user);
+        UserAndRestaurant userAndRestaurantSelected = apiService.getCurrentUserSelectedRestaurant(user);
 //        List<User> interestedFriends = apiService.getUsersInterestedAtCurrentRestaurant(user.getUid());
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);

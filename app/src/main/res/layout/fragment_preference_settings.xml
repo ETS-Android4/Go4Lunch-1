@@ -19,25 +19,45 @@
         android:layout_margin="12dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/preference_setting_night_mode_tv"
+        android:id="@+id/preference_setting_notification_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/preference_setting_title_tv"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="@string/preference_setting_enable_night_mode"
+        android:text="@string/preference_setting_enable_notification"
         android:textSize="@dimen/preference_setting_normal_text_size"
         android:textColor="?attr/text_color"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="30dp"/>
 
     <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/preference_setting_night_mode_switch"
+        android:id="@+id/preference_setting_notification_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/preference_setting_title_tv"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="26dp"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/preference_setting_night_mode_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/preference_setting_notification_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/preference_setting_enable_night_mode"
+        android:textSize="@dimen/preference_setting_normal_text_size"
+        android:textColor="?attr/text_color"
+        android:layout_margin="12dp"
+        />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/preference_setting_night_mode_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/preference_setting_notification_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="12dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

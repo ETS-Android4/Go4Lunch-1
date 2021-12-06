@@ -28,66 +28,66 @@ import java.util.Map;
  */
 public interface ApiService {
 
-    // --- GET LIST ---
+    // --- GET DUMMY LIST ---
     List<Restaurant> getRestaurant();
     List<Restaurant> getSearchedRestaurant();
     List<UserAndRestaurant> getUserAndRestaurant();
     List<User> getUsers();
 
-    // --- ADD TO LIST ---
+    // --- ADD TO ---
     void addUserAndRestaurant(UserAndRestaurant userAndRestaurant);
     void addRestaurant(Restaurant restaurant);
     void addUser(User user);
+
+    // --- DELETE ---
     void deleteUser(User user);
 
+    // --- CREATE ---
+    Restaurant createRestaurant(Place place, Bitmap placeImage, Context context);
+
+    // --- MAKE ---
     Map<String, UserAndRestaurant> makeUserAndRestaurantMap(String currentUserId);
     UserAndRestaurant searchUserAndRestaurantById(String userId, String RestaurantId);
     String makeStringOpeningHours(OpeningHours openingHours, Context context);
+    String makeUserFirstName(String userName);
+    String makeInterestedFriendsString(List<User> interestedFriendList);
+    String removeUselessWords(String restaurantName);
 
+    // --- SEARCH ---
     Restaurant searchCurrentRestaurantById(String id);
     User searchUserById(String uid);
     void searchSelectedUserAndRestaurantToDeselect(String currentUserId, String currentRestaurantId);
     void likeOrSelectRestaurant(String currentUserId, String currentRestaurantId, int buttonId);
     UserAndRestaurant searchSelectedRestaurant(User user);
 
+    // --- GETTERS ---
     List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurantId);
-    List<User> getUsersInterestedAtCurrentRestaurant(String uid);
-    UserAndRestaurant getCurrentuserSelectedRestaurant(User currentUserId);
-    void filterUsersInterestedAtCurrentRestaurant();
+    UserAndRestaurant getCurrentUserSelectedRestaurant(User currentUserId);
+    String getOpeningHours(OpeningHours openingHours, Context context);
+    String getWebsiteUri(Uri websiteUri);
+    double getRating(Double rating);
+    float getDistance(LatLng latLng, LatLng currentLocation);
+    RectangularBounds getRectangularBound(LatLng currentLocation);
 
+    // --- SET IMAGE OR ICON ---
     int setRatingStars(int index, double rating);
     int setFavoriteImage(boolean favorite);
     int setSelectedImage(boolean Selected);
     int setMarkerIcon(String placeId, boolean isSearched, LatLng restaurantPosition, GoogleMap mMap);
 
-    RectangularBounds getRectangularBound(LatLng currentLocation);
+    // --- MAP MARKER ---
     void updateMarkerOnMap(boolean isSearched, GoogleMap map);
     void setMarkerOnMap(Restaurant restaurant, GoogleMap map, boolean isSearched);
-    String getOpeningHours(OpeningHours openingHours, Context context);
-    float getDistance(LatLng latLng, LatLng currentLocation);
-    String getWebsiteUri(Uri websiteUri);
-    double getRating(Double rating);
 
-    Restaurant createRestaurant(Place place, Bitmap placeImage, Context context);
-
+    // --- ORDER ---
     void listViewComparator();
+    void filterUsersInterestedAtCurrentRestaurant();
 
-    String makeUserFirstName(String userName);
-
-    String makeInterestedFriendsString(List<User> interestedFriendList);
-    String removeUselessWords(String restaurantName);
-
+    // --- THEME ---
     void setTheme(Activity activity);
-
     void setMapTheme(FragmentActivity fragmentActivity, GoogleMap mMap);
-
     void setTabColor(TabLayout activityMainTabs, Activity application);
-
     void setSelectedTabColor(TabLayout.Tab tab, MainActivity activity);
-
     void setUnselectedTabColor(TabLayout.Tab tab, MainActivity activity);
-
-    void setNavigationDrawerBackground(View navigationView, MainActivity activity);
-
     void setToolbarColor(Toolbar toolbar, View childAt, MainActivity activity);
 }

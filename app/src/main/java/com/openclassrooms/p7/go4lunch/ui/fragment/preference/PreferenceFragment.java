@@ -13,21 +13,21 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.openclassrooms.p7.go4lunch.R;
-import com.openclassrooms.p7.go4lunch.databinding.PreferenceSettingsBinding;
+import com.openclassrooms.p7.go4lunch.databinding.FragmentPreferenceSettingsBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.UserSettings;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 public class PreferenceFragment extends Fragment {
 
-    private PreferenceSettingsBinding mBinding;
+    private FragmentPreferenceSettingsBinding mBinding;
     private SharedPreferences sharedPreferences;
     private UserSettings settings;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mBinding = PreferenceSettingsBinding.inflate(inflater, container, false);
+        mBinding = FragmentPreferenceSettingsBinding.inflate(inflater, container, false);
         View view = mBinding.getRoot();
         settings = (UserSettings) requireActivity().getApplication();
         loadSharedPreferences();
@@ -59,7 +59,19 @@ public class PreferenceFragment extends Fragment {
                 editor.putString(UserSettings.CUSTOM_THEME, settings.getCustomTheme());
                 editor.apply();
                 updateView();
+            }
+        });
+        mBinding.preferenceSettingNotificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
 
+                } else {
+
+                }
+                SharedPreferences.Editor editor = requireActivity().getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE).edit();
+                editor.putString(UserSettings.CUSTOM_THEME, settings.getCustomTheme());
+                editor.apply();
             }
         });
     }
