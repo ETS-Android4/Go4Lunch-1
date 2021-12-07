@@ -138,7 +138,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        mApiService.setMapTheme(requireActivity(), mMap);
+//        mApiService.setMapTheme(requireActivity(), mMap);
         getLocationPermission();
         updateLocationUI();
         getDeviceLocation();

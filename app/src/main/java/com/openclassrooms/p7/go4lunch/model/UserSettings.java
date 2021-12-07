@@ -8,7 +8,9 @@ public class UserSettings extends Application {
     public static final String CUSTOM_THEME = "customTheme";
     public static final String LIGHT_THEME = "lightTheme";
     public static final String DARK_THEME = "darkTheme";
-    public static final boolean NOTIFICATION = false;
+    public static final String NOTIFICATION = "notification";
+    public static final String NOTIFICATION_ENABLED = "notification_enabled";
+    public static final String NOTIFICATION_DISABLED = "notification_disabled";
     private String customTheme;
     private String notification;
 

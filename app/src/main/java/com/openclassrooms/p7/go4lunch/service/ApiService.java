@@ -20,6 +20,7 @@ import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -42,26 +43,25 @@ public interface ApiService {
     // --- DELETE ---
     void deleteUser(User user);
 
-    // --- CREATE ---
-    Restaurant createRestaurant(Place place, Bitmap placeImage, Context context);
-
     // --- MAKE ---
     Map<String, UserAndRestaurant> makeUserAndRestaurantMap(String currentUserId);
-    UserAndRestaurant searchUserAndRestaurantById(String userId, String RestaurantId);
     String makeStringOpeningHours(OpeningHours openingHours, Context context);
+    String getCurrentDay(Calendar calendar);
     String makeUserFirstName(String userName);
     String makeInterestedFriendsString(List<User> interestedFriendList);
     String removeUselessWords(String restaurantName);
 
     // --- SEARCH ---
-    Restaurant searchCurrentRestaurantById(String id);
     User searchUserById(String uid);
+    Restaurant searchCurrentRestaurantById(String id);
+    UserAndRestaurant searchUserAndRestaurantById(String userId, String RestaurantId);
     void searchSelectedUserAndRestaurantToDeselect(String currentUserId, String currentRestaurantId);
     void likeOrSelectRestaurant(String currentUserId, String currentRestaurantId, int buttonId);
     UserAndRestaurant searchSelectedRestaurant(User user);
 
     // --- GETTERS ---
-    List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurantId);
+    List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurant);
+    List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId);
     UserAndRestaurant getCurrentUserSelectedRestaurant(User currentUserId);
     String getOpeningHours(OpeningHours openingHours, Context context);
     String getWebsiteUri(Uri websiteUri);
@@ -83,11 +83,8 @@ public interface ApiService {
     void listViewComparator();
     void filterUsersInterestedAtCurrentRestaurant();
 
-    // --- THEME ---
-    void setTheme(Activity activity);
-    void setMapTheme(FragmentActivity fragmentActivity, GoogleMap mMap);
-    void setTabColor(TabLayout activityMainTabs, Activity application);
-    void setSelectedTabColor(TabLayout.Tab tab, MainActivity activity);
-    void setUnselectedTabColor(TabLayout.Tab tab, MainActivity activity);
-    void setToolbarColor(Toolbar toolbar, View childAt, MainActivity activity);
+    // --- BOOLEAN ---
+    boolean notificationEnabled(Context context);
+
+    void addSearchedRestaurant(Restaurant restaurant);
 }

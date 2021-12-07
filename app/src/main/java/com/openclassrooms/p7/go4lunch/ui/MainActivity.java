@@ -4,6 +4,7 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -57,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
     public static String CURRENT_USER_ID;
     private ActivityMainBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
-    private ApiService mApiService;
     private HandleData mHandleData;
 
     @Override
@@ -72,10 +72,8 @@ public class MainActivity extends AppCompatActivity {
         this.configureListeners();
         this.updateHeader();
         this.initNotification();
-        this.setTheme();
+
     }
-
-
 
     @Override
     protected void onResume() {
@@ -126,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         if (mViewModel.isCurrentUserLogged()) {
             CURRENT_USER_ID = mViewModel.getCurrentUser().getUid();
         }
-        mApiService = DI.getRestaurantApiService();
     }
 
     private void startSignActivity() {
@@ -162,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
                             configureListeners();
                             configureViewPager();
                             updateHeader();
-                            setTheme();
                         }
                     });
 
@@ -213,11 +209,6 @@ public class MainActivity extends AppCompatActivity {
         PushNotificationService.periodicTimeRequest(getApplicationContext());
     }
 
-    private void setTheme() {
-        mApiService.setTheme(this);
-        mApiService.setToolbarColor(mBinding.activityMainToolbar.toolbar, mBinding.activityMainNavigationView.getChildAt(0), this);
-    }
-
     private void setTabLayoutName() {
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.main_activity_map_view_page)));
         mBinding.activityMainTabs.addTab(mBinding.activityMainTabs.newTab().setText(getString(R.string.main_activity_list_view_page)));
@@ -225,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
         Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).setIcon(R.drawable.ic_map);
         Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(1)).setIcon(R.drawable.ic_list);
         Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(2)).setIcon(R.drawable.ic_people_alt);
-        mApiService.setTabColor(mBinding.activityMainTabs, this);
+        Objects.requireNonNull(Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).getIcon()).setColorFilter(getApplicationContext().getResources().getColor(R.color.light_icon_color), PorterDuff.Mode.SRC_IN);
         this.setTabLayoutListener();
     }
 
@@ -234,12 +225,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mBinding.activityMainViewpager.setCurrentItem(tab.getPosition());
-                mApiService.setSelectedTabColor(tab, MainActivity.this);
+                Objects.requireNonNull(tab.getIcon()).setColorFilter(getResources().getColor(R.color.light_icon_color), PorterDuff.Mode.SRC_IN);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                mApiService.setUnselectedTabColor(tab, MainActivity.this);
+                Objects.requireNonNull(tab.getIcon()).setColorFilter(getResources().getColor(R.color.light_text_color), PorterDuff.Mode.SRC_IN);
             }
 
             @Override

@@ -9,7 +9,7 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -30,9 +30,13 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/activity_main_tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:tabTextColor="@color/black"
+                app:tabSelectedTextColor="@color/drawerlayout_color"
+                app:tabIndicator="@color/fui_transparent"/>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/activity_main_navigation_view"

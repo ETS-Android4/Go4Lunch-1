@@ -58,7 +58,6 @@ public class DetailFragment extends Fragment {
         this.configureView();
         this.initRecyclerView();
         this.configureListeners();
-        this.setTheme();
         return root;
     }
 
@@ -154,16 +153,6 @@ public class DetailFragment extends Fragment {
         mBinding.activityDetailLikeBtn.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
         // Select Restaurant to lunch Button
         mBinding.activityDetailFab.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
-    }
-
-    private void setTheme() {
-        mApiService.setTheme(requireActivity());
-//        mBinding.activityDetailRecyclerview.setBackgroundColor(getResources().getColor(R.color.light_text_color));
-//        mBinding.activityDetailButtonContainer.setBackgroundColor(getResources().getColor(R.color.light_text_color));
-//        mBinding.activityDetailCallTv.setTextColor(getResources().getColor(R.color.white));
-//        mBinding.activityDetailLikeTv.setTextColor(getResources().getColor(R.color.white));
-//        mBinding.activityDetailWebsiteTv.setTextColor(getResources().getColor(R.color.white));
-
     }
 
     private void permissionToCall() {

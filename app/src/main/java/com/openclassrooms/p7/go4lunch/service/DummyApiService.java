@@ -1,6 +1,11 @@
 package com.openclassrooms.p7.go4lunch.service;
 
 
+import static com.openclassrooms.p7.go4lunch.model.UserSettings.CUSTOM_THEME;
+import static com.openclassrooms.p7.go4lunch.model.UserSettings.LIGHT_THEME;
+import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION;
+import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_ENABLED;
+import static com.openclassrooms.p7.go4lunch.model.UserSettings.PREFERENCES;
 import static com.openclassrooms.p7.go4lunch.ui.fragment.DetailFragment.LIKE_BTN_TAG;
 import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
 
@@ -43,9 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Created by lleotraas on 21.
- */
 public class DummyApiService implements ApiService {
 
     // --- LIST ---
@@ -87,34 +89,14 @@ public class DummyApiService implements ApiService {
     public void deleteUser(User user) {
         mUserList.remove(user);
     }
-
-    /**
-     * Create a Restaurant found from nearby search.
-     * @param place Restaurant.
-     * @param placeImage Restaurant image.
-     * @param context context of the fragment.
-     * @return Restaurant.
-     */
     @Override
-    public Restaurant createRestaurant(Place place, Bitmap placeImage, Context context) {
-        //TODO if photo = null change it by noImage.
-        return new Restaurant(
-                place.getId(),
-                place.getName(),
-                place.getAddress(),
-                getOpeningHours(place.getOpeningHours(), context),
-                place.getPhoneNumber(),
-                getWebsiteUri(place.getWebsiteUri()),
-                getDistance(place.getLatLng(), currentLocation),
-                getRating(place.getRating()),
-                place.getLatLng(),
-                placeImage,
-                0);
+    public void addSearchedRestaurant(Restaurant restaurant) {
+
     }
 
     /**
      * Make a Map to copy it in the currentUser and send it to the Database.
-     * @param currentUserId th id of the current user.
+     * @param currentUserId the id of the current user.
      * @return a UserAndRestaurant Map.
      */
     @Override
@@ -126,26 +108,6 @@ public class DummyApiService implements ApiService {
             }
         }
         return userAndRestaurantMap;
-    }
-
-    /**
-     * Make a UserAndRestaurantList with all User contains Restaurant found nearby.
-     * @param userId current user id.
-     * @param restaurantId current restaurant id.
-     * @return current userAndRestaurant.
-     */
-    @Override
-    public UserAndRestaurant searchUserAndRestaurantById(String userId, String restaurantId) {
-        UserAndRestaurant userAndRestaurantFound = null;
-        for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
-            if (
-                    userAndRestaurant.getUserId().equals(userId) &&
-                    userAndRestaurant.getRestaurantId().equals(restaurantId)
-            ) {
-                userAndRestaurantFound = userAndRestaurant;
-            }
-        }
-        return userAndRestaurantFound;
     }
 
     /**
@@ -185,7 +147,7 @@ public class DummyApiService implements ApiService {
         return "still closed";
     }
 
-    private String getCurrentDay(Calendar calendar) {
+    public String getCurrentDay(Calendar calendar) {
         int day = calendar.get(Calendar.DAY_OF_WEEK);
         String currentDays = "";
         switch (day - 1) {
@@ -255,6 +217,22 @@ public class DummyApiService implements ApiService {
     }
 
     /**
+     * Search User currently logged to the application.
+     * @param currentUserId id of the current User.
+     * @return current User.
+     */
+    @Override
+    public User searchUserById(String currentUserId) {
+        User userFound = null;
+        for (User user : getUsers()) {
+            if (currentUserId.equals(user.getUid())) {
+                userFound = user;
+            }
+        }
+        return userFound;
+    }
+
+    /**
      * Search current Restaurant to detail it.
      * @param restaurantId id of the clicked Restaurant.
      * @return Restaurant to detail.
@@ -276,19 +254,23 @@ public class DummyApiService implements ApiService {
     }
 
     /**
-     * Search User currently logged to the application.
-     * @param currentUserId id of the current User.
-     * @return current User.
+     * Make a UserAndRestaurantList with all User contains Restaurant found nearby.
+     * @param userId current user id.
+     * @param restaurantId current restaurant id.
+     * @return current userAndRestaurant.
      */
     @Override
-    public User searchUserById(String currentUserId) {
-        User userFound = null;
-        for (User user : getUsers()) {
-            if (currentUserId.equals(user.getUid())) {
-                userFound = user;
+    public UserAndRestaurant searchUserAndRestaurantById(String userId, String restaurantId) {
+        UserAndRestaurant userAndRestaurantFound = null;
+        for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
+            if (
+                    userAndRestaurant.getUserId().equals(userId) &&
+                            userAndRestaurant.getRestaurantId().equals(restaurantId)
+            ) {
+                userAndRestaurantFound = userAndRestaurant;
             }
         }
-        return userFound;
+        return userAndRestaurantFound;
     }
 
     /**
@@ -369,6 +351,20 @@ public class DummyApiService implements ApiService {
             }
         }
         currentRestaurant.setNumberOfFriendInterested(usersInterested.size());
+        return usersInterested;
+    }
+
+    public List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId) {
+        List<User> usersInterested = new ArrayList<>();
+        for (UserAndRestaurant restaurantSelected : getUserAndRestaurant()) {
+            if (
+                    restaurantSelected.isSelected() &&
+                            !currentUserId.equals(restaurantSelected.getUserId())
+            ) {
+                User user = searchUserById(restaurantSelected.getUserId());
+                usersInterested.add(user);
+            }
+        }
         return usersInterested;
     }
 
@@ -584,79 +580,13 @@ public class DummyApiService implements ApiService {
         }
     }
 
-    //TODO comment all theme methods
     @Override
-    public void setTheme(Activity activity) {
-        if (getCurrentTheme(activity).equals("darkTheme")) {
-            activity.setTheme(R.style.dark_theme);
-        } else {
-            activity.setTheme(R.style.light_theme);
-        }
+    public boolean notificationEnabled(Context context) {
+        return getCurrentNotification(context).equals(NOTIFICATION_ENABLED);
     }
 
-    @Override
-    public void setMapTheme(FragmentActivity activity, GoogleMap mMap) {
-        if (getCurrentTheme(activity).equals("darkTheme")) {
-            mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(activity.getApplicationContext(), R.raw.mapstyle_night));
-        } else {
-            mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(activity.getApplicationContext(), R.raw.mapstyle_default));
-        }
-    }
-
-    @Override
-    public void setTabColor(TabLayout activityMainTabs, Activity activity) {
-        if (getCurrentTheme(activity).equals("darkTheme")) {
-            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(0)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.dark_icon_color), PorterDuff.Mode.SRC_IN);
-            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(1)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.dark_text_color), PorterDuff.Mode.SRC_IN);
-            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(2)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.dark_text_color), PorterDuff.Mode.SRC_IN);
-            activityMainTabs.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.dark_background_color));
-            activityMainTabs.setSelectedTabIndicatorColor(activity.getApplicationContext().getResources().getColor(R.color.dark_decoration_color));
-            activityMainTabs.setTabTextColors(activity.getApplicationContext().getResources().getColor(R.color.dark_text_color), activity.getApplicationContext().getResources().getColor(R.color.dark_icon_color));
-
-        } else {
-            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(0)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.light_icon_color), PorterDuff.Mode.SRC_IN);
-            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(1)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.light_text_color), PorterDuff.Mode.SRC_IN);
-            Objects.requireNonNull(Objects.requireNonNull(activityMainTabs.getTabAt(2)).getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.light_text_color), PorterDuff.Mode.SRC_IN);
-            activityMainTabs.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.light_background_color));
-            activityMainTabs.setSelectedTabIndicatorColor(activity.getApplicationContext().getResources().getColor(R.color.light_decoration_color));
-            activityMainTabs.setTabTextColors(activity.getApplicationContext().getResources().getColor(R.color.light_text_color), activity.getApplicationContext().getResources().getColor(R.color.light_decoration_color));
-        }
-    }
-
-    @Override
-    public void setSelectedTabColor(TabLayout.Tab tab, MainActivity activity) {
-        if (getCurrentTheme(activity).equals("darkTheme")) {
-            Objects.requireNonNull(tab.getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.dark_icon_color), PorterDuff.Mode.SRC_IN);
-        } else {
-            Objects.requireNonNull(tab.getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.light_icon_color), PorterDuff.Mode.SRC_IN);
-        }
-    }
-
-    @Override
-    public void setUnselectedTabColor(TabLayout.Tab tab, MainActivity activity) {
-        if (getCurrentTheme(activity).equals("darkTheme")) {
-            Objects.requireNonNull(tab.getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.dark_text_color), PorterDuff.Mode.SRC_IN);
-        } else {
-            Objects.requireNonNull(tab.getIcon()).setColorFilter(activity.getApplicationContext().getResources().getColor(R.color.light_text_color), PorterDuff.Mode.SRC_IN);
-        }
-    }
-
-    @Override
-    public void setToolbarColor(Toolbar toolbar, View childAt, MainActivity activity) {
-        Window window = activity.getWindow();
-        if (getCurrentTheme(activity).equals("darkTheme")) {
-            toolbar.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.dark_decoration_color));
-            window.setStatusBarColor(activity.getApplicationContext().getResources().getColor(R.color.black));
-            childAt.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.dark_decoration_color));
-        } else {
-            toolbar.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.light_decoration_color));
-            window.setStatusBarColor(activity.getApplicationContext().getResources().getColor(R.color.system_bar_color));
-            childAt.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.light_decoration_color));
-        }
-    }
-
-    private String getCurrentTheme(Activity activity) {
-        SharedPreferences mSharedPreferences = activity.getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE);
-        return mSharedPreferences.getString(UserSettings.CUSTOM_THEME, UserSettings.LIGHT_THEME);
+    private String getCurrentNotification(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(NOTIFICATION, NOTIFICATION_ENABLED);
     }
 }

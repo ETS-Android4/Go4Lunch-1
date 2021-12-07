@@ -1,5 +1,9 @@
 package com.openclassrooms.p7.go4lunch.ui.fragment.preference;
 
+import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION;
+import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_DISABLED;
+import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_ENABLED;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,16 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.FragmentPreferenceSettingsBinding;
-import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.UserSettings;
-import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 public class PreferenceFragment extends Fragment {
 
     private FragmentPreferenceSettingsBinding mBinding;
-    private SharedPreferences sharedPreferences;
     private UserSettings settings;
 
     @Nullable
@@ -36,58 +36,29 @@ public class PreferenceFragment extends Fragment {
     }
 
     private void loadSharedPreferences() {
-        sharedPreferences = requireActivity().getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE);
-        String theme = sharedPreferences.getString(UserSettings.CUSTOM_THEME, UserSettings.LIGHT_THEME);
-        settings.setCustomTheme(theme);
-        if (theme.equals("darkTheme")) {
-            mBinding.preferenceSettingNightModeSwitch.setChecked(true);
-        } else {
-            mBinding.preferenceSettingNightModeSwitch.setChecked(false);
-        }
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE);
+        String notification  = sharedPreferences.getString(UserSettings.NOTIFICATION, UserSettings.NOTIFICATION_ENABLED);
+        settings.setNotification(notification);
+        mBinding.preferenceSettingNotificationSwitch.setChecked(notification.equals(NOTIFICATION_ENABLED));
     }
 
     private void initSwitchListener() {
-        mBinding.preferenceSettingNightModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    settings.setCustomTheme(UserSettings.DARK_THEME);
-                } else {
-                    settings.setCustomTheme(UserSettings.LIGHT_THEME);
-                }
-                SharedPreferences.Editor editor = requireActivity().getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE).edit();
-                editor.putString(UserSettings.CUSTOM_THEME, settings.getCustomTheme());
-                editor.apply();
-                updateView();
-            }
-        });
         mBinding.preferenceSettingNotificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-
+                    settings.setNotification(NOTIFICATION_ENABLED);
                 } else {
-
+                    settings.setNotification(NOTIFICATION_DISABLED);
                 }
-                SharedPreferences.Editor editor = requireActivity().getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE).edit();
-                editor.putString(UserSettings.CUSTOM_THEME, settings.getCustomTheme());
-                editor.apply();
+                saveSharedPreferences(NOTIFICATION, settings.getNotification());
             }
         });
     }
 
-    private void updateView() {
-        ApiService apiService = DI.getRestaurantApiService();
-        if (settings.getCustomTheme().equals(UserSettings.DARK_THEME)) {
-            mBinding.preferenceSettingContainer.setBackgroundColor(getResources().getColor(R.color.light_text_color));
-            mBinding.preferenceSettingNightModeTv.setTextColor(getResources().getColor(R.color.white));
-            mBinding.preferenceSettingTitleTv.setTextColor(getResources().getColor(R.color.white));
-        } else {
-            mBinding.preferenceSettingContainer.setBackgroundColor(getResources().getColor(R.color.white));
-            mBinding.preferenceSettingNightModeTv.setTextColor(getResources().getColor(R.color.black));
-            mBinding.preferenceSettingTitleTv.setTextColor(getResources().getColor(R.color.black));
-        }
+    private void saveSharedPreferences(String category, String userSettingsGetter) {
+        SharedPreferences.Editor editor = requireActivity().getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE).edit();
+        editor.putString(category, userSettingsGetter);
+        editor.apply();
     }
-
-
 }

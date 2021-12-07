@@ -76,5 +76,8 @@
     <string name="preference_setting_title">Setting menu</string>
     <string name="preference_setting_enable_night_mode">Enable night mode</string>
     <string name="preference_setting_enable_notification">Enable notification</string>
+    <string name="UserSettings_notification_enabled">notification_enabled</string>
+    <string name="UserSettings_darkTheme">darkTheme</string>
+    <string name="push_notification_service_list_of_friend_are_come">Friends that come with you:</string>
 
 </resources>
