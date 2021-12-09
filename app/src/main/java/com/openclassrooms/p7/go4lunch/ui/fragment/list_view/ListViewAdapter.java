@@ -41,7 +41,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     @Override
     public void onBindViewHolder(@NonNull ListViewAdapter.ListViewHolder holder, int position) {
         holder.bind(mRestaurantList.get(position));
-        holder.mApiService.getUsersInterestedAtCurrentRestaurant(CURRENT_USER_ID, mRestaurantList.get(position));
+        holder.mApiService.getUsersInterestedAtCurrentRestaurants(CURRENT_USER_ID, mRestaurantList.get(position));
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
             String id = mRestaurantList.get(position).getId();

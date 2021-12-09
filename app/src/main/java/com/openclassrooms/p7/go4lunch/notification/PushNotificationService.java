@@ -1,11 +1,15 @@
 package com.openclassrooms.p7.go4lunch.notification;
 
+import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION;
+import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_ENABLED;
+import static com.openclassrooms.p7.go4lunch.model.UserSettings.PREFERENCES;
 import static com.openclassrooms.p7.go4lunch.notification.Notification.CHANNEL_ID;
 
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -58,7 +62,7 @@ public class PushNotificationService extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        if (!mApiService.notificationEnabled(mContext)) {
+        if (!getCurrentNotification(mContext).equals(NOTIFICATION_ENABLED)) {
             mWorkManager.cancelUniqueWork("lunch time");
             return Result.success();
         }
@@ -86,7 +90,7 @@ public class PushNotificationService extends Worker {
 
         String userName = mApiService.makeUserFirstName(user.getUserName());
         UserAndRestaurant userAndRestaurantSelected = mApiService.getCurrentUserSelectedRestaurant(user);
-        List<User> interestedFriends = mApiService.getUsersInterestedAtCurrentRestaurant(user.getUid());
+        List<User> interestedFriends = mApiService.getUsersInterestedAtCurrentRestaurantForNotification(user.getUid(), userAndRestaurantSelected.getRestaurantId());
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
@@ -134,5 +138,10 @@ public class PushNotificationService extends Worker {
                 .setRequiresBatteryNotLow(true)
                 .build();
         return constraints;
+    }
+
+    private String getCurrentNotification(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(NOTIFICATION, NOTIFICATION_ENABLED);
     }
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:key="@string/preference_notifications"
+        app:title="@string/preference_enable_notifications" />
+
+    <SwitchPreferenceCompat
+        app:key="@string/preference_night_mode"
+        app:title="@string/preference_enable_Night_mode" />
+</PreferenceScreen>

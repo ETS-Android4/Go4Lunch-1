@@ -1,44 +1,28 @@
 package com.openclassrooms.p7.go4lunch.service;
 
 
-import static com.openclassrooms.p7.go4lunch.model.UserSettings.CUSTOM_THEME;
-import static com.openclassrooms.p7.go4lunch.model.UserSettings.LIGHT_THEME;
 import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION;
 import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_ENABLED;
 import static com.openclassrooms.p7.go4lunch.model.UserSettings.PREFERENCES;
-import static com.openclassrooms.p7.go4lunch.ui.fragment.DetailFragment.LIKE_BTN_TAG;
-import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
 import android.location.Location;
 import android.net.Uri;
-import android.view.View;
-import android.view.Window;
-
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.model.LocalTime;
 import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Period;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.google.android.material.tabs.TabLayout;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
-import com.openclassrooms.p7.go4lunch.model.UserSettings;
-import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,7 +36,7 @@ public class DummyApiService implements ApiService {
 
     // --- LIST ---
     private final List<Restaurant> mRestaurantList = DummyUserAndRestaurant.generateRestaurant();
-    private final List<Restaurant> mSearchedRestaurant = new ArrayList<>();
+    private final List<Restaurant> mSearchedRestaurant = DummyUserAndRestaurant.generateSearchedRestaurant();
     private final List<UserAndRestaurant> mUserAndRestaurantList = DummyUserAndRestaurant.generateUserAndRestaurant();
     private final List<User> mUserList = DummyUserAndRestaurant.generateUsers();
 
@@ -61,41 +45,51 @@ public class DummyApiService implements ApiService {
     public List<Restaurant> getRestaurant() {
         return mRestaurantList;
     }
+
     @Override
     public List<UserAndRestaurant> getUserAndRestaurant() {
         return mUserAndRestaurantList;
     }
+
     @Override
     public List<User> getUsers() {
         return mUserList;
     }
+
     @Override
-    public List<Restaurant> getSearchedRestaurant() { return mSearchedRestaurant; }
+    public List<Restaurant> getSearchedRestaurant() {
+        return mSearchedRestaurant;
+    }
 
     // --- ADD TO LIST ---
     @Override
     public void addUserAndRestaurant(UserAndRestaurant userAndRestaurant) {
         mUserAndRestaurantList.add(userAndRestaurant);
     }
+
     @Override
     public void addRestaurant(Restaurant restaurant) {
         mRestaurantList.add(restaurant);
     }
+
     @Override
     public void addUser(User user) {
         mUserList.add(user);
     }
+
     @Override
     public void deleteUser(User user) {
         mUserList.remove(user);
     }
+
     @Override
     public void addSearchedRestaurant(Restaurant restaurant) {
-
+        mSearchedRestaurant.add(restaurant);
     }
 
     /**
      * Make a Map to copy it in the currentUser and send it to the Database.
+     *
      * @param currentUserId the id of the current user.
      * @return a UserAndRestaurant Map.
      */
@@ -112,35 +106,27 @@ public class DummyApiService implements ApiService {
 
     /**
      * Get the current hour and openingHour of the currentDay and calculate the remaining time before Restaurant close.
+     *
      * @param openingHours Restaurant openingHours.
-     * @param context context of the fragment.
      * @return String with remaining time before restaurant close.
      */
-    @Override
-    public String makeStringOpeningHours(OpeningHours openingHours, Context context) {
-        Calendar calendar = Calendar.getInstance();
-        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-        String currentDays = this.getCurrentDay(calendar);
+    public String makeStringOpeningHours(OpeningHours openingHours, String currentDay, LocalTime currentTime) {
+        int currentHour = currentTime.getHours();
         for (Period openingDay : openingHours.getPeriods()) {
-            if (Objects.requireNonNull(openingDay.getOpen()).getDay().toString().equals(currentDays)) {
+            if (Objects.requireNonNull(openingDay.getOpen()).getDay().toString().equals(currentDay)) {
                 int closeHour = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
-                int closeMinute = Objects.requireNonNull(openingDay.getClose()).getTime().getMinutes();
                 int openHour = Objects.requireNonNull(openingDay.getOpen()).getTime().getHours();
                 int openMinute = Objects.requireNonNull(openingDay.getOpen()).getTime().getMinutes();
                 String closeTime = String.format("%s", closeHour);
-                String openTime = String.format("%s", openHour);
-                if (closeMinute > 0) {
-                    closeTime = String.format("%s:%s", closeHour, closeMinute);
-                }
-                if (openMinute > 0) {
-                    openTime = String.format("%s:%s", openHour, openMinute);
-                }
 
-                if (openingDay.getOpen().getTime().getHours() > currentHour) {
-                    return String.format("%s %spm %s %spm",context.getResources().getString(R.string.list_view_holder_open_at), openTime,context.getResources().getString(R.string.list_view_holder_until), closeTime);
+                if (openMinute > 0 && openHour > currentHour) {
+                    return String.format("%s:%s", openHour, openMinute);
                 }
-                if (openingDay.getClose().getTime().getHours() > currentHour || openingDay.getClose().getTime().getHours() < 3) {
-                    return String.format("%s %s pm",context.getResources().getString(R.string.list_view_holder_still_open_until), Math.abs(closeHour - currentHour));
+                if (openHour > currentHour) {
+                    return closeTime;
+                }
+                if (closeHour > currentHour || closeHour < 3) {
+                    return String.format("%s", Math.abs(closeHour - currentHour));
                 }
             }
         }
@@ -178,6 +164,7 @@ public class DummyApiService implements ApiService {
 
     /**
      * Used to format username with his first name and put a uppercase on the first letter.
+     *
      * @param userName name of the user.
      * @return first name format.
      */
@@ -218,6 +205,7 @@ public class DummyApiService implements ApiService {
 
     /**
      * Search User currently logged to the application.
+     *
      * @param currentUserId id of the current User.
      * @return current User.
      */
@@ -234,19 +222,20 @@ public class DummyApiService implements ApiService {
 
     /**
      * Search current Restaurant to detail it.
+     *
      * @param restaurantId id of the clicked Restaurant.
      * @return Restaurant to detail.
      */
     @Override
     public Restaurant searchCurrentRestaurantById(String restaurantId) {
         Restaurant restaurantFound = null;
-        if ( !getSearchedRestaurant().isEmpty()) {
+        if (!getSearchedRestaurant().isEmpty()) {
             if (restaurantId.equals(getSearchedRestaurant().get(0).getId())) {
                 restaurantFound = getSearchedRestaurant().get(0);
             }
         }
         for (Restaurant restaurant : getRestaurant()) {
-            if (restaurantId.equals(restaurant.getId())){
+            if (restaurantId.equals(restaurant.getId())) {
                 restaurantFound = restaurant;
             }
         }
@@ -255,7 +244,8 @@ public class DummyApiService implements ApiService {
 
     /**
      * Make a UserAndRestaurantList with all User contains Restaurant found nearby.
-     * @param userId current user id.
+     *
+     * @param userId       current user id.
      * @param restaurantId current restaurant id.
      * @return current userAndRestaurant.
      */
@@ -275,7 +265,8 @@ public class DummyApiService implements ApiService {
 
     /**
      * Deselect the previous UserAndRestaurant selected in the UserAndRestaurantList.
-     * @param currentUserId Current User id.
+     *
+     * @param currentUserId       Current User id.
      * @param currentRestaurantId Current Restaurant id.
      */
     @Override
@@ -283,9 +274,8 @@ public class DummyApiService implements ApiService {
         for (int index = 0; index < getUserAndRestaurant().size(); index++) {
             if (
                     getUserAndRestaurant().get(index).getUserId().equals(currentUserId) &&
-                    !getUserAndRestaurant().get(index).getRestaurantId().equals(currentRestaurantId) &&
-                    getUserAndRestaurant().get(index).isSelected())
-            {
+                            !getUserAndRestaurant().get(index).getRestaurantId().equals(currentRestaurantId) &&
+                            getUserAndRestaurant().get(index).isSelected()) {
                 getUserAndRestaurant().get(index).setSelected(false);
             }
         }
@@ -293,9 +283,10 @@ public class DummyApiService implements ApiService {
 
     /**
      * Like or select Restaurant show in Details depend which button was clicked.
-     * @param currentUserId current User id.
+     *
+     * @param currentUserId       current User id.
      * @param currentRestaurantId current Restaurant id.
-     * @param buttonId Clicked button id.
+     * @param buttonId            Clicked button id.
      */
     @Override
     public void likeOrSelectRestaurant(String currentUserId, String currentRestaurantId, int buttonId) {
@@ -304,7 +295,7 @@ public class DummyApiService implements ApiService {
                     currentRestaurantId.equals(getUserAndRestaurant().get(index).getRestaurantId()) &&
                             currentUserId.equals(getUserAndRestaurant().get(index).getUserId())
             ) {
-                if (buttonId == LIKE_BTN_TAG) {
+                if (buttonId == R.id.activity_detail_like_btn) {
                     getUserAndRestaurant().get(index).setFavorite(!getUserAndRestaurant().get(index).isFavorite());
                 } else {
                     getUserAndRestaurant().get(index).setSelected(!getUserAndRestaurant().get(index).isSelected());
@@ -315,6 +306,7 @@ public class DummyApiService implements ApiService {
 
     /**
      * Call to search the selected Restaurant by the User and show it in the WorkmatesRecyclerView.
+     *
      * @param user User in the Database.
      * @return UserAndRestaurant selected.
      */
@@ -333,18 +325,19 @@ public class DummyApiService implements ApiService {
      * Call to know how many users are interested at current Restaurant for the ListViewFragment and the DetailsActivity RecyclerView.
      * First we search the userId corresponding to the restaurant selected.
      * Second we looking for the user with his id and add him to the list.
-     * @param currentUserId current User id.
+     *
+     * @param currentUserId     current User id.
      * @param currentRestaurant Restaurant to compare with UserAndRestaurant.
      * @return List of User interested at the Restaurant.
      */
     @Override
-    public List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId, Restaurant currentRestaurant) {
+    public List<User> getUsersInterestedAtCurrentRestaurants(String currentUserId, Restaurant currentRestaurant) {
         List<User> usersInterested = new ArrayList<>();
         for (UserAndRestaurant restaurantSelected : getUserAndRestaurant()) {
             if (
                     restaurantSelected.isSelected() &&
-                    !currentUserId.equals(restaurantSelected.getUserId()) &&
-                    currentRestaurant.getId().equals(restaurantSelected.getRestaurantId())
+                            !currentUserId.equals(restaurantSelected.getUserId()) &&
+                            currentRestaurant.getId().equals(restaurantSelected.getRestaurantId())
             ) {
                 User user = searchUserById(restaurantSelected.getUserId());
                 usersInterested.add(user);
@@ -354,12 +347,13 @@ public class DummyApiService implements ApiService {
         return usersInterested;
     }
 
-    public List<User> getUsersInterestedAtCurrentRestaurant(String currentUserId) {
+    public List<User> getUsersInterestedAtCurrentRestaurantForNotification(String currentUserId, String restaurantId) {
         List<User> usersInterested = new ArrayList<>();
         for (UserAndRestaurant restaurantSelected : getUserAndRestaurant()) {
             if (
                     restaurantSelected.isSelected() &&
-                            !currentUserId.equals(restaurantSelected.getUserId())
+                            !currentUserId.equals(restaurantSelected.getUserId()) &&
+                            restaurantId.equals(restaurantSelected.getRestaurantId())
             ) {
                 User user = searchUserById(restaurantSelected.getUserId());
                 usersInterested.add(user);
@@ -374,7 +368,7 @@ public class DummyApiService implements ApiService {
         for (Map.Entry<String, UserAndRestaurant> userAndRestaurant : user.getUserAndRestaurant().entrySet()) {
             if (
                     userAndRestaurant.getValue().getUserId().equals(user.getUid()) &&
-                    userAndRestaurant.getValue().isSelected()
+                            userAndRestaurant.getValue().isSelected()
             ) {
                 return userAndRestaurant.getValue();
             }
@@ -384,35 +378,37 @@ public class DummyApiService implements ApiService {
 
     /**
      * Format opening hour for show it.
+     *
      * @param openingHours place opening hours.
-     * @param context context of the fragment.
      * @return opening hours if available.
      */
     @Override
-    public String getOpeningHours(OpeningHours openingHours, Context context) {
-        String noDetails = String.format("%s", R.string.workmates_list_view_holder_no_details_here);
+    public String getOpeningHours(OpeningHours openingHours) {
         if (openingHours != null) {
-            return makeStringOpeningHours(openingHours, context);
+            String currentDay = getCurrentDay(Calendar.getInstance());
+            LocalTime currentTime = LocalTime.newInstance(Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE));
+            return makeStringOpeningHours(openingHours, currentDay, currentTime);
         }
-        return noDetails;
+        return "no details";
     }
 
     /**
      * Get the Restaurant website if available and format it to a String.
+     *
      * @param websiteUri uri website.
      * @return String url.
      */
     @Override
     public String getWebsiteUri(Uri websiteUri) {
-        String noWebsiteUrl = "";
         if (websiteUri != null) {
-            return String.format("%s", websiteUri);
+            return websiteUri.toString();
         }
-        return noWebsiteUrl;
+        return "";
     }
 
     /**
      * Get the Restaurant Rating if available.
+     *
      * @param rating rating.
      * @return rating or noRating.
      */
@@ -427,7 +423,8 @@ public class DummyApiService implements ApiService {
 
     /**
      * Calculate the distance between User and Restaurant.
-     * @param placeLocation Restaurant location.
+     *
+     * @param placeLocation   Restaurant location.
      * @param currentLocation User Location.
      * @return distance between User and Restaurant.
      */
@@ -446,6 +443,7 @@ public class DummyApiService implements ApiService {
 
     /**
      * set a limit zone around the current User location for better search result.
+     *
      * @param currentLocation current User Location.
      * @return RectangularBound around the User.
      */
@@ -458,37 +456,40 @@ public class DummyApiService implements ApiService {
 
     /**
      * Call three time to show the rating of Restaurant in ListViewFragment and DetailsActivity.
-     * @param index Loop index.
+     *
+     * @param index  Loop index.
      * @param rating Restaurant rating.
      * @return rating image to set.
      */
     @Override
     public int setRatingStars(int index, double rating) {
         int convertedRating = (int) rating;
-            if (convertedRating == 2 && index == 1|| convertedRating == 4 && index == 2) {
-                return R.drawable.baseline_star_half_black_24;
-            }
-            if (convertedRating < 4 && index == 2 || convertedRating < 2 && index == 1) {
-               return R.drawable.baseline_star_border_black_24;
-            }
+        if (convertedRating == 2 && index == 1 || convertedRating == 4 && index == 2) {
+            return R.drawable.baseline_star_half_black_24;
+        }
+        if (convertedRating < 4 && index == 2 || convertedRating < 2 && index == 1 || convertedRating == 0) {
+            return R.drawable.baseline_star_border_black_24;
+        }
         return R.drawable.baseline_star_rate_black_24;
     }
 
     /**
      * Call if Restaurant is liked or not.
+     *
      * @param isFavorite if restaurant is favorite or not.
      * @return liked image to set.
      */
     @Override
     public int setFavoriteImage(boolean isFavorite) {
-            if (isFavorite) {
-                return R.drawable.ic_star;
-            }
-            return R.drawable.ic_star_outline;
+        if (isFavorite) {
+            return R.drawable.ic_star;
+        }
+        return R.drawable.ic_star_outline;
     }
 
     /**
      * Call if Restaurant is selected or not.
+     *
      * @param selected if restaurant is selected or not.
      * @return selected image to set.
      */
@@ -502,15 +503,18 @@ public class DummyApiService implements ApiService {
 
     /**
      * Call to set marker at Restaurant Location default return red marker, selected Restaurant return green marker, searched Restaurant return blue marker.
-     * @param placeId place id.
-     * @param isSearched to define if it's a nearby search or a search.
-     * @param restaurantPosition restaurant location.
-     * @param mMap the current GoogleMap.
+     *
+     * @param placeId            place id.
+     * @param isSearched         to define if it's a nearby search or a search.
      * @return marker image to set.
      */
-    public int setMarkerIcon(String placeId, boolean isSearched, LatLng restaurantPosition, GoogleMap mMap) {
+    public int setMarkerIcon(String placeId, boolean isSearched) {
         for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
-            if (userAndRestaurant.getRestaurantId().equals(placeId) && userAndRestaurant.isSelected() && !isSearched) {
+            if (
+                    userAndRestaurant.getRestaurantId().equals(placeId) &&
+                    userAndRestaurant.isSelected() &&
+                    !isSearched
+            ) {
                 //TODO these marker still here even the restaurant is deselected.
                 return R.drawable.baseline_place_cyan;
             }
@@ -522,16 +526,16 @@ public class DummyApiService implements ApiService {
     }
 
 
-
     /**
      * Update markers on map when the user go back on the MapViewFragment.
+     *
      * @param isSearched to define if it's a nearby search or a search.
-     * @param map current Google Maps
+     * @param map        current Google Maps
      */
     public void updateMarkerOnMap(boolean isSearched, GoogleMap map) {
         for (Restaurant restaurantFound : getRestaurant()) {
             MarkerOptions options = new MarkerOptions();
-            options.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurantFound.getId(), isSearched, restaurantFound.getPosition(), map)));
+            options.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurantFound.getId(), isSearched)));
             LatLng latLng = new LatLng(restaurantFound.getPosition().latitude, restaurantFound.getPosition().longitude);
             options.position(latLng);
             options.snippet(restaurantFound.getId());
@@ -541,12 +545,13 @@ public class DummyApiService implements ApiService {
 
     /**
      * Put markers on map for each Restaurant found after a nearby search or a search.
+     *
      * @param restaurant Restaurant to set a marker on.
-     * @param map current Google Maps
+     * @param map        current Google Maps
      */
     public void setMarkerOnMap(Restaurant restaurant, GoogleMap map, boolean isSearched) {
         MarkerOptions options = new MarkerOptions();
-        options.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), isSearched, restaurant.getPosition(), map)));
+        options.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), isSearched)));
         LatLng latLng = new LatLng(restaurant.getPosition().latitude, restaurant.getPosition().longitude);
         options.position(latLng);
         options.snippet(restaurant.getId());
@@ -578,15 +583,5 @@ public class DummyApiService implements ApiService {
                 getUsers().add(0, userFound);
             }
         }
-    }
-
-    @Override
-    public boolean notificationEnabled(Context context) {
-        return getCurrentNotification(context).equals(NOTIFICATION_ENABLED);
-    }
-
-    private String getCurrentNotification(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(NOTIFICATION, NOTIFICATION_ENABLED);
     }
 }
