@@ -469,7 +469,7 @@ public class DummyApiService implements ApiService {
             if (
                     userAndRestaurant.getRestaurantId().equals(placeId) &&
                     userAndRestaurant.isSelected() &&
-                    CURRENT_USER_ID.equals(userAndRestaurant.getUserId()) &&
+                    !CURRENT_USER_ID.equals(userAndRestaurant.getUserId()) &&
                     !isSearched
             ) {
                 //TODO these marker still here even the restaurant is deselected.

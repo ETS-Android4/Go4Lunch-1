@@ -1,6 +1,10 @@
 package com.openclassrooms.p7.go4lunch.repository;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -79,13 +83,9 @@ public final class UserRepository {
      * Call a task to do a request to the collection where current user.
      * @return A query task.
      */
-    private Task<DocumentSnapshot> getUserData() {
+    public Task<DocumentSnapshot> getUserData() {
         String uid = Objects.requireNonNull(this.getCurrentUser()).getUid();
         return this.getUsersCollection().document(uid).get();
-    }
-
-    public Task<DocumentSnapshot> getUserData(String userId) {
-        return this.getUsersCollection().document(userId).get();
     }
 
     /**
@@ -99,12 +99,11 @@ public final class UserRepository {
     /**
      * Create user in Firestore, if user already exist just update it.
      */
-    public void createUser() {
+    public void createFireStoreUser() {
         FirebaseUser user = getCurrentUser();
         HashMap<String, UserAndRestaurant> likedOrSelectedRestaurant = new HashMap<>();
-        assert user != null;
         User userToCreate = new User(
-                user.getUid(),
+                Objects.requireNonNull(user).getUid(),
                 user.getDisplayName(),
                 Objects.requireNonNull(user.getPhotoUrl()).toString(),
                 likedOrSelectedRestaurant
@@ -122,7 +121,7 @@ public final class UserRepository {
     /**
      * Get userList from Firestore and store it in DUMMY_USER.
      */
-    public void getUsersDataList() {
+    public void getFirestoreUsersDataList() {
         ApiService apiService = DI.getRestaurantApiService();
         Objects.requireNonNull(this.getUserDataCollection()).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -144,14 +143,14 @@ public final class UserRepository {
      * @param currentUserID Id of the current user.
      * @param likedOrSelectedRestaurant Map with the new content.
      */
-    public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
+    public void updateFirestoreUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
                this.getUsersCollection().document(currentUserID).update("userAndRestaurant", likedOrSelectedRestaurant);
     }
 
     /**
      * Delete user from Firestore.
      */
-    public void deleteUserFromFirestore() {
+    public void deleteFirestoreUser() {
         String uid = this.getCurrentUser().getUid();
         if (uid != null) {
             this.getUsersCollection().document(uid).delete();

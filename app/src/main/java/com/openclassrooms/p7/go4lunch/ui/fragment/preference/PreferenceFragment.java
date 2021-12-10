@@ -5,6 +5,7 @@ import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_DIS
 import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_ENABLED;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,15 +15,22 @@ import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.FragmentPreferenceSettingsBinding;
 import com.openclassrooms.p7.go4lunch.model.UserSettings;
+import com.openclassrooms.p7.go4lunch.ui.MainActivity;
+import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
+import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 public class PreferenceFragment extends Fragment {
 
     private FragmentPreferenceSettingsBinding mBinding;
     private UserSettings settings;
+    private UserAndRestaurantViewModel mViewModel;
 
     @Nullable
     @Override
@@ -30,9 +38,14 @@ public class PreferenceFragment extends Fragment {
         mBinding = FragmentPreferenceSettingsBinding.inflate(inflater, container, false);
         View view = mBinding.getRoot();
         settings = (UserSettings) requireActivity().getApplication();
+        initViewModel();
         loadSharedPreferences();
-        initSwitchListener();
+        initListener();
         return view;
+    }
+
+    private void initViewModel() {
+        mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
     }
 
     private void loadSharedPreferences() {
@@ -42,17 +55,18 @@ public class PreferenceFragment extends Fragment {
         mBinding.preferenceSettingNotificationSwitch.setChecked(notification.equals(NOTIFICATION_ENABLED));
     }
 
-    private void initSwitchListener() {
-        mBinding.preferenceSettingNotificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    settings.setNotification(NOTIFICATION_ENABLED);
-                } else {
-                    settings.setNotification(NOTIFICATION_DISABLED);
-                }
-                saveSharedPreferences(NOTIFICATION, settings.getNotification());
+    private void initListener() {
+        mBinding.preferenceSettingNotificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                settings.setNotification(NOTIFICATION_ENABLED);
+            } else {
+                settings.setNotification(NOTIFICATION_DISABLED);
             }
+            saveSharedPreferences(NOTIFICATION, settings.getNotification());
+        });
+
+        mBinding.preferenceSettingDeleteAccountBtn.setOnClickListener(view -> {
+            deleteAccountAlertPopup();
         });
     }
 
@@ -60,5 +74,19 @@ public class PreferenceFragment extends Fragment {
         SharedPreferences.Editor editor = requireActivity().getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE).edit();
         editor.putString(category, userSettingsGetter);
         editor.apply();
+    }
+
+    private void deleteAccountAlertPopup() {
+        AlertDialog.Builder signOutPopup = new AlertDialog.Builder(requireContext());
+        signOutPopup
+                .setTitle(R.string.preference_popup_title)
+                .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> {
+                    mViewModel.deleteUserFromFirestore();
+                    mViewModel.deleteFirebaseUser(requireContext()).addOnSuccessListener(aVoid -> {
+                        startActivity(new Intent(requireActivity(), LoginActivity.class));
+                    });
+                })
+                .setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, null)
+                .show();
     }
 }

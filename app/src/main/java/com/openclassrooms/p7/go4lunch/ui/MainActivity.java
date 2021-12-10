@@ -3,6 +3,7 @@ package com.openclassrooms.p7.go4lunch.ui;
 import static android.content.ContentValues.TAG;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
                     break;
                 case R.id.logout:
-                    mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
+                    signOutAlertPopup();
                     break;
             }
             return true;
@@ -175,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
         mBinding.activityMainTabs.setVisibility(View.GONE);
         mBinding.activityMainToolbar.getRoot().setTitle(getString(R.string.main_activity_settings_title));
         mBinding.activityMainToolbar.getRoot().getMenu().clear();
-        mBinding.activityMainToolbar.toolbar.setBackgroundColor(getResources().getColor(R.color.teal_700));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -186,12 +186,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showRestaurantSelected() {
-        AlertDialog.Builder restaurantSelectedPopup = new AlertDialog.Builder(this);
         ApiService apiService = DI.getRestaurantApiService();
         User currentUser = apiService.searchUserById(CURRENT_USER_ID);
+        AlertDialog.Builder restaurantSelectedPopup = new AlertDialog.Builder(this);
         restaurantSelectedPopup
                 .setTitle(getString(R.string.main_activity_selected_restaurant_dialog))
                 .setMessage(apiService.removeUselessWords(apiService.getCurrentUserSelectedRestaurant(currentUser).getRestaurantName()))
+                .show();
+    }
+
+    private void signOutAlertPopup() {
+        AlertDialog.Builder signOutPopup = new AlertDialog.Builder(this);
+        signOutPopup
+                .setTitle(R.string.main_activity_signout_confirmation_title)
+                .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> {
+                    mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
+                })
+                .setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, (dialog, which) -> {
+                })
                 .show();
     }
 

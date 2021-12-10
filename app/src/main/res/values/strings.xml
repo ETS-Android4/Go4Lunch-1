@@ -84,5 +84,11 @@
     <string name="push_notification_service_list_of_friend_are_come">Friends that come with you:</string>
     <string name="map_view_repository_open_until">open until</string>
     <string name="map_view_repository_open_at">open at</string>
+    <string name="main_activity_signout_confirmation_title">Sign out ?</string>
+    <string name="main_activity_signout_confirmation_content_message">Are you sure?</string>
+    <string name="main_activity_signout_confirmation_positive_btn">OK</string>
+    <string name="main_activity_signout_confirmation_negative_btn">CANCEL</string>
+    <string name="preference_setting_delete_account">Delete account</string>
+    <string name="preference_popup_title">Delete your account ?</string>
 
 </resources>

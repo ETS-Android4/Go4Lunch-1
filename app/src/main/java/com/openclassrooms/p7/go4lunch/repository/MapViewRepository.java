@@ -230,7 +230,7 @@ public class MapViewRepository {
                 int closeHour = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
                 int openHour = Objects.requireNonNull(openingDay.getOpen()).getTime().getHours();
                 int openMinute = Objects.requireNonNull(openingDay.getOpen()).getTime().getMinutes();
-                
+
 
                 if (openMinute > 0 && openHour > currentHour) {
                     return String.format("%s %s:%s", context.getResources().getString(R.string.map_view_repository_open_at), openHour, openMinute);
