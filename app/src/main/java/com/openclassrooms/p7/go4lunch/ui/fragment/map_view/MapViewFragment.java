@@ -320,7 +320,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 //            for (int i = 0; i < hashMaps.size(); i++) {
             //TODO just for save some request.
             for (int i = 0; i < 3; i++) {
-                mViewModel.requestForPlaceDetails(hashMaps.get(i).get("placeId"), requireActivity().getApplicationContext(), mMap);
+                mViewModel.requestForPlaceDetails(hashMaps.get(i).get("placeId"), requireActivity().getApplicationContext(), mMap, false);
             }
         }
     }

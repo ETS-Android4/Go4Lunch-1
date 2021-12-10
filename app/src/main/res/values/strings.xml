@@ -67,6 +67,9 @@
     <string name="push_notification_service_alert">It\'s 12am</string>
     <string name="push_notification_service_restaurant_choice">You have chosen to eat at</string>
 
+    <!-- MapViewRepository -->
+    <string name="map_view_repository_still_closed">still closed</string>
+
     <!-- Unused -->
     <string name="channel_Name">lunch channel</string>
     <string name="channel_description">show to user where to lunch</string>
@@ -79,5 +82,7 @@
     <string name="UserSettings_notification_enabled">notification_enabled</string>
     <string name="UserSettings_darkTheme">darkTheme</string>
     <string name="push_notification_service_list_of_friend_are_come">Friends that come with you:</string>
+    <string name="map_view_repository_open_until">open until</string>
+    <string name="map_view_repository_open_at">open at</string>
 
 </resources>

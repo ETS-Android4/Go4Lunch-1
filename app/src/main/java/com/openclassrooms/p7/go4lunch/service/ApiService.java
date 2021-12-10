@@ -38,7 +38,6 @@ public interface ApiService {
 
     // --- MAKE ---
     Map<String, UserAndRestaurant> makeUserAndRestaurantMap(String currentUserId);
-    String makeStringOpeningHours(OpeningHours openingHours, String currentDay, LocalTime currentTime);
     String getCurrentDay(Calendar calendar);
     String makeUserFirstName(String userName);
     String makeInterestedFriendsString(List<User> interestedFriendList);
@@ -56,7 +55,6 @@ public interface ApiService {
     List<User> getUsersInterestedAtCurrentRestaurants(String currentUserId, Restaurant currentRestaurant);
     List<User> getUsersInterestedAtCurrentRestaurantForNotification(String currentUserId, String restaurantId);
     UserAndRestaurant getCurrentUserSelectedRestaurant(User currentUser);
-    String getOpeningHours(OpeningHours openingHours);
     String getWebsiteUri(Uri websiteUri);
     double getRating(Double rating);
     float getDistance(LatLng latLng, LatLng currentLocation);

@@ -4,6 +4,7 @@ package com.openclassrooms.p7.go4lunch.service;
 import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION;
 import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_ENABLED;
 import static com.openclassrooms.p7.go4lunch.model.UserSettings.PREFERENCES;
+import static com.openclassrooms.p7.go4lunch.ui.MainActivity.CURRENT_USER_ID;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -102,35 +103,6 @@ public class DummyApiService implements ApiService {
             }
         }
         return userAndRestaurantMap;
-    }
-
-    /**
-     * Get the current hour and openingHour of the currentDay and calculate the remaining time before Restaurant close.
-     *
-     * @param openingHours Restaurant openingHours.
-     * @return String with remaining time before restaurant close.
-     */
-    public String makeStringOpeningHours(OpeningHours openingHours, String currentDay, LocalTime currentTime) {
-        int currentHour = currentTime.getHours();
-        for (Period openingDay : openingHours.getPeriods()) {
-            if (Objects.requireNonNull(openingDay.getOpen()).getDay().toString().equals(currentDay)) {
-                int closeHour = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
-                int openHour = Objects.requireNonNull(openingDay.getOpen()).getTime().getHours();
-                int openMinute = Objects.requireNonNull(openingDay.getOpen()).getTime().getMinutes();
-                String closeTime = String.format("%s", closeHour);
-
-                if (openMinute > 0 && openHour > currentHour) {
-                    return String.format("%s:%s", openHour, openMinute);
-                }
-                if (openHour > currentHour) {
-                    return closeTime;
-                }
-                if (closeHour > currentHour || closeHour < 3) {
-                    return String.format("%s", Math.abs(closeHour - currentHour));
-                }
-            }
-        }
-        return "still closed";
     }
 
     public String getCurrentDay(Calendar calendar) {
@@ -377,22 +349,6 @@ public class DummyApiService implements ApiService {
     }
 
     /**
-     * Format opening hour for show it.
-     *
-     * @param openingHours place opening hours.
-     * @return opening hours if available.
-     */
-    @Override
-    public String getOpeningHours(OpeningHours openingHours) {
-        if (openingHours != null) {
-            String currentDay = getCurrentDay(Calendar.getInstance());
-            LocalTime currentTime = LocalTime.newInstance(Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE));
-            return makeStringOpeningHours(openingHours, currentDay, currentTime);
-        }
-        return "no details";
-    }
-
-    /**
      * Get the Restaurant website if available and format it to a String.
      *
      * @param websiteUri uri website.
@@ -513,6 +469,7 @@ public class DummyApiService implements ApiService {
             if (
                     userAndRestaurant.getRestaurantId().equals(placeId) &&
                     userAndRestaurant.isSelected() &&
+                    CURRENT_USER_ID.equals(userAndRestaurant.getUserId()) &&
                     !isSearched
             ) {
                 //TODO these marker still here even the restaurant is deselected.

@@ -97,7 +97,7 @@ public final class UserRepository {
     }
 
     /**
-     * Create user in Firestore
+     * Create user in Firestore, if user already exist just update it.
      */
     public void createUser() {
         FirebaseUser user = getCurrentUser();
@@ -113,7 +113,6 @@ public final class UserRepository {
             if (documentSnapshot.contains("userAndRestaurant")) {
                 this.getUsersCollection().document().update("userName", userToCreate.getUserName());
                 this.getUsersCollection().document().update("photoUrl", userToCreate.getPhotoUrl());
-                this.getUsersCollection().document().update("uid", userToCreate.getUid());
             } else {
                 this.getUsersCollection().document(user.getUid()).set(userToCreate);
             }

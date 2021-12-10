@@ -35,9 +35,9 @@ public class UserAndRestaurantViewModel extends androidx.lifecycle.ViewModel {
     }
 
     //                  --- GOOGLE MAPS ---
-    public void requestForPlaceDetails(String placeId, Context context, GoogleMap map) {
-        mapDataSource.requestForPlaceDetails(placeId, context, map);
-    }
+//    public void requestForPlaceDetails(String placeId, Context context, GoogleMap map) {
+//        mapDataSource.requestForPlaceDetails(placeId, context, map);
+//    }
     public void requestForPlaceDetails(String placeId, Context context, GoogleMap map, boolean isSearched) {
         mapDataSource.requestForPlaceDetails(placeId, context, map, isSearched);
     }
