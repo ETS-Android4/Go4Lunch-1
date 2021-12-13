@@ -1,10 +1,6 @@
 package com.openclassrooms.p7.go4lunch.repository;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -22,11 +18,10 @@ import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class UserRepository {
+public class UserRepository {
 
     private static volatile UserRepository INSTANCE;
     private static final String USERS_COLLECTION_NAME = "users";

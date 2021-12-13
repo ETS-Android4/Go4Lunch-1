@@ -18,11 +18,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityLoginBinding;
 import com.openclassrooms.p7.go4lunch.model.User;
+import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.FacebookSignInActivity;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.GoogleSignInActivity;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -84,11 +86,12 @@ public class LoginActivity extends AppCompatActivity {
         if (mViewModel.isCurrentUserLogged()) {
 //            mViewModel.createUser();
             FirebaseUser user = mViewModel.getCurrentUser();
+            Map<String, UserAndRestaurant> userAndRestaurant = null;
             User userToCreate = new User(
                     Objects.requireNonNull(user).getUid(),
                     user.getDisplayName(),
                     Objects.requireNonNull(user.getPhotoUrl()).toString(),
-                    null
+                    userAndRestaurant
             );
             mViewModel.getUserData().addOnSuccessListener(task -> {
                 if (task.contains("userAndRestaurant")) {

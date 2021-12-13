@@ -4,6 +4,10 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="PREFERENCES" translatable="false">preferences</string>
+    <string name="NOTIFICATION" translatable="false">notification</string>
+    <string name="NOTIFICATION_ENABLED" translatable="false">notification_enabled</string>
+    <string name="NOTIFICATION_DISABLED" translatable="false">notification_disabled</string>
 
     <!-- Facebook application id -->
     <string name="facebook_application_id">590265162119569</string>

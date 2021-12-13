@@ -321,14 +321,15 @@ public class DummyApiService implements ApiService {
 
     public List<User> getUsersInterestedAtCurrentRestaurantForNotification(String currentUserId, String restaurantId) {
         List<User> usersInterested = new ArrayList<>();
-        for (UserAndRestaurant restaurantSelected : getUserAndRestaurant()) {
-            if (
-                    restaurantSelected.isSelected() &&
-                            !currentUserId.equals(restaurantSelected.getUserId()) &&
-                            restaurantId.equals(restaurantSelected.getRestaurantId())
-            ) {
-                User user = searchUserById(restaurantSelected.getUserId());
-                usersInterested.add(user);
+        for (User user : getUsers()) {
+            for (Map.Entry<String, UserAndRestaurant> userAndRestaurantEntry : user.getUserAndRestaurant().entrySet()) {
+                if (
+                        userAndRestaurantEntry.getValue().isSelected() &&
+                                !currentUserId.equals(userAndRestaurantEntry.getValue().getUserId()) &&
+                                restaurantId.equals(userAndRestaurantEntry.getValue().getRestaurantId())
+                ) {
+                    usersInterested.add(user);
+                }
             }
         }
         return usersInterested;

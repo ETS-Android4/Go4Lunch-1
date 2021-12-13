@@ -26,18 +26,19 @@ import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
+import java.util.Objects;
+
 public class PreferenceFragment extends Fragment {
 
     private FragmentPreferenceSettingsBinding mBinding;
-    private UserSettings settings;
     private UserAndRestaurantViewModel mViewModel;
+    private String notification;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentPreferenceSettingsBinding.inflate(inflater, container, false);
         View view = mBinding.getRoot();
-        settings = (UserSettings) requireActivity().getApplication();
         initViewModel();
         loadSharedPreferences();
         initListener();
@@ -49,20 +50,19 @@ public class PreferenceFragment extends Fragment {
     }
 
     private void loadSharedPreferences() {
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE);
-        String notification  = sharedPreferences.getString(UserSettings.NOTIFICATION, UserSettings.NOTIFICATION_ENABLED);
-        settings.setNotification(notification);
-        mBinding.preferenceSettingNotificationSwitch.setChecked(notification.equals(NOTIFICATION_ENABLED));
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        notification  = sharedPreferences.getString("notification", "notification_enabled");
+        mBinding.preferenceSettingNotificationSwitch.setChecked(notification.equals("notification_enabled"));
     }
 
     private void initListener() {
         mBinding.preferenceSettingNotificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                settings.setNotification(NOTIFICATION_ENABLED);
+               notification = "notification_enabled";
             } else {
-                settings.setNotification(NOTIFICATION_DISABLED);
+                notification = "notification_disabled";
             }
-            saveSharedPreferences(NOTIFICATION, settings.getNotification());
+            saveSharedPreferences("notification", notification);
         });
 
         mBinding.preferenceSettingDeleteAccountBtn.setOnClickListener(view -> {
@@ -71,7 +71,7 @@ public class PreferenceFragment extends Fragment {
     }
 
     private void saveSharedPreferences(String category, String userSettingsGetter) {
-        SharedPreferences.Editor editor = requireActivity().getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = requireActivity().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE).edit();
         editor.putString(category, userSettingsGetter);
         editor.apply();
     }

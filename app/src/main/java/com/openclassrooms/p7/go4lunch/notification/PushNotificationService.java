@@ -62,7 +62,7 @@ public class PushNotificationService extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        if (!getCurrentNotification(mContext).equals(NOTIFICATION_ENABLED)) {
+        if (!getCurrentNotification(mContext).equals("notification_enabled")) {
             mWorkManager.cancelUniqueWork("lunch time");
             return Result.success();
         }
@@ -94,15 +94,14 @@ public class PushNotificationService extends Worker {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-
+        Log.d(TAG, "createNotification: friends are coming: " + mApiService.makeInterestedFriendsString(interestedFriends));
         Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.drawable.meal_v2_half_size)
                 .setContentTitle(String.format("%s %s", mContext.getString(R.string.push_notification_service_alert), userName))
                 .setContentText(String.format("%s %s", mContext.getString(R.string.push_notification_service_restaurant_choice), userAndRestaurantSelected.getRestaurantName()))
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(String.format("%s %s", mContext.getString(R.string.push_notification_service_list_of_friend_are_come), mApiService.makeInterestedFriendsString(interestedFriends)))
-                        .setBigContentTitle(mContext.getString(R.string.push_notification_service_alert))
-                        .setSummaryText("c'est le sommaire"))
+                        .setBigContentTitle(mContext.getString(R.string.push_notification_service_alert)))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setContentIntent(pendingIntent)
@@ -141,7 +140,7 @@ public class PushNotificationService extends Worker {
     }
 
     private String getCurrentNotification(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(NOTIFICATION, NOTIFICATION_ENABLED);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
+        return sharedPreferences.getString("notification", "notification_enabled");
     }
 }
