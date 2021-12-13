@@ -37,6 +37,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViewModelAndService() {
-        mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
+        mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserAndRestaurantViewModel.class);
         if (mViewModel.isCurrentUserLogged()) {
             CURRENT_USER_ID = mViewModel.getCurrentUser().getUid();
         }

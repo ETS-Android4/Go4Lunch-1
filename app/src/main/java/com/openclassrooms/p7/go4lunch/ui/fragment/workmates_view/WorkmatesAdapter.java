@@ -5,6 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -14,16 +16,17 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
+import com.openclassrooms.p7.go4lunch.ui.UserStateItem;
 
 import java.util.List;
 
-public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.WorkmatesViewHolder> {
+public class WorkmatesAdapter extends ListAdapter<UserStateItem, WorkmatesAdapter.WorkmatesViewHolder> {
 
-    private List<User> mUsersList;
+
     private ApiService mApiService;
 
-    public WorkmatesAdapter(List<User> usersList) {
-        mUsersList = usersList;
+    public WorkmatesAdapter() {
+        super(new ListNeighbourItemCallback());
     }
 
     @NonNull
@@ -36,12 +39,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
     @Override
     public void onBindViewHolder(@NonNull WorkmatesViewHolder holder, int position) {
-        holder.bind(mUsersList.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return mUsersList.size();
+        holder.bind(getItem(position));
     }
 
     public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
@@ -53,7 +51,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
             mBinding = WorkmatesListRowBinding.bind(itemView);
         }
 
-        public void bind(User user){
+        public void bind(UserStateItem user){
             UserAndRestaurant userAndRestaurant = mApiService.searchSelectedRestaurant(user);
             Glide.with(itemView)
                     .load(user.getPhotoUrl())
@@ -65,6 +63,19 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
                 mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_not_decided)));
                 mBinding.workmatesListRowEatingTypeTv.setHintTextColor(itemView.getResources().getColor(R.color.grey));
             }
+        }
+    }
+
+    private static class ListNeighbourItemCallback extends DiffUtil.ItemCallback<UserStateItem> {
+
+        @Override
+        public boolean areItemsTheSame(@NonNull UserStateItem oldItem, @NonNull UserStateItem newItem) {
+            return oldItem.getUid().equals(newItem.getUid());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull UserStateItem oldItem, @NonNull UserStateItem newItem) {
+            return oldItem.equals(newItem);
         }
     }
 }

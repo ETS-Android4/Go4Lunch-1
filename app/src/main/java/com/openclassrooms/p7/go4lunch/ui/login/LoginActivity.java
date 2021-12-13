@@ -84,25 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void currentUserLogged() {
         if (mViewModel.isCurrentUserLogged()) {
-//            mViewModel.createUser();
-            FirebaseUser user = mViewModel.getCurrentUser();
-            Map<String, UserAndRestaurant> userAndRestaurant = null;
-            User userToCreate = new User(
-                    Objects.requireNonNull(user).getUid(),
-                    user.getDisplayName(),
-                    Objects.requireNonNull(user.getPhotoUrl()).toString(),
-                    userAndRestaurant
-            );
-            mViewModel.getUserData().addOnSuccessListener(task -> {
-                if (task.contains("userAndRestaurant")) {
-                    mViewModel.getUserCollection().document().update("userName", userToCreate.getUserName());
-                    mViewModel.getUserCollection().document().update("photoUrl", userToCreate.getPhotoUrl());
-                } else {
-                    mViewModel.getUserCollection().document(user.getUid()).set(userToCreate);
-                }
-            }).addOnFailureListener(exception -> {
-                Log.e(TAG, "currentUserLogged: Create User failure: " + exception.getMessage());
-            });
+            mViewModel.createUser();
             startActivity(new Intent(this, MainActivity.class));
         }
     }

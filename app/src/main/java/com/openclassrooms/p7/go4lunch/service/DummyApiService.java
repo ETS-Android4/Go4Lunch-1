@@ -1,13 +1,8 @@
 package com.openclassrooms.p7.go4lunch.service;
 
 
-import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION;
-import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_ENABLED;
-import static com.openclassrooms.p7.go4lunch.model.UserSettings.PREFERENCES;
 import static com.openclassrooms.p7.go4lunch.ui.MainActivity.CURRENT_USER_ID;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 
@@ -16,14 +11,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.libraries.places.api.model.LocalTime;
-import com.google.android.libraries.places.api.model.OpeningHours;
-import com.google.android.libraries.places.api.model.Period;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
+import com.openclassrooms.p7.go4lunch.ui.UserStateItem;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -283,7 +276,7 @@ public class DummyApiService implements ApiService {
      * @return UserAndRestaurant selected.
      */
     @Override
-    public UserAndRestaurant searchSelectedRestaurant(User user) {
+    public UserAndRestaurant searchSelectedRestaurant(UserStateItem user) {
         UserAndRestaurant userAndRestaurantFound = null;
         for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
             if (userAndRestaurant.isSelected() && user.getUid().equals(userAndRestaurant.getUserId())) {

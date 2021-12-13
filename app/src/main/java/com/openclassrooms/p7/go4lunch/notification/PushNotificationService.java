@@ -31,6 +31,7 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
+import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
@@ -48,7 +49,7 @@ public class PushNotificationService extends Worker {
     private static final String TAG = PushNotificationService.class.getName();
     private final WorkManager mWorkManager;
     private final Context mContext;
-    private final UserRepository mUserDataSource = UserRepository.getInstance();
+    private final FirebaseHelper mFirebaseHelper = FirebaseHelper.getInstance();
     private final ApiService mApiService;
 
 
@@ -66,7 +67,7 @@ public class PushNotificationService extends Worker {
             mWorkManager.cancelUniqueWork("lunch time");
             return Result.success();
         }
-        String userId = Objects.requireNonNull(mUserDataSource.getCurrentUser()).getUid();
+        String userId = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
         Task<QuerySnapshot> task = FirebaseFirestore.getInstance().collection("users").get();
         List<DocumentSnapshot> documentSnapshotList = null;
         try {

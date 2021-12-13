@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.libraries.places.api.model.Place;
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
@@ -52,7 +53,7 @@ public class ListViewFragment extends Fragment {
     }
 
     private void configureServiceAndViewModel() {
-        mViewModel = new ViewModelProvider(this.requireActivity()).get(UserAndRestaurantViewModel.class);
+        mViewModel = new ViewModelProvider(this.requireActivity(), ViewModelFactory.getInstance()).get(UserAndRestaurantViewModel.class);
         mApiService = DI.getRestaurantApiService();
     }
 
