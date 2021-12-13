@@ -1,7 +1,10 @@
 package com.openclassrooms.p7.go4lunch.ui.login;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -11,12 +14,16 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityLoginBinding;
+import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.FacebookSignInActivity;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.GoogleSignInActivity;
+
+import java.util.Objects;
 
 /**
  * Created by lleotraas on 15.
@@ -25,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     private ActivityLoginBinding mBinding;
-    private UserAndRestaurantViewModel mUserAndRestaurantViewModel;
+    private UserAndRestaurantViewModel mViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initViewModel() {
-        mUserAndRestaurantViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
     }
 
     private void configureListeners() {
@@ -74,8 +81,25 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void currentUserLogged() {
-        if (mUserAndRestaurantViewModel.isCurrentUserLogged()) {
-            mUserAndRestaurantViewModel.createUser();
+        if (mViewModel.isCurrentUserLogged()) {
+//            mViewModel.createUser();
+            FirebaseUser user = mViewModel.getCurrentUser();
+            User userToCreate = new User(
+                    Objects.requireNonNull(user).getUid(),
+                    user.getDisplayName(),
+                    Objects.requireNonNull(user.getPhotoUrl()).toString(),
+                    null
+            );
+            mViewModel.getUserData().addOnSuccessListener(task -> {
+                if (task.contains("userAndRestaurant")) {
+                    mViewModel.getUserCollection().document().update("userName", userToCreate.getUserName());
+                    mViewModel.getUserCollection().document().update("photoUrl", userToCreate.getPhotoUrl());
+                } else {
+                    mViewModel.getUserCollection().document(user.getUid()).set(userToCreate);
+                }
+            }).addOnFailureListener(exception -> {
+                Log.e(TAG, "currentUserLogged: Create User failure: " + exception.getMessage());
+            });
             startActivity(new Intent(this, MainActivity.class));
         }
     }

@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
@@ -22,6 +24,7 @@ public class UserAndRestaurantViewModel extends androidx.lifecycle.ViewModel {
 
     //                   --- FOR USER FIREBASE ---
     public Task<DocumentSnapshot> getUserData() { return userDataSource.getUserData();}
+    public CollectionReference getUserCollection() { return userDataSource.getUsersCollection(); }
     public FirebaseUser getCurrentUser() { return userDataSource.getCurrentUser(); }
     public Task<Void> deleteFirebaseUser(Context context) { return userDataSource.deleteUser(context); }
     public Boolean isCurrentUserLogged() {

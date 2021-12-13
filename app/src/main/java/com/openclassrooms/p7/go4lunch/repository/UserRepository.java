@@ -101,12 +101,11 @@ public final class UserRepository {
      */
     public void createFireStoreUser() {
         FirebaseUser user = getCurrentUser();
-        HashMap<String, UserAndRestaurant> likedOrSelectedRestaurant = new HashMap<>();
         User userToCreate = new User(
                 Objects.requireNonNull(user).getUid(),
                 user.getDisplayName(),
                 Objects.requireNonNull(user.getPhotoUrl()).toString(),
-                likedOrSelectedRestaurant
+                null
         );
         getUserData().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.contains("userAndRestaurant")) {
@@ -130,8 +129,10 @@ public final class UserRepository {
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                         User user = documentSnapshot.toObject(User.class);
                         apiService.addUser(user);
-                        for (Map.Entry<String, UserAndRestaurant> mapEntry : user.getUserAndRestaurant().entrySet()) {
-                            apiService.addUserAndRestaurant(mapEntry.getValue());
+                        if (user.getUserAndRestaurant() != null) {
+                            for (Map.Entry<String, UserAndRestaurant> mapEntry : user.getUserAndRestaurant().entrySet()) {
+                                apiService.addUserAndRestaurant(mapEntry.getValue());
+                            }
                         }
                     }
             }
