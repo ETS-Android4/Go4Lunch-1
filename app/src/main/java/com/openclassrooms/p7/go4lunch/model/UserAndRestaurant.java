@@ -1,10 +1,7 @@
 package com.openclassrooms.p7.go4lunch.model;
 
-import java.util.Comparator;
-
 public class UserAndRestaurant {
 
-    private String userId;
     private String restaurantId;
     private String restaurantName;
     private boolean isFavorite;
@@ -12,8 +9,7 @@ public class UserAndRestaurant {
 
     public UserAndRestaurant() { }
 
-    public UserAndRestaurant(String userId, String restaurantId, String restaurantName, boolean isFavorite, Boolean isSelected) {
-        this.userId = userId;
+    public UserAndRestaurant(String restaurantId, String restaurantName, boolean isFavorite, Boolean isSelected) {
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.isFavorite = isFavorite;
@@ -21,8 +17,6 @@ public class UserAndRestaurant {
     }
 
     // --- GETTERS ---
-
-    public String getUserId() { return userId; }
     public String getRestaurantId() {
         return restaurantId;
     }

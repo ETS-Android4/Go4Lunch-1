@@ -9,15 +9,13 @@ public class User {
     private  String uid;
     private  String userName;
     private  String photoUrl;
-    private Map<String, UserAndRestaurant> userAndRestaurant;
 
     // --- CONSTRUCTOR ---
     public User() { }
-    public User(String uid, String userName, String photoUrl, Map<String, UserAndRestaurant> userAndRestaurant) {
+    public User(String uid, String userName, String photoUrl) {
         this.uid = uid;
         this.userName = userName;
         this.photoUrl = photoUrl;
-        this.userAndRestaurant = userAndRestaurant;
     }
 
     // --- GETTERS ---
@@ -29,9 +27,6 @@ public class User {
     }
     public String getPhotoUrl() {
         return photoUrl;
-    }
-    public Map<String, UserAndRestaurant> getUserAndRestaurant() {
-        return userAndRestaurant;
     }
 
     @Override
