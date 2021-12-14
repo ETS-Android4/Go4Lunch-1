@@ -13,14 +13,11 @@ import com.bumptech.glide.Glide;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.WorkmatesListRowBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
+import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
-import com.openclassrooms.p7.go4lunch.ui.UserStateItem;
 
-import java.util.List;
-
-public class WorkmatesAdapter extends ListAdapter<UserStateItem, WorkmatesAdapter.WorkmatesViewHolder> {
+public class WorkmatesAdapter extends ListAdapter<User, WorkmatesAdapter.WorkmatesViewHolder> {
 
 
     private ApiService mApiService;
@@ -51,7 +48,7 @@ public class WorkmatesAdapter extends ListAdapter<UserStateItem, WorkmatesAdapte
             mBinding = WorkmatesListRowBinding.bind(itemView);
         }
 
-        public void bind(UserStateItem user){
+        public void bind(User user){
             UserAndRestaurant userAndRestaurant = mApiService.searchSelectedRestaurant(user);
             Glide.with(itemView)
                     .load(user.getPhotoUrl())
@@ -66,15 +63,15 @@ public class WorkmatesAdapter extends ListAdapter<UserStateItem, WorkmatesAdapte
         }
     }
 
-    private static class ListNeighbourItemCallback extends DiffUtil.ItemCallback<UserStateItem> {
+    private static class ListNeighbourItemCallback extends DiffUtil.ItemCallback<User> {
 
         @Override
-        public boolean areItemsTheSame(@NonNull UserStateItem oldItem, @NonNull UserStateItem newItem) {
+        public boolean areItemsTheSame(@NonNull User oldItem, @NonNull User newItem) {
             return oldItem.getUid().equals(newItem.getUid());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull UserStateItem oldItem, @NonNull UserStateItem newItem) {
+        public boolean areContentsTheSame(@NonNull User oldItem, @NonNull User newItem) {
             return oldItem.equals(newItem);
         }
     }

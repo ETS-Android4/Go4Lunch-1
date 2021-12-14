@@ -18,6 +18,7 @@ import java.util.Objects;
 public class FirebaseHelper {
 
     private static final String USERS_COLLECTION_NAME = "users";
+    private static final String RESTAURANT_COLLECTION_NAME = "restaurants";
     public static FirebaseHelper firebaseHelper;
 
     public static FirebaseHelper getInstance() {
@@ -33,24 +34,6 @@ public class FirebaseHelper {
     @Nullable
     public FirebaseUser getCurrentUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
-    }
-
-    /**
-     * Call to signOut the current user.
-     * @param context context of the activity.
-     * @return a task to signOut.
-     */
-    public Task<Void> signOut(Context context) {
-        return AuthUI.getInstance().signOut(context);
-    }
-
-    /**
-     * Call to delete user account from Firestore.
-     * @param context context of the activity.
-     * @return a task to delete user.
-     */
-    public Task<Void> deleteUser(Context context) {
-        return AuthUI.getInstance().delete(context);
     }
 
     /**
@@ -74,5 +57,31 @@ public class FirebaseHelper {
      */
     public Task<QuerySnapshot> getUserDataCollection() {
         return this.getUsersCollection().get();
+    }
+
+    /**
+     * Call to signOut the current user.
+     * @param context context of the activity.
+     * @return a task to signOut.
+     */
+    public Task<Void> signOut(Context context) {
+        return AuthUI.getInstance().signOut(context);
+    }
+
+    /**
+     * Call to delete user account from Firestore.
+     * @param context context of the activity.
+     * @return a task to delete user.
+     */
+    public Task<Void> deleteUser(Context context) {
+        return AuthUI.getInstance().delete(context);
+    }
+
+    public CollectionReference getRestaurantsCollection() {
+        return FirebaseFirestore.getInstance().collection(RESTAURANT_COLLECTION_NAME);
+    }
+
+    public Task<QuerySnapshot> getRestaurantsDataCollection() {
+        return this.getRestaurantsCollection().get();
     }
 }

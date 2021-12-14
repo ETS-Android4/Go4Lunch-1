@@ -18,7 +18,11 @@ public class JsonParser {
         HashMap<String,String> dataList = new HashMap<>();
         try {
             String placeId = object.getString("place_id");
+            String placeLat = object.getJSONObject("geometry").getJSONObject("location").getString("lat");
+            String placeLng = object.getJSONObject("geometry").getJSONObject("location").getString("lng");
             dataList.put("placeId", placeId);
+            dataList.put("latitude", placeLat);
+            dataList.put("longitude", placeLng);
         }catch (JSONException e) {
             e.printStackTrace();
         }

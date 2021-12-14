@@ -2,6 +2,8 @@ package com.openclassrooms.p7.go4lunch.model;
 
 import android.graphics.Bitmap;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Comparator;
@@ -70,6 +72,16 @@ public class Restaurant {
     // --- SETTERS ---
     public void setNumberOfFriendInterested(int numberOfFriendInterested) {
         this.numberOfFriendInterested = numberOfFriendInterested;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     // --- COMPARATOR CLASS ---

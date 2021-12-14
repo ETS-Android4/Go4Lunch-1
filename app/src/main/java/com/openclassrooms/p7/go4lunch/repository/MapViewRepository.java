@@ -8,10 +8,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.LocalTime;
@@ -27,6 +32,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.fragment.list_view.ListViewAdapter;
 
@@ -39,6 +45,7 @@ public class MapViewRepository {
 
     private static volatile MapViewRepository INSTANCE;
     private final ApiService mApiService = DI.getRestaurantApiService();
+    private final MutableLiveData<List<Restaurant>> listOfRestaurant = new MutableLiveData<>();
 
     private MapViewRepository() { }
 
@@ -55,29 +62,19 @@ public class MapViewRepository {
         }
     }
 
-    /**
-     * Do a request to search a place in ListViewFragment.
-     * @param placeId id of the place.
-     * @param context context of the fragment.
-     * @param mRecyclerView recyclerView of the fragment.
-     * @param listViewAdapter adapter of the fragment.
-     */
-    public void requestForPlaceDetails(String placeId, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
-        getPlaceData(context, placeId).addOnSuccessListener((response) -> {
-            requestForPlacePhoto(response.getPlace(), context, mRecyclerView, listViewAdapter);
-        });
+    public MutableLiveData<List<Restaurant>> getAllRestaurantList() {
+        return listOfRestaurant;
     }
 
     /**
      * Do a request to search a place in MapViewFragment.
      * @param placeId id of the place.
      * @param context context of the fragment.
-     * @param map map of the fragment.
      * @param isSearched usefull for the marker color.
      */
-    public void requestForPlaceDetails(String placeId, Context context,GoogleMap map, boolean isSearched) {
+    public void requestForPlaceDetails(String placeId, Context context, boolean isSearched) {
         getPlaceData(context, placeId).addOnSuccessListener((response) -> {
-            requestForPlacePhoto(response.getPlace(), context, map, isSearched);
+            requestForPlacePhoto(response.getPlace(), context, isSearched);
         });
     }
 
@@ -87,7 +84,7 @@ public class MapViewRepository {
      * @param placeId id of the place.
      * @return fetch place task.
      */
-    public Task<FetchPlaceResponse> getPlaceData(Context context, String placeId) {
+    private Task<FetchPlaceResponse> getPlaceData(Context context, String placeId) {
         PlacesClient placesClient = Places.createClient(context);
         List<Place.Field> placeFields = Arrays.asList(
                 Place.Field.ID,
@@ -105,56 +102,33 @@ public class MapViewRepository {
         return placesClient.fetchPlace(request);
     }
 
-    /**
-     * Do a request to get place photo for ListViewFragment.
-     * @param place the place contains photos.
-     * @param context context of the fragment.
-     * @param mRecyclerView recyclerView of the fragment.
-     * @param listViewAdapter adapter of the fragment.
-     */
-    public void requestForPlacePhoto(Place place, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
-        // Place have a photo.
-        if (getPhotoData(place, context) != null) {
-            getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
-                createRestaurantAndShowIt(place, fetchPhotoResponse, context, mRecyclerView, listViewAdapter);
-            }).addOnFailureListener((exception) -> {
-                if (exception instanceof ApiException) {
-                    Log.e(TAG, "Place not found: " + exception.getMessage());
-                }
-            });
-        // Place don't have a photo.
-        } else {
-            createRestaurantAndShowIt(place, null, context, mRecyclerView, listViewAdapter);
+    public Restaurant getCurrentRestaurant(String restaurantId) {
+        Restaurant currentRestaurant = null;
+        for (Restaurant restaurant : Objects.requireNonNull(listOfRestaurant.getValue())) {
+            if (restaurant.getId().equals(restaurantId)) {
+                currentRestaurant = restaurant;
+            }
         }
-    }
-
-    //TODO comments
-    private void createRestaurantAndShowIt(Place place, FetchPhotoResponse fetchPhotoResponse, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
-        Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
-        mApiService.getSearchedRestaurant().clear();
-        restaurant.setNumberOfFriendInterested(mApiService.getUsersInterestedAtCurrentRestaurants(CURRENT_USER_ID, restaurant).size());
-        mApiService.getSearchedRestaurant().add(restaurant);
-        listViewAdapter.notifyDataSetChanged();
-        mRecyclerView.setAdapter(listViewAdapter);
+        return currentRestaurant;
     }
 
     /**
      * Do a request to get place photo for MapViewFragment when user search for a place.
      * @param place the place contains photos.
      * @param context context of the fragment.
-     * @param map map of the fragment.
      * @param isSearched usefull for the marker color.
      */
-    public void requestForPlacePhoto(Place place, Context context, GoogleMap map, boolean isSearched) {
+    public void requestForPlacePhoto(Place place, Context context, boolean isSearched) {
         getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
             Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
             if (isSearched) {
                 mApiService.getSearchedRestaurant().clear();
                 mApiService.getSearchedRestaurant().add(restaurant);
-                mApiService.setMarkerOnMap(restaurant, map, isSearched);
+//                mApiService.setMarkerOnMap(restaurant, map, true);
             } else {
                 mApiService.getRestaurant().add(restaurant);
-                mApiService.setMarkerOnMap(restaurant, map, false);
+                listOfRestaurant.setValue(mApiService.getRestaurant());
+//                mApiService.setMarkerOnMap(restaurant, map, false);
             }
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
@@ -245,4 +219,48 @@ public class MapViewRepository {
         }
         return context.getResources().getString(R.string.map_view_repository_still_closed);
     }
+
+    /**
+     * Do a request to search a place in ListViewFragment.
+     * @param placeId id of the place.
+     * @param context context of the fragment.
+     * @param mRecyclerView recyclerView of the fragment.
+     * @param listViewAdapter adapter of the fragment.
+     */
+//    public void requestForPlaceDetails(String placeId, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
+//        getPlaceData(context, placeId).addOnSuccessListener((response) -> {
+//            requestForPlacePhoto(response.getPlace(), context, mRecyclerView, listViewAdapter);
+//        });
+//    }
+
+    /**
+     * Do a request to get place photo for ListViewFragment.
+     //     * @param place the place contains photos.
+     //     * @param context context of the fragment.
+     //     * @param mRecyclerView recyclerView of the fragment.
+     //     * @param listViewAdapter adapter of the fragment.
+     */
+//    public void requestForPlacePhoto(Place place, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
+//        // Place have a photo.
+//        if (getPhotoData(place, context) != null) {
+//            getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
+//                createRestaurantAndShowIt(place, fetchPhotoResponse, context, mRecyclerView, listViewAdapter);
+//            }).addOnFailureListener((exception) -> {
+//                if (exception instanceof ApiException) {
+//                    Log.e(TAG, "Place not found: " + exception.getMessage());
+//                }
+//            });
+//        // Place don't have a photo.
+//        } else {
+//            createRestaurantAndShowIt(place, null, context, mRecyclerView, listViewAdapter);
+//        }
+//    }
+
+    //TODO comments
+//    private void createRestaurantAndShowIt(Place place, FetchPhotoResponse fetchPhotoResponse, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
+//        Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
+//        mApiService.getSearchedRestaurant().clear();
+//        restaurant.setNumberOfFriendInterested(mApiService.getUsersInterestedAtCurrentRestaurants(CURRENT_USER_ID, restaurant).size());
+//        mApiService.getSearchedRestaurant().add(restaurant);
+//    }
 }

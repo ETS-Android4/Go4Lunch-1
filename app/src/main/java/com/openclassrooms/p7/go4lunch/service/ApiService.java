@@ -4,11 +4,11 @@ import android.net.Uri;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.ui.UserStateItem;
 
 import java.util.Calendar;
 import java.util.List;
@@ -47,7 +47,7 @@ public interface ApiService {
     UserAndRestaurant searchUserAndRestaurantById(String userId, String RestaurantId);
     void searchSelectedUserAndRestaurantToDeselect(String currentUserId, String currentRestaurantId);
     void likeOrSelectRestaurant(String currentUserId, String currentRestaurantId, int buttonId);
-    UserAndRestaurant searchSelectedRestaurant(UserStateItem user);
+    UserAndRestaurant searchSelectedRestaurant(User user);
 
     // --- GETTERS ---
     List<User> getUsersInterestedAtCurrentRestaurants(String currentUserId, Restaurant currentRestaurant);
@@ -62,11 +62,6 @@ public interface ApiService {
     int setRatingStars(int index, double rating);
     int setFavoriteImage(boolean favorite);
     int setSelectedImage(boolean Selected);
-    int setMarkerIcon(String placeId, boolean isSearched);
-
-    // --- MAP MARKER ---
-    void updateMarkerOnMap(boolean isSearched, GoogleMap map);
-    void setMarkerOnMap(Restaurant restaurant, GoogleMap map, boolean isSearched);
 
     // --- ORDER ---
     void listViewComparator();

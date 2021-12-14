@@ -71,22 +71,17 @@ public class UserRepository {
 
         });
         return listOfUser;
-//        ApiService apiService = DI.getRestaurantApiService();
-//        Objects.requireNonNull(this.getUserDataCollection()).addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                apiService.getUsers().clear();
-//                apiService.getUserAndRestaurant().clear();
-//                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-//                        User user = documentSnapshot.toObject(User.class);
-//                        apiService.addUser(user);
-//                        if (user.getUserAndRestaurant() != null) {
-//                            for (Map.Entry<String, UserAndRestaurant> mapEntry : user.getUserAndRestaurant().entrySet()) {
-//                                apiService.addUserAndRestaurant(mapEntry.getValue());
-//                            }
-//                        }
-//                    }
-//            }
-//        });
+    }
+
+    public User getCurrentFirestoreUser() {
+        String currentUserId = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
+        User currentUser = null;
+        for (User user : Objects.requireNonNull(listOfUser.getValue())) {
+            if (user.getUid().equals(currentUserId)) {
+                currentUser = user;
+            }
+        }
+        return currentUser;
     }
 
     /**

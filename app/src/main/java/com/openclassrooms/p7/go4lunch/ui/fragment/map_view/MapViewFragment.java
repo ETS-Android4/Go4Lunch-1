@@ -6,6 +6,8 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 
+import static com.openclassrooms.p7.go4lunch.ui.MainActivity.CURRENT_USER_ID;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -35,9 +37,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -49,6 +53,8 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
@@ -118,8 +124,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         ((MainActivity) requireActivity()).setOnDataSelected(new MainActivity.HandleData() {
             @Override
             public void onDataSelect(Place place) {
-                mViewModel.requestForPlaceDetails(place.getId(), requireActivity(), mMap, true);
-
+                mViewModel.requestForPlaceDetails(place.getId(), requireContext(), true);
+                //TODO new marker
             }
         });
     }
@@ -195,7 +201,11 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         super.onResume();
         if (mMap != null) {
             mMap.clear();
-            mApiService.updateMarkerOnMap(false, mMap);
+            for (Restaurant restaurant : Objects.requireNonNull(mViewModel.getAllRestaurants().getValue())) {
+                MarkerOptions markerOptions = setMarkerOnMap(restaurant.getId(), restaurant.getPosition().latitude, restaurant.getPosition().longitude);
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), false)));
+                mMap.addMarker(markerOptions);
+            }
         }
         this.configureListener();
     }
@@ -276,6 +286,31 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         return data;
     }
 
+    private MarkerOptions setMarkerOnMap(String placeId, double latitude, double longitude) {
+        MarkerOptions options = new MarkerOptions();
+        options.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(placeId, false)));
+        LatLng latLng = new LatLng(latitude, longitude);
+        options.position(latLng);
+        options.snippet(placeId);
+        return options;
+    }
+
+    private int setMarkerIcon(String placeId, Boolean isSearched) {
+//        for (UserAndRestaurant userAndRestaurant : Objects.requireNonNull(mViewModel.getAllUserAndRestaurants().getValue())) {
+//            if (
+//                    userAndRestaurant.getRestaurantId().equals(placeId) &&
+//                            userAndRestaurant.isSelected() &&
+//                            !CURRENT_USER_ID.equals(userAndRestaurant.getUserId())
+//            ) {
+//                return R.drawable.baseline_place_cyan;
+//            }
+//            if (isSearched) {
+//                return R.drawable.baseline_place_green;
+//            }
+//        }
+        return R.drawable.baseline_place_orange;
+    }
+
     private class PlaceTask extends AsyncTask<String, Integer, String> {
 
         // Get the data from the url
@@ -320,7 +355,13 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 //            for (int i = 0; i < hashMaps.size(); i++) {
             //TODO just for save some request.
             for (int i = 0; i < 3; i++) {
-                mViewModel.requestForPlaceDetails(hashMaps.get(i).get("placeId"), requireActivity().getApplicationContext(), mMap, false);
+                String placeId = hashMaps.get(i).get("placeId");
+                double lat = Double.parseDouble(Objects.requireNonNull(hashMaps.get(i).get("latitude")));
+                double lng = Double.parseDouble(Objects.requireNonNull(hashMaps.get(i).get("longitude")));
+                mViewModel.requestForPlaceDetails(placeId, requireContext(), false);
+                MarkerOptions markerOptions = setMarkerOnMap(placeId, lat, lng);
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(placeId, false)));
+                mMap.addMarker(markerOptions);
             }
         }
     }

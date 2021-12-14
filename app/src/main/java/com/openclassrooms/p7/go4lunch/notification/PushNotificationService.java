@@ -1,8 +1,5 @@
 package com.openclassrooms.p7.go4lunch.notification;
 
-import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION;
-import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_ENABLED;
-import static com.openclassrooms.p7.go4lunch.model.UserSettings.PREFERENCES;
 import static com.openclassrooms.p7.go4lunch.notification.Notification.CHANNEL_ID;
 
 import android.app.Notification;
@@ -32,7 +29,6 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
-import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 

@@ -16,7 +16,6 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
-import com.openclassrooms.p7.go4lunch.ui.UserStateItem;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -276,7 +275,7 @@ public class DummyApiService implements ApiService {
      * @return UserAndRestaurant selected.
      */
     @Override
-    public UserAndRestaurant searchSelectedRestaurant(UserStateItem user) {
+    public UserAndRestaurant searchSelectedRestaurant(User user) {
         UserAndRestaurant userAndRestaurantFound = null;
         for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
             if (userAndRestaurant.isSelected() && user.getUid().equals(userAndRestaurant.getUserId())) {
@@ -449,69 +448,6 @@ public class DummyApiService implements ApiService {
             return R.drawable.baseline_check_circle_24;
         }
         return R.drawable.baseline_check_circle_outline_black_24;
-    }
-
-    /**
-     * Call to set marker at Restaurant Location default return red marker, selected Restaurant return green marker, searched Restaurant return blue marker.
-     *
-     * @param placeId            place id.
-     * @param isSearched         to define if it's a nearby search or a search.
-     * @return marker image to set.
-     */
-    public int setMarkerIcon(String placeId, boolean isSearched) {
-        for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
-            if (
-                    userAndRestaurant.getRestaurantId().equals(placeId) &&
-                    userAndRestaurant.isSelected() &&
-                    !CURRENT_USER_ID.equals(userAndRestaurant.getUserId()) &&
-                    !isSearched
-            ) {
-                //TODO these marker still here even the restaurant is deselected.
-                return R.drawable.baseline_place_cyan;
-            }
-            if (isSearched) {
-                return R.drawable.baseline_place_green;
-            }
-        }
-        return R.drawable.baseline_place_orange;
-    }
-
-
-    /**
-     * Update markers on map when the user go back on the MapViewFragment.
-     *
-     * @param isSearched to define if it's a nearby search or a search.
-     * @param map        current Google Maps
-     */
-    public void updateMarkerOnMap(boolean isSearched, GoogleMap map) {
-        for (Restaurant restaurantFound : getRestaurant()) {
-            MarkerOptions options = new MarkerOptions();
-            options.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurantFound.getId(), isSearched)));
-            LatLng latLng = new LatLng(restaurantFound.getPosition().latitude, restaurantFound.getPosition().longitude);
-            options.position(latLng);
-            options.snippet(restaurantFound.getId());
-            map.addMarker(options);
-        }
-    }
-
-    /**
-     * Put markers on map for each Restaurant found after a nearby search or a search.
-     *
-     * @param restaurant Restaurant to set a marker on.
-     * @param map        current Google Maps
-     */
-    public void setMarkerOnMap(Restaurant restaurant, GoogleMap map, boolean isSearched) {
-        MarkerOptions options = new MarkerOptions();
-        options.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), isSearched)));
-        LatLng latLng = new LatLng(restaurant.getPosition().latitude, restaurant.getPosition().longitude);
-        options.position(latLng);
-        options.snippet(restaurant.getId());
-        if (isSearched) {
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(restaurant.getPosition().latitude,
-                            restaurant.getPosition().longitude), 15));
-        }
-        map.addMarker(options);
     }
 
     /**

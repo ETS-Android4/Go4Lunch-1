@@ -38,7 +38,7 @@ public class DetailFragment extends Fragment {
     private static final int PERMISSION_CODE = 100;
     private Restaurant mCurrentRestaurant;
     private ApiService mApiService;
-    private UserAndRestaurantViewModel mUserAndRestaurantViewModel;
+    private UserAndRestaurantViewModel mViewModel;
     private final ImageView[] ratingStarsArray = new ImageView[3];
     private UserAndRestaurant mCurrentUserAndRestaurant;
     private String CURRENT_USER_UID;
@@ -82,7 +82,7 @@ public class DetailFragment extends Fragment {
 
     private void initServiceAndViewModel() {
         mApiService = DI.getRestaurantApiService();
-        mUserAndRestaurantViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
     }
 
     private void searchById() {
@@ -94,10 +94,10 @@ public class DetailFragment extends Fragment {
         this.searchFavoriteRestaurantById();
     }
 
-    private void searchRestaurantById() { mCurrentRestaurant = mApiService.searchCurrentRestaurantById(CURRENT_RESTAURANT_ID); }
+    private void searchRestaurantById() { mCurrentRestaurant = mViewModel.getCurrentRestaurant(CURRENT_RESTAURANT_ID); }
 
     private void searchUserById() {
-        mCurrentUser = mApiService.searchUserById(CURRENT_USER_UID);
+        mCurrentUser = mViewModel.getCurrentFirestoreUser();
     }
 
     private void searchFavoriteRestaurantById() {
@@ -206,7 +206,7 @@ public class DetailFragment extends Fragment {
             setSelectedImage(!mCurrentUserAndRestaurant.isSelected());
         }
         mApiService.likeOrSelectRestaurant(CURRENT_USER_UID, CURRENT_RESTAURANT_ID, buttonId);
-        mUserAndRestaurantViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID));
+        mViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID));
 
     }
 
@@ -225,7 +225,7 @@ public class DetailFragment extends Fragment {
                 selected
         );
         mApiService.getUserAndRestaurant().add(userAndRestaurant);
-        mUserAndRestaurantViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID));
+        mViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID));
         mCurrentUserAndRestaurant = userAndRestaurant;
         setFavoriteImage(favorite);
         setSelectedImage(selected);

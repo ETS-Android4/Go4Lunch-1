@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,18 +20,17 @@ import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 
-import java.util.List;
 import java.util.Locale;
 
 
-public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListViewHolder> {
+public class ListViewAdapter extends ListAdapter<Restaurant, ListViewAdapter.ListViewHolder> {
 
-    private final List<Restaurant> mRestaurantList;
     private final String CURRENT_USER_ID = MainActivity.CURRENT_USER_ID;
 
-    public ListViewAdapter(List<Restaurant> restaurantList) {
-        mRestaurantList = restaurantList;
+    protected ListViewAdapter() {
+        super(new ListNeighbourItemCallback());
     }
+
 
     @NonNull
     @Override
@@ -40,23 +41,19 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
 
     @Override
     public void onBindViewHolder(@NonNull ListViewAdapter.ListViewHolder holder, int position) {
-        holder.bind(mRestaurantList.get(position));
-        holder.mApiService.getUsersInterestedAtCurrentRestaurants(CURRENT_USER_ID, mRestaurantList.get(position));
+        holder.bind(getItem(position));
+        holder.mApiService.getUsersInterestedAtCurrentRestaurants(CURRENT_USER_ID, getItem(position));
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
-            String id = mRestaurantList.get(position).getId();
+            String id = getItem(position).getId();
             intent.putExtra("restaurantId", id);
             view.getContext().startActivity(intent);
         });
     }
 
-    @Override
-    public int getItemCount() {
-        return mRestaurantList.size();
-    }
+    public class ListViewHolder extends RecyclerView.ViewHolder {
 
-    public static class ListViewHolder extends RecyclerView.ViewHolder {
-        private ListViewRowBinding mBinding;
+        private final ListViewRowBinding mBinding;
         private final ImageView[] ratingStarsArray = new ImageView[3];
         private final ApiService mApiService;
 
@@ -87,6 +84,19 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
                 ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, restaurant.getRating()));
             }
             mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",restaurant.getNumberOfFriendInterested()));
+        }
+    }
+
+    private static class ListNeighbourItemCallback extends DiffUtil.ItemCallback<Restaurant> {
+
+        @Override
+        public boolean areItemsTheSame(@NonNull Restaurant oldItem, @NonNull Restaurant newItem) {
+            return oldItem.getId().equals(newItem.getId());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Restaurant oldItem, @NonNull Restaurant newItem) {
+            return oldItem.equals(newItem);
         }
     }
 }
