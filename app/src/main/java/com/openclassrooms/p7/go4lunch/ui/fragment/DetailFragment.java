@@ -101,7 +101,7 @@ public class DetailFragment extends Fragment {
     }
 
     private void searchFavoriteRestaurantById() {
-        if (mCurrentUser.getUserAndRestaurant() != null) {
+        if (mCurrentUser.getRestaurantDataMap() != null) {
             mCurrentUserAndRestaurant = mApiService.searchUserAndRestaurantById(CURRENT_USER_UID, CURRENT_RESTAURANT_ID);
             if (mCurrentUserAndRestaurant != null) {
                 this.setImageAtStart();
@@ -206,7 +206,7 @@ public class DetailFragment extends Fragment {
             setSelectedImage(!mCurrentUserAndRestaurant.isSelected());
         }
         mApiService.likeOrSelectRestaurant(CURRENT_USER_UID, CURRENT_RESTAURANT_ID, buttonId);
-        mViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID));
+//        mViewModel.updateUser(CURRENT_USER_UID, );
 
     }
 
@@ -218,14 +218,13 @@ public class DetailFragment extends Fragment {
             selected = true;
         }
         UserAndRestaurant userAndRestaurant = new UserAndRestaurant(
-                CURRENT_USER_UID,
                 CURRENT_RESTAURANT_ID,
                 mCurrentRestaurant.getName(),
                 favorite,
                 selected
         );
         mApiService.getUserAndRestaurant().add(userAndRestaurant);
-        mViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID));
+//        mViewModel.updateUser(CURRENT_USER_UID, mApiService.makeUserAndRestaurantMap(CURRENT_USER_UID));
         mCurrentUserAndRestaurant = userAndRestaurant;
         setFavoriteImage(favorite);
         setSelectedImage(selected);

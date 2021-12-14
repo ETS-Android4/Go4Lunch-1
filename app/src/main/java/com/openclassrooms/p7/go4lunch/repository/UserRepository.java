@@ -40,7 +40,8 @@ public class UserRepository {
         User userToCreate = new User(
                 Objects.requireNonNull(user).getUid(),
                 user.getDisplayName(),
-                Objects.requireNonNull(user.getPhotoUrl()).toString()
+                Objects.requireNonNull(user.getPhotoUrl()).toString(),
+                null
         );
         mFirebaseHelper.getUserData().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.contains("userAndRestaurant")) {

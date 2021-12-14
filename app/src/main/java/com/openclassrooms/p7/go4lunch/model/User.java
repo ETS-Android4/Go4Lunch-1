@@ -6,16 +6,19 @@ import java.util.Map;
 
 public class User {
 
-    private  String uid;
-    private  String userName;
-    private  String photoUrl;
+    private String uid;
+    private String userName;
+    private String photoUrl;
+    private Map<String, UserAndRestaurant> restaurantDataMap;
 
     // --- CONSTRUCTOR ---
     public User() { }
-    public User(String uid, String userName, String photoUrl) {
+
+    public User(String uid, String userName, String photoUrl, Map<String, UserAndRestaurant> restaurantDataMap) {
         this.uid = uid;
         this.userName = userName;
         this.photoUrl = photoUrl;
+        this.restaurantDataMap = restaurantDataMap;
     }
 
     // --- GETTERS ---
@@ -27,6 +30,9 @@ public class User {
     }
     public String getPhotoUrl() {
         return photoUrl;
+    }
+    public Map<String, UserAndRestaurant> getRestaurantDataMap() {
+        return restaurantDataMap;
     }
 
     @Override

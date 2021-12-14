@@ -90,9 +90,9 @@ public class DummyApiService implements ApiService {
     public Map<String, UserAndRestaurant> makeUserAndRestaurantMap(String currentUserId) {
         Map<String, UserAndRestaurant> userAndRestaurantMap = new HashMap<>();
         for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
-            if (userAndRestaurant.getUserId().equals(currentUserId)) {
-                userAndRestaurantMap.put(userAndRestaurant.getRestaurantId(), userAndRestaurant);
-            }
+//            if (userAndRestaurant.getUserId().equals(currentUserId)) {
+//                userAndRestaurantMap.put(userAndRestaurant.getRestaurantId(), userAndRestaurant);
+//            }
         }
         return userAndRestaurantMap;
     }
