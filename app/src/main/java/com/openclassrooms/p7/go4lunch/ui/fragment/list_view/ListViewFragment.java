@@ -24,7 +24,6 @@ import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 public class ListViewFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
-    private ApiService mApiService;
     private ListViewAdapter listViewAdapter;
     private UserAndRestaurantViewModel mViewModel;
 
@@ -43,7 +42,6 @@ public class ListViewFragment extends Fragment {
 
     private void configureServiceAndViewModel() {
         mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
-        mApiService = DI.getRestaurantApiService();
     }
 
 //    private void configureListener() {

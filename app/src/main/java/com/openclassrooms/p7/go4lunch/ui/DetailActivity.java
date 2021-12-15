@@ -14,8 +14,6 @@ import com.openclassrooms.p7.go4lunch.ui.fragment.DetailFragment;
 
 public class DetailActivity extends AppCompatActivity {
 
-    private ActivityDetailBinding mBinding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

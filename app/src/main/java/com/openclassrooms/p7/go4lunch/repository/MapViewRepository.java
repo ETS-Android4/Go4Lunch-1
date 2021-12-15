@@ -119,22 +119,33 @@ public class MapViewRepository {
      * @param isSearched usefull for the marker color.
      */
     public void requestForPlacePhoto(Place place, Context context, boolean isSearched) {
-        getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
-            Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
+        if (getPhotoData(place, context) != null) {
+            getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
+                Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
+                if (isSearched) {
+                    mApiService.getSearchedRestaurant().clear();
+                    mApiService.getSearchedRestaurant().add(restaurant);
+//                mApiService.setMarkerOnMap(restaurant, map, true);
+                } else {
+                    mApiService.getRestaurant().add(restaurant);
+                    listOfRestaurant.setValue(mApiService.getRestaurant());
+//                mApiService.setMarkerOnMap(restaurant, map, false);
+                }
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    Log.e(TAG, "Place not found: " + exception.getMessage());
+                }
+            });
+        } else {
+            Restaurant restaurant = createRestaurant(place, null, context);
             if (isSearched) {
                 mApiService.getSearchedRestaurant().clear();
                 mApiService.getSearchedRestaurant().add(restaurant);
-//                mApiService.setMarkerOnMap(restaurant, map, true);
             } else {
                 mApiService.getRestaurant().add(restaurant);
                 listOfRestaurant.setValue(mApiService.getRestaurant());
-//                mApiService.setMarkerOnMap(restaurant, map, false);
             }
-        }).addOnFailureListener((exception) -> {
-            if (exception instanceof ApiException) {
-                Log.e(TAG, "Place not found: " + exception.getMessage());
-            }
-        });
+        }
     }
 
     /**
@@ -160,7 +171,6 @@ public class MapViewRepository {
     }
 
     private Restaurant createRestaurant(Place place, Bitmap placeImage, Context context) {
-        //TODO if photo = null change it by noImage.
         return new Restaurant(
                 place.getId(),
                 place.getName(),

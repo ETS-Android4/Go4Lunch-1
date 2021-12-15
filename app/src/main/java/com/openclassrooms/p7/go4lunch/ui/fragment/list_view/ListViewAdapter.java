@@ -25,8 +25,6 @@ import java.util.Locale;
 
 public class ListViewAdapter extends ListAdapter<Restaurant, ListViewAdapter.ListViewHolder> {
 
-    private final String CURRENT_USER_ID = MainActivity.CURRENT_USER_ID;
-
     protected ListViewAdapter() {
         super(new ListNeighbourItemCallback());
     }
@@ -42,7 +40,7 @@ public class ListViewAdapter extends ListAdapter<Restaurant, ListViewAdapter.Lis
     @Override
     public void onBindViewHolder(@NonNull ListViewAdapter.ListViewHolder holder, int position) {
         holder.bind(getItem(position));
-        holder.mApiService.getUsersInterestedAtCurrentRestaurants(CURRENT_USER_ID, getItem(position));
+        //TODO number of friend interested
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
             String id = getItem(position).getId();

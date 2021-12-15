@@ -86,18 +86,18 @@ public class PushNotificationService extends Worker {
     private void createNotification(User user) {
 
         String userName = mApiService.makeUserFirstName(user.getUserName());
-        UserAndRestaurant userAndRestaurantSelected = mApiService.getCurrentUserSelectedRestaurant(user);
-        List<User> interestedFriends = mApiService.getUsersInterestedAtCurrentRestaurantForNotification(user.getUid(), userAndRestaurantSelected.getRestaurantId());
+//        UserAndRestaurant userAndRestaurantSelected = mApiService.getCurrentUserSelectedRestaurant(user);
+//        List<User> interestedFriends = mApiService.getUsersInterestedAtCurrentRestaurantForNotification(user.getUid(), userAndRestaurantSelected.getRestaurantId());
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-        Log.d(TAG, "createNotification: friends are coming: " + mApiService.makeInterestedFriendsString(interestedFriends));
+//        Log.d(TAG, "createNotification: friends are coming: " + mApiService.makeInterestedFriendsString(interestedFriends));
         Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.drawable.meal_v2_half_size)
                 .setContentTitle(String.format("%s %s", mContext.getString(R.string.push_notification_service_alert), userName))
-                .setContentText(String.format("%s %s", mContext.getString(R.string.push_notification_service_restaurant_choice), userAndRestaurantSelected.getRestaurantName()))
+//                .setContentText(String.format("%s %s", mContext.getString(R.string.push_notification_service_restaurant_choice), userAndRestaurantSelected.getRestaurantName()))
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(String.format("%s %s", mContext.getString(R.string.push_notification_service_list_of_friend_are_come), mApiService.makeInterestedFriendsString(interestedFriends)))
+//                        .bigText(String.format("%s %s", mContext.getString(R.string.push_notification_service_list_of_friend_are_come), mApiService.makeInterestedFriendsString(interestedFriends)))
                         .setBigContentTitle(mContext.getString(R.string.push_notification_service_alert)))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)

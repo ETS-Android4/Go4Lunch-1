@@ -36,11 +36,18 @@ public class UserAndRestaurantViewModel extends ViewModel {
 
     public LiveData<List<User>> getAllUsers() {
         MutableLiveData<List<User>> userMutableLiveData = new MutableLiveData<>();
-        userMutableLiveData.setValue(userDataSource.getFirestoreUsersDataList().getValue());
+        userMutableLiveData.setValue(userDataSource.getListOfUsers().getValue());
         return userMutableLiveData;
     }
 
-    public User getCurrentFirestoreUser() { return  userDataSource.getCurrentFirestoreUser(); }
+    public LiveData<List<User>> getAllInterestedUsers() {
+        MutableLiveData<List<User>> userMutableLiveData = new MutableLiveData<>();
+        userMutableLiveData.setValue(userDataSource.getListOfUsersInterested().getValue());
+        return userMutableLiveData;
+    }
+
+    public User getCurrentFirestoreUser(String userId) { return  userDataSource.getFirestoreUser(userId); }
+    public MutableLiveData<User> getUser() { return  userDataSource.getCurrentUser(); }
 
     public LiveData<List<Restaurant>> getAllRestaurants() {
         MutableLiveData<List<Restaurant>> restaurantMutableLiveData = new MutableLiveData<>();
@@ -66,7 +73,6 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public void createUser(){
         userDataSource.createFireStoreUser();
     }
-    public LiveData<List<User>> getUsersDataList() { return userDataSource.getFirestoreUsersDataList(); }
     public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) { userDataSource.updateFirestoreUser(currentUserID, likedOrSelectedRestaurant);}
     public void deleteUserFromFirestore() { userDataSource.deleteFirestoreUser(); }
     //                  --- GOOGLE MAPS ---

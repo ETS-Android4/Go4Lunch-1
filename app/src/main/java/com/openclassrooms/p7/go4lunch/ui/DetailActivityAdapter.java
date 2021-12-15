@@ -5,6 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -17,15 +19,10 @@ import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 import java.util.List;
 
-public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAdapter.DetailActivityViewHolder> {
+public class DetailActivityAdapter extends ListAdapter<User, DetailActivityAdapter.DetailActivityViewHolder> {
 
-    private List<User> mUsers = null;
-    ApiService mApiService;
-
-    public DetailActivityAdapter(Restaurant restaurant) {
-        mApiService = DI.getRestaurantApiService();
-        String CURRENT_USER_ID = MainActivity.CURRENT_USER_ID;
-        this.mUsers = mApiService.getUsersInterestedAtCurrentRestaurants(CURRENT_USER_ID, restaurant);
+    public DetailActivityAdapter() {
+        super(new ListNeighbourItemCallback());
     }
 
     @NonNull
@@ -37,22 +34,19 @@ public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAd
 
     @Override
     public void onBindViewHolder(@NonNull DetailActivityViewHolder holder, int position) {
-                holder.bind(mUsers.get(position));
+                holder.bind(getItem(position));
     }
 
-    @Override
-    public int getItemCount() {
-        return mUsers.size();
-    }
-
-    public class DetailActivityViewHolder extends RecyclerView.ViewHolder {
+    public static class DetailActivityViewHolder extends RecyclerView.ViewHolder {
 
         private final WorkmatesListRowBinding mBinding;
+        private final ApiService mApiService;
         private final View view;
 
         public DetailActivityViewHolder(@NonNull View itemView) {
             super(itemView);
             mBinding = WorkmatesListRowBinding.bind(itemView);
+            mApiService = DI.getRestaurantApiService();
             view = itemView;
         }
 
@@ -62,6 +56,18 @@ public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAd
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
             mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s", mApiService.makeUserFirstName(user.getUserName()), view.getResources().getString(R.string.detail_viewHolder_is_joining)));
+        }
+    }
+
+    private static class ListNeighbourItemCallback extends androidx.recyclerview.widget.DiffUtil.ItemCallback<User> {
+        @Override
+        public boolean areItemsTheSame(@NonNull User oldItem, @NonNull User newItem) {
+            return oldItem.getUid().equals(newItem.getUid());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull User oldItem, @NonNull User newItem) {
+            return oldItem.equals(newItem);
         }
     }
 }

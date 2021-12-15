@@ -1,22 +1,32 @@
 package com.openclassrooms.p7.go4lunch.repository;
 
+import static android.content.ContentValues.TAG;
+
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class UserRepository {
 
+    private MutableLiveData<User> currentUser;
     private final MutableLiveData<List<User>> listOfUser = new MutableLiveData<>();
+    private final MutableLiveData<List<User>> listOfUserInterested = new MutableLiveData<>();
 
     private static UserRepository mUserRepository;
     private final FirebaseHelper mFirebaseHelper;
@@ -37,11 +47,12 @@ public class UserRepository {
      */
     public void createFireStoreUser() {
         FirebaseUser user = mFirebaseHelper.getCurrentUser();
+        Map<String, UserAndRestaurant> restaurantDataMap = new HashMap<>();
         User userToCreate = new User(
                 Objects.requireNonNull(user).getUid(),
                 user.getDisplayName(),
                 Objects.requireNonNull(user.getPhotoUrl()).toString(),
-                null
+                restaurantDataMap
         );
         mFirebaseHelper.getUserData().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.contains("userAndRestaurant")) {
@@ -56,7 +67,7 @@ public class UserRepository {
     /**
      * Get userList from Firestore and store it in DUMMY_USER.
      */
-    public MutableLiveData<List<User>> getFirestoreUsersDataList() {
+    public MutableLiveData<List<User>> getListOfUsers() {
         mFirebaseHelper.getUserDataCollection().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 ArrayList<User> users = new ArrayList<>();
@@ -73,13 +84,39 @@ public class UserRepository {
         return listOfUser;
     }
 
-    public User getCurrentFirestoreUser() {
-        String currentUserId = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
-        User currentUser = null;
+    public MutableLiveData<List<User>> getListOfUsersInterested() {
+        mFirebaseHelper.getUsersCollection()
+                .whereArrayContains("isSelected", true)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<User> users = new ArrayList<>();
+                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                            users.add(documentSnapshot.toObject(User.class));
+                        }
+                        listOfUserInterested.postValue(users);
+                    } else {
+                        Log.e("Error","Error getting documents: ", task.getException());
+                    }
+        }).addOnFailureListener(exception -> {
+
+        });
+        return listOfUserInterested;
+    }
+
+    public User getFirestoreUser(String userId) {
+        User userFound = null;
         for (User user : Objects.requireNonNull(listOfUser.getValue())) {
-            if (user.getUid().equals(currentUserId)) {
-                currentUser = user;
+            if (user.getUid().equals(userId)) {
+                userFound = user;
             }
+        }
+        return userFound;
+    }
+
+    public MutableLiveData<User> getCurrentUser() {
+        if (currentUser == null) {
+            currentUser = new MutableLiveData<>();
         }
         return currentUser;
     }
@@ -90,7 +127,7 @@ public class UserRepository {
      * @param likedOrSelectedRestaurant Map with the new content.
      */
     public void updateFirestoreUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
-               mFirebaseHelper.getUsersCollection().document(currentUserID).update("userAndRestaurant", likedOrSelectedRestaurant);
+        mFirebaseHelper.getUsersCollection().document(currentUserID).update("restaurantDataMap", likedOrSelectedRestaurant);
     }
 
     /**

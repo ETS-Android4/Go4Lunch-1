@@ -44,15 +44,15 @@ public interface ApiService {
     // --- SEARCH ---
     User searchUserById(String uid);
     Restaurant searchCurrentRestaurantById(String id);
-    UserAndRestaurant searchUserAndRestaurantById(String userId, String RestaurantId);
-    void searchSelectedUserAndRestaurantToDeselect(String currentUserId, String currentRestaurantId);
-    void likeOrSelectRestaurant(String currentUserId, String currentRestaurantId, int buttonId);
-    UserAndRestaurant searchSelectedRestaurant(User user);
+//    Restaurant searchUserAndRestaurantById(String RestaurantId);
+    UserAndRestaurant searchSelectedRestaurant(User currentUser);
+//    void likeOrSelectRestaurant(String currentUserId, String currentRestaurantId, int buttonId);
+//    UserAndRestaurant searchSelectedRestaurant(User user);
 
     // --- GETTERS ---
-    List<User> getUsersInterestedAtCurrentRestaurants(String currentUserId, Restaurant currentRestaurant);
-    List<User> getUsersInterestedAtCurrentRestaurantForNotification(String currentUserId, String restaurantId);
-    UserAndRestaurant getCurrentUserSelectedRestaurant(User currentUser);
+//    List<User> getUsersInterestedAtCurrentRestaurants(String currentUserId, Restaurant currentRestaurant);
+//    List<User> getUsersInterestedAtCurrentRestaurantForNotification(String currentUserId, String restaurantId);
+//    UserAndRestaurant getCurrentUserSelectedRestaurant(User currentUser);
     String getWebsiteUri(Uri websiteUri);
     double getRating(Double rating);
     float getDistance(LatLng latLng, LatLng currentLocation);
@@ -65,5 +65,5 @@ public interface ApiService {
 
     // --- ORDER ---
     void listViewComparator();
-    void filterUsersInterestedAtCurrentRestaurant();
+//    void filterUsersInterestedAtCurrentRestaurant();
 }

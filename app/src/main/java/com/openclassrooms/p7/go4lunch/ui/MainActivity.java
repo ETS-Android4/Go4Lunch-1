@@ -186,11 +186,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void showRestaurantSelected() {
         ApiService apiService = DI.getRestaurantApiService();
-        User currentUser = apiService.searchUserById(CURRENT_USER_ID);
+        String currentUserId = mViewModel.getCurrentUser().getUid();
+        User currentUser = mViewModel.getCurrentFirestoreUser(currentUserId);
         AlertDialog.Builder restaurantSelectedPopup = new AlertDialog.Builder(this);
         restaurantSelectedPopup
                 .setTitle(getString(R.string.main_activity_selected_restaurant_dialog))
-                .setMessage(apiService.removeUselessWords(apiService.getCurrentUserSelectedRestaurant(currentUser).getRestaurantName()))
+                .setMessage(apiService.removeUselessWords(apiService.searchSelectedRestaurant(currentUser).getRestaurantName()))
                 .show();
     }
 
@@ -272,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
      * Initialize User List and Favorite Restaurant List
      */
     private void initLists() {
-        mViewModel.getUsersDataList();
+
     }
 
     public void startAutocompleteActivity(MenuItem item) {
