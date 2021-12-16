@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
@@ -86,7 +87,8 @@ public class UserRepository {
 
     public MutableLiveData<List<User>> getListOfUsersInterested() {
         mFirebaseHelper.getUsersCollection()
-                .whereArrayContains("isSelected", true)
+
+                .whereArrayContains("selected", true)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -128,6 +130,7 @@ public class UserRepository {
      */
     public void updateFirestoreUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) {
         mFirebaseHelper.getUsersCollection().document(currentUserID).update("restaurantDataMap", likedOrSelectedRestaurant);
+        onDataChanged(currentUserID);
     }
 
     /**
@@ -136,5 +139,30 @@ public class UserRepository {
     public void deleteFirestoreUser() {
         String uid = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
         mFirebaseHelper.getUsersCollection().document(uid).delete();
+    }
+
+    /**
+     * Call when the user update the database for refresh listOfUser data.
+     */
+    private void onDataChanged(String userId) {
+        mFirebaseHelper.getUsersCollection().document(userId).addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
+                }
+                if (value != null && value.exists()) {
+                    User user = value.toObject(User.class);
+                    for (int index = 0; index < Objects.requireNonNull(listOfUser.getValue()).size(); index++) {
+                        if (listOfUser.getValue().get(index).getUid().equals(userId)) {
+                            listOfUser.getValue().set(index, user);
+                        }
+                    }
+                } else {
+                    Log.d(TAG, "Current data: null");
+                }
+            }
+        });
     }
 }

@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,11 +12,8 @@ import com.bumptech.glide.Glide;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.WorkmatesListRowBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
-
-import java.util.List;
 
 public class DetailActivityAdapter extends ListAdapter<User, DetailActivityAdapter.DetailActivityViewHolder> {
 
@@ -34,7 +30,7 @@ public class DetailActivityAdapter extends ListAdapter<User, DetailActivityAdapt
 
     @Override
     public void onBindViewHolder(@NonNull DetailActivityViewHolder holder, int position) {
-                holder.bind(getItem(position));
+        holder.bind(getItem(position));
     }
 
     public static class DetailActivityViewHolder extends RecyclerView.ViewHolder {

@@ -77,11 +77,11 @@ public class FirebaseHelper {
         return AuthUI.getInstance().delete(context);
     }
 
-    public CollectionReference getRestaurantsCollection() {
-        return FirebaseFirestore.getInstance().collection(RESTAURANT_COLLECTION_NAME);
+    public CollectionReference getRestaurantDataReference() {
+        return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME).document(Objects.requireNonNull(getCurrentUser()).getUid()).collection(RESTAURANT_COLLECTION_NAME);
     }
 
     public Task<QuerySnapshot> getRestaurantsDataCollection() {
-        return this.getRestaurantsCollection().get();
+        return this.getRestaurantDataReference().get();
     }
 }

@@ -85,6 +85,7 @@ public class LoginActivity extends AppCompatActivity {
     private void currentUserLogged() {
         if (mViewModel.isCurrentUserLogged()) {
             mViewModel.createUser();
+            mViewModel.createRestaurantData();
             startActivity(new Intent(this, MainActivity.class));
         }
     }

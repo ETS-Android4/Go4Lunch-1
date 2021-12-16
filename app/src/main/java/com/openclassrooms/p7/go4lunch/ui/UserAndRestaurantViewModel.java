@@ -16,6 +16,7 @@ import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
+import com.openclassrooms.p7.go4lunch.repository.RestaurantDataRepository;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 import com.openclassrooms.p7.go4lunch.ui.fragment.list_view.ListViewAdapter;
 
@@ -25,11 +26,13 @@ import java.util.Map;
 public class UserAndRestaurantViewModel extends ViewModel {
 
     private final UserRepository userDataSource;
+    private final RestaurantDataRepository restaurantDataSource;
     private final MapViewRepository mapDataSource;
     private final FirebaseHelper firebaseHelperDataSource;
 
     public UserAndRestaurantViewModel() {
         userDataSource = UserRepository.getInstance();
+        restaurantDataSource = RestaurantDataRepository.getInstance();
         mapDataSource = MapViewRepository.getInstance();
         firebaseHelperDataSource = FirebaseHelper.getInstance();
     }
@@ -81,5 +84,9 @@ public class UserAndRestaurantViewModel extends ViewModel {
     }
     public void requestForPlaceDetails(String placeId, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
 //        mapDataSource.requestForPlaceDetails(placeId, context, mRecyclerView, listViewAdapter);
+    }
+
+    public void createRestaurantData() {
+        restaurantDataSource.createRestaurantData();
     }
 }

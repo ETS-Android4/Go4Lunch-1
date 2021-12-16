@@ -49,7 +49,6 @@ public class DetailFragment extends Fragment {
     public static int LIKE_BTN_TAG;
     private User mCurrentUser;
     private DetailActivityAdapter mAdapter;
-    private Observer<User> userObserver;
 
     @Nullable
     @Override
@@ -68,7 +67,6 @@ public class DetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mViewModel.getUser().observe(this, userObserver);
     }
 
     private void configureViewBinding() {
@@ -81,12 +79,6 @@ public class DetailFragment extends Fragment {
     private void initServiceAndViewModel() {
         mApiService = DI.getRestaurantApiService();
         mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
-        userObserver = new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                mCurrentUser = user;
-            }
-        };
     }
 
     private void searchById() {
@@ -102,8 +94,7 @@ public class DetailFragment extends Fragment {
 
     private void searchUserById() {
         String currentUserId = mViewModel.getCurrentUser().getUid();
-        mViewModel.getUser().setValue(mViewModel.getCurrentFirestoreUser(currentUserId));
-//        mCurrentUser = mViewModel.getCurrentFirestoreUser(currentUserId);
+        mCurrentUser = mViewModel.getCurrentFirestoreUser(currentUserId);
     }
 
     private void searchFavoriteRestaurantById() {
@@ -196,15 +187,15 @@ public class DetailFragment extends Fragment {
      */
     private void setFavoriteOrSelectedRestaurant(View view) {
         int buttonId = view.getId();
-        if (mCurrentUserAndRestaurant != null) {
-            if (buttonId == mBinding.activityDetailFab.getId()){
-                UserAndRestaurant userAndRestaurantToUpdate = mApiService.searchSelectedRestaurant(mCurrentUser);
-                if (userAndRestaurantToUpdate != null) {
-                    if (!userAndRestaurantToUpdate.getRestaurantId().equals(mCurrentUserAndRestaurant.getRestaurantId())) {
-                        Objects.requireNonNull(mCurrentUser.getRestaurantDataMap().get(userAndRestaurantToUpdate.getRestaurantId())).setSelected(false);
-                    }
+        if (buttonId == mBinding.activityDetailFab.getId()){
+            UserAndRestaurant userAndRestaurantToUpdate = mApiService.searchSelectedRestaurant(mCurrentUser);
+            if (userAndRestaurantToUpdate != null) {
+                if (!userAndRestaurantToUpdate.getRestaurantId().equals(CURRENT_RESTAURANT_ID)) {
+                    Objects.requireNonNull(mCurrentUser.getRestaurantDataMap().get(userAndRestaurantToUpdate.getRestaurantId())).setSelected(false);
                 }
             }
+        }
+        if (mCurrentUserAndRestaurant != null) {
             updateFavoriteOrSelectedRestaurant(buttonId);
         } else {
             createFavoriteOrSelectedRestaurant(buttonId);
