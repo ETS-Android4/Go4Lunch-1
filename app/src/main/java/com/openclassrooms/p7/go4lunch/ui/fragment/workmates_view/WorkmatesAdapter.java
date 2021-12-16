@@ -14,7 +14,6 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.WorkmatesListRowBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 public class WorkmatesAdapter extends ListAdapter<User, WorkmatesAdapter.WorkmatesViewHolder> {
@@ -49,13 +48,13 @@ public class WorkmatesAdapter extends ListAdapter<User, WorkmatesAdapter.Workmat
         }
 
         public void bind(User user){
-            UserAndRestaurant userAndRestaurant = mApiService.searchSelectedRestaurant(user);
             Glide.with(itemView)
                     .load(user.getPhotoUrl())
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
-            if (userAndRestaurant != null) {
-                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_is_eating_at), mApiService.removeUselessWords(userAndRestaurant.getRestaurantName())));
+            if (user.isRestaurantIsSelected()) {
+                //TODO get the restaurant name
+                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_is_eating_at), mApiService.removeUselessWords(user.getRestaurantId())));
             } else {
                 mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_not_decided)));
                 mBinding.workmatesListRowEatingTypeTv.setHintTextColor(itemView.getResources().getColor(R.color.grey));

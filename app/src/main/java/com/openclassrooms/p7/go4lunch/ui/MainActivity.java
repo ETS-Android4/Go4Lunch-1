@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         this.updateHeader();
-//        this.initLists();
+        this.initLists();
     }
 
     @Override
@@ -188,10 +188,15 @@ public class MainActivity extends AppCompatActivity {
         ApiService apiService = DI.getRestaurantApiService();
         String currentUserId = mViewModel.getCurrentUser().getUid();
         User currentUser = mViewModel.getCurrentFirestoreUser(currentUserId);
+        String restaurantId = currentUser.getRestaurantId();
+        String restaurantName = getString(R.string.main_activity_no_restaurant_selected);
+        if (restaurantId != null) {
+            restaurantName = apiService.removeUselessWords(mViewModel.getCurrentRestaurantData(restaurantId).getRestaurantName());
+        }
         AlertDialog.Builder restaurantSelectedPopup = new AlertDialog.Builder(this);
         restaurantSelectedPopup
                 .setTitle(getString(R.string.main_activity_selected_restaurant_dialog))
-                .setMessage(apiService.removeUselessWords(apiService.searchSelectedRestaurant(currentUser).getRestaurantName()))
+                .setMessage(restaurantName)
                 .show();
     }
 
@@ -273,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
      * Initialize User List and Favorite Restaurant List
      */
     private void initLists() {
-
+        mViewModel.initData();
     }
 
     public void startAutocompleteActivity(MenuItem item) {

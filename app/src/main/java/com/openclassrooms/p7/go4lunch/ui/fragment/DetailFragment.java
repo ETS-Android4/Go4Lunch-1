@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,25 +29,26 @@ import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivityAdapter;
-import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DetailFragment extends Fragment {
 
-    private FragmentDetailBinding mBinding;
     private static final int PERMISSION_CODE = 100;
+    private String CURRENT_RESTAURANT_ID;
+    public static int LIKE_BTN_TAG;
+    private FragmentDetailBinding mBinding;
+    private User mCurrentUser;
     private Restaurant mCurrentRestaurant;
+    private UserAndRestaurant mCurrentUserAndRestaurant;
+    private Map<String, UserAndRestaurant> mRestaurantDataMap;
     private ApiService mApiService;
     private UserAndRestaurantViewModel mViewModel;
     private final ImageView[] ratingStarsArray = new ImageView[3];
-    private UserAndRestaurant mCurrentUserAndRestaurant;
-    private String CURRENT_USER_UID;
-    private String CURRENT_RESTAURANT_ID;
-    public static int LIKE_BTN_TAG;
-    private User mCurrentUser;
-    private DetailActivityAdapter mAdapter;
+
+
 
     @Nullable
     @Override
@@ -79,30 +79,21 @@ public class DetailFragment extends Fragment {
     private void initServiceAndViewModel() {
         mApiService = DI.getRestaurantApiService();
         mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
+        mRestaurantDataMap = mViewModel.getRestaurantData().getValue();
+        if (mRestaurantDataMap == null) {
+            mRestaurantDataMap = new HashMap<>();
+        }
     }
 
     private void searchById() {
         Intent mainActivityIntent = requireActivity().getIntent();
-        CURRENT_USER_UID = MainActivity.CURRENT_USER_ID;
-        CURRENT_RESTAURANT_ID = mainActivityIntent.getStringExtra("restaurantId");
-        this.searchRestaurantById();
-        this.searchUserById();
-        this.searchFavoriteRestaurantById();
-    }
-
-    private void searchRestaurantById() { mCurrentRestaurant = mViewModel.getCurrentRestaurant(CURRENT_RESTAURANT_ID); }
-
-    private void searchUserById() {
         String currentUserId = mViewModel.getCurrentUser().getUid();
+        CURRENT_RESTAURANT_ID = mainActivityIntent.getStringExtra("restaurantId");
+        mCurrentRestaurant = mViewModel.getCurrentRestaurant(CURRENT_RESTAURANT_ID);
         mCurrentUser = mViewModel.getCurrentFirestoreUser(currentUserId);
-    }
-
-    private void searchFavoriteRestaurantById() {
-        if (mCurrentUser.getRestaurantDataMap() != null) {
-            mCurrentUserAndRestaurant = mCurrentUser.getRestaurantDataMap().get(CURRENT_RESTAURANT_ID);
-            if (mCurrentUserAndRestaurant != null) {
-                this.setImageAtStart();
-            }
+        mCurrentUserAndRestaurant = mViewModel.getCurrentRestaurantData(CURRENT_RESTAURANT_ID);
+        if (mCurrentUserAndRestaurant != null) {
+            this.setImageAtStart();
         }
     }
 
@@ -137,7 +128,7 @@ public class DetailFragment extends Fragment {
     private void initRecyclerView() {
         mBinding.activityDetailRecyclerview.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mBinding.activityDetailRecyclerview.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
-        mAdapter = new DetailActivityAdapter();
+        DetailActivityAdapter mAdapter = new DetailActivityAdapter();
         mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
         mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), mAdapter::submitList);
     }
@@ -188,10 +179,12 @@ public class DetailFragment extends Fragment {
     private void setFavoriteOrSelectedRestaurant(View view) {
         int buttonId = view.getId();
         if (buttonId == mBinding.activityDetailFab.getId()){
-            UserAndRestaurant userAndRestaurantToUpdate = mApiService.searchSelectedRestaurant(mCurrentUser);
+            UserAndRestaurant userAndRestaurantToUpdate = mApiService.searchSelectedRestaurant(mRestaurantDataMap);
             if (userAndRestaurantToUpdate != null) {
                 if (!userAndRestaurantToUpdate.getRestaurantId().equals(CURRENT_RESTAURANT_ID)) {
-                    Objects.requireNonNull(mCurrentUser.getRestaurantDataMap().get(userAndRestaurantToUpdate.getRestaurantId())).setSelected(false);
+//                    Objects.requireNonNull(mRestaurantDataMap.get(userAndRestaurantToUpdate.getRestaurantId())).setSelected(false);
+                    userAndRestaurantToUpdate.setSelected(false);
+                    mViewModel.updateRestaurantData(userAndRestaurantToUpdate);
                 }
             }
         }
@@ -211,7 +204,8 @@ public class DetailFragment extends Fragment {
             setSelectedImage(mCurrentUserAndRestaurant.isSelected());
         }
 //        mCurrentUser.getRestaurantDataMap().put(mCurrentRestaurant.getId(), mCurrentUserAndRestaurant);
-        mViewModel.updateUser(CURRENT_USER_UID, mCurrentUser.getRestaurantDataMap());
+        mViewModel.updateRestaurantData(mCurrentUserAndRestaurant);
+        mViewModel.onDataChanged(mCurrentUser.getUid());
     }
 
     private void createFavoriteOrSelectedRestaurant(int buttonId) {
@@ -227,9 +221,10 @@ public class DetailFragment extends Fragment {
                 favorite,
                 selected
         );
-        mCurrentUser.getRestaurantDataMap().put(CURRENT_RESTAURANT_ID, userAndRestaurant);
-        mViewModel.updateUser(CURRENT_USER_UID, mCurrentUser.getRestaurantDataMap());
+
         mCurrentUserAndRestaurant = userAndRestaurant;
+        mViewModel.createRestaurantData(mCurrentUserAndRestaurant);
+        mViewModel.onDataChanged(mCurrentUser.getUid());
         setFavoriteImage(favorite);
         setSelectedImage(selected);
     }

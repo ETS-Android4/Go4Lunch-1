@@ -2,23 +2,23 @@ package com.openclassrooms.p7.go4lunch.model;
 
 import androidx.annotation.Nullable;
 
-import java.util.Map;
-
 public class User {
 
     private String uid;
     private String userName;
     private String photoUrl;
-    private Map<String, UserAndRestaurant> restaurantDataMap;
+    private String restaurantId;
+    private boolean restaurantIsSelected;
 
     // --- CONSTRUCTOR ---
     public User() { }
 
-    public User(String uid, String userName, String photoUrl, Map<String, UserAndRestaurant> restaurantDataMap) {
+    public User(String uid, String userName, String photoUrl, String restaurantId, boolean restaurantIsSelected) {
         this.uid = uid;
         this.userName = userName;
         this.photoUrl = photoUrl;
-        this.restaurantDataMap = restaurantDataMap;
+        this.restaurantId = restaurantId;
+        this.restaurantIsSelected = restaurantIsSelected;
     }
 
     // --- GETTERS ---
@@ -31,8 +31,19 @@ public class User {
     public String getPhotoUrl() {
         return photoUrl;
     }
-    public Map<String, UserAndRestaurant> getRestaurantDataMap() {
-        return restaurantDataMap;
+    public String getRestaurantId() {
+        return restaurantId;
+    }
+    public boolean isRestaurantIsSelected() {
+        return restaurantIsSelected;
+    }
+
+    // --- SETTERS ---
+    public void setRestaurantId(String restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+    public void setRestaurantIsSelected(boolean restaurantIsSelected) {
+        this.restaurantIsSelected = restaurantIsSelected;
     }
 
     @Override

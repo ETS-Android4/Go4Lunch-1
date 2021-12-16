@@ -94,5 +94,6 @@
     <string name="main_activity_signout_confirmation_negative_btn">CANCEL</string>
     <string name="preference_setting_delete_account">Delete account</string>
     <string name="preference_popup_title">Delete your account ?</string>
+    <string name="main_activity_no_restaurant_selected">Choose a restaurant.</string>
 
 </resources>

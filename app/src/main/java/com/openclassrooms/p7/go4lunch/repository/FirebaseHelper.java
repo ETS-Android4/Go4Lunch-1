@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Objects;
@@ -79,6 +80,14 @@ public class FirebaseHelper {
 
     public CollectionReference getRestaurantDataReference() {
         return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME).document(Objects.requireNonNull(getCurrentUser()).getUid()).collection(RESTAURANT_COLLECTION_NAME);
+    }
+
+    public Query onDataChangedToTrue() {
+        return getRestaurantDataReference().whereEqualTo("selected", true);
+    }
+
+    public Query onDataChangedToFalse() {
+        return getRestaurantDataReference().whereEqualTo("selected", false);
     }
 
     public Task<QuerySnapshot> getRestaurantsDataCollection() {

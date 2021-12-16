@@ -2,9 +2,7 @@ package com.openclassrooms.p7.go4lunch.service;
 
 import android.net.Uri;
 
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
@@ -45,7 +43,7 @@ public interface ApiService {
     User searchUserById(String uid);
     Restaurant searchCurrentRestaurantById(String id);
 //    Restaurant searchUserAndRestaurantById(String RestaurantId);
-    UserAndRestaurant searchSelectedRestaurant(User currentUser);
+    UserAndRestaurant searchSelectedRestaurant(Map<String, UserAndRestaurant> userAndRestaurant);
 //    void likeOrSelectRestaurant(String currentUserId, String currentRestaurantId, int buttonId);
 //    UserAndRestaurant searchSelectedRestaurant(User user);
 

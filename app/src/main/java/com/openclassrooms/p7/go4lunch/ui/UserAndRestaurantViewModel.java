@@ -50,7 +50,6 @@ public class UserAndRestaurantViewModel extends ViewModel {
     }
 
     public User getCurrentFirestoreUser(String userId) { return  userDataSource.getFirestoreUser(userId); }
-    public MutableLiveData<User> getUser() { return  userDataSource.getCurrentUser(); }
 
     public LiveData<List<Restaurant>> getAllRestaurants() {
         MutableLiveData<List<Restaurant>> restaurantMutableLiveData = new MutableLiveData<>();
@@ -76,7 +75,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public void createUser(){
         userDataSource.createFireStoreUser();
     }
-    public void updateUser(String currentUserID, Map<String, UserAndRestaurant> likedOrSelectedRestaurant) { userDataSource.updateFirestoreUser(currentUserID, likedOrSelectedRestaurant);}
+    public void updateUser(User user) { userDataSource.updateFirestoreUser(user);}
     public void deleteUserFromFirestore() { userDataSource.deleteFirestoreUser(); }
     //                  --- GOOGLE MAPS ---
     public void requestForPlaceDetails(String placeId, Context context, boolean isSearched) {
@@ -86,7 +85,31 @@ public class UserAndRestaurantViewModel extends ViewModel {
 //        mapDataSource.requestForPlaceDetails(placeId, context, mRecyclerView, listViewAdapter);
     }
 
-    public void createRestaurantData() {
-        restaurantDataSource.createRestaurantData();
+    public void createRestaurantData(UserAndRestaurant userAndRestaurant) {
+        restaurantDataSource.createRestaurantData(userAndRestaurant);
+    }
+
+    public LiveData<Map<String, UserAndRestaurant>> getRestaurantData() {
+        MutableLiveData<Map<String, UserAndRestaurant>> restaurantDataMutableLiveData = new MutableLiveData<>();
+        restaurantDataMutableLiveData.setValue(restaurantDataSource.getRestaurantData().getValue());
+        return restaurantDataMutableLiveData;
+    }
+
+    public void updateRestaurantData(UserAndRestaurant userAndRestaurant) {
+        restaurantDataSource.updateRestaurantData(userAndRestaurant);
+    }
+
+    public UserAndRestaurant getCurrentRestaurantData(String currentRestaurantId) {
+        return restaurantDataSource.getCurrentRestaurantData(currentRestaurantId);
+    }
+
+    public void initData() {
+        restaurantDataSource.getRestaurantData();
+        userDataSource.getListOfUsers();
+    }
+
+    public void onDataChanged(String userId) {
+        userDataSource.onDataChangedToFalse(userId);
+        userDataSource.onDataChangedToTrue(userId);
     }
 }

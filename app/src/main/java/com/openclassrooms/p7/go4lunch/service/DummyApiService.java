@@ -205,6 +205,7 @@ public class DummyApiService implements ApiService {
 //     * @param userId       current user id.
 //     * @param restaurantId current restaurant id.
      * @return current userAndRestaurant.
+     * @param userAndRestaurant
      */
 //    @Override
 //    public UserAndRestaurant searchUserAndRestaurantById(String userId, String restaurantId) {
@@ -221,11 +222,13 @@ public class DummyApiService implements ApiService {
 //    }
 
     @Override
-    public UserAndRestaurant searchSelectedRestaurant(User currentUser) {
+    public UserAndRestaurant searchSelectedRestaurant(Map<String, UserAndRestaurant> userAndRestaurant) {
         UserAndRestaurant userAndRestaurantFound = null;
-        for (Map.Entry<String, UserAndRestaurant> userAndRestaurantEntry : currentUser.getRestaurantDataMap().entrySet()) {
-            if (userAndRestaurantEntry.getValue().isSelected()) {
-                userAndRestaurantFound = userAndRestaurantEntry.getValue();
+        if (userAndRestaurant != null) {
+            for (Map.Entry<String, UserAndRestaurant> userAndRestaurantEntry : userAndRestaurant.entrySet()) {
+                if (userAndRestaurantEntry.getValue().isSelected()) {
+                    userAndRestaurantFound = userAndRestaurantEntry.getValue();
+                }
             }
         }
         return userAndRestaurantFound;
