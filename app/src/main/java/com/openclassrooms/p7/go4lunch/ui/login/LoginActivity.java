@@ -1,10 +1,7 @@
 package com.openclassrooms.p7.go4lunch.ui.login;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -14,18 +11,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityLoginBinding;
-import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.FacebookSignInActivity;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.GoogleSignInActivity;
-
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by lleotraas on 15.

@@ -2,14 +2,9 @@ package com.openclassrooms.p7.go4lunch.ui.fragment.map_view;
 
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 
-import static com.openclassrooms.p7.go4lunch.ui.MainActivity.CURRENT_USER_ID;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,7 +23,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,22 +32,15 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
-import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
@@ -69,7 +55,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;

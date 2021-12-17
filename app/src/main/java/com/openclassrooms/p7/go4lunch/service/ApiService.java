@@ -4,7 +4,7 @@ import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantData;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 
@@ -20,11 +20,11 @@ public interface ApiService {
     // --- GET DUMMY LIST ---
     List<Restaurant> getRestaurant();
     List<Restaurant> getSearchedRestaurant();
-    List<UserAndRestaurant> getUserAndRestaurant();
+    List<RestaurantData> getUserAndRestaurant();
     List<User> getUsers();
 
     // --- ADD TO ---
-    void addUserAndRestaurant(UserAndRestaurant userAndRestaurant);
+    void addUserAndRestaurant(RestaurantData restaurantData);
     void addRestaurant(Restaurant restaurant);
     void addUser(User user);
     void addSearchedRestaurant(Restaurant restaurant);
@@ -33,7 +33,7 @@ public interface ApiService {
     void deleteUser(User user);
 
     // --- MAKE ---
-    Map<String, UserAndRestaurant> makeUserAndRestaurantMap(String currentUserId);
+    Map<String, RestaurantData> makeUserAndRestaurantMap(String currentUserId);
     String getCurrentDay(Calendar calendar);
     String makeUserFirstName(String userName);
     String makeInterestedFriendsString(List<User> interestedFriendList);
@@ -43,7 +43,7 @@ public interface ApiService {
     User searchUserById(String uid);
     Restaurant searchCurrentRestaurantById(String id);
 //    Restaurant searchUserAndRestaurantById(String RestaurantId);
-    UserAndRestaurant searchSelectedRestaurant(Map<String, UserAndRestaurant> userAndRestaurant);
+    RestaurantData searchSelectedRestaurant(Map<String, RestaurantData> userAndRestaurant);
 //    void likeOrSelectRestaurant(String currentUserId, String currentRestaurantId, int buttonId);
 //    UserAndRestaurant searchSelectedRestaurant(User user);
 

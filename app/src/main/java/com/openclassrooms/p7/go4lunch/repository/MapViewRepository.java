@@ -1,22 +1,15 @@
 package com.openclassrooms.p7.go4lunch.repository;
 
 import static android.content.ContentValues.TAG;
-import static com.openclassrooms.p7.go4lunch.ui.MainActivity.CURRENT_USER_ID;
 import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.LocalTime;
@@ -32,9 +25,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
-import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
-import com.openclassrooms.p7.go4lunch.ui.fragment.list_view.ListViewAdapter;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -128,7 +119,7 @@ public class MapViewRepository {
 //                mApiService.setMarkerOnMap(restaurant, map, true);
                 } else {
                     mApiService.getRestaurant().add(restaurant);
-                    listOfRestaurant.setValue(mApiService.getRestaurant());
+                    listOfRestaurant.postValue(mApiService.getRestaurant());
 //                mApiService.setMarkerOnMap(restaurant, map, false);
                 }
             }).addOnFailureListener((exception) -> {
@@ -143,7 +134,7 @@ public class MapViewRepository {
                 mApiService.getSearchedRestaurant().add(restaurant);
             } else {
                 mApiService.getRestaurant().add(restaurant);
-                listOfRestaurant.setValue(mApiService.getRestaurant());
+                listOfRestaurant.postValue(mApiService.getRestaurant());
             }
         }
     }

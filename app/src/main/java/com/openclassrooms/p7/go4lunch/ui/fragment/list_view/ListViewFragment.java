@@ -58,6 +58,9 @@ public class ListViewFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         listViewAdapter = new ListViewAdapter();
+        mRecyclerView.setAdapter(listViewAdapter);
+        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), listViewAdapter::submitList);
+
     }
 
     @Override

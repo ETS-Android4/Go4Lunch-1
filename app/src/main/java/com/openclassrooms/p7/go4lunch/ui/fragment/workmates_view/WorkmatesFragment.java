@@ -25,6 +25,7 @@ public class WorkmatesFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private UserAndRestaurantViewModel mViewModel;
+    private WorkmatesAdapter workmatesAdapter;
 
     public WorkmatesFragment() { }
 
@@ -45,7 +46,14 @@ public class WorkmatesFragment extends Fragment {
     private void initList() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
-        WorkmatesAdapter workmatesAdapter = new WorkmatesAdapter();
+        workmatesAdapter = new WorkmatesAdapter();
+        mRecyclerView.setAdapter(workmatesAdapter);
+        mViewModel.getAllUsers().observe(getViewLifecycleOwner(), workmatesAdapter::submitList);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         mRecyclerView.setAdapter(workmatesAdapter);
         mViewModel.getAllUsers().observe(getViewLifecycleOwner(), workmatesAdapter::submitList);
     }

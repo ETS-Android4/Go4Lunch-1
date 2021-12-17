@@ -13,7 +13,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantData;
 import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
 import com.openclassrooms.p7.go4lunch.repository.RestaurantDataRepository;
@@ -43,9 +43,9 @@ public class UserAndRestaurantViewModel extends ViewModel {
         return userMutableLiveData;
     }
 
-    public LiveData<List<User>> getAllInterestedUsers() {
+    public LiveData<List<User>> getAllInterestedUsers(String restaurantId) {
         MutableLiveData<List<User>> userMutableLiveData = new MutableLiveData<>();
-        userMutableLiveData.setValue(userDataSource.getListOfUsersInterested().getValue());
+        userMutableLiveData.setValue(userDataSource.getListOfUsersInterested(restaurantId).getValue());
         return userMutableLiveData;
     }
 
@@ -61,7 +61,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
 
 
     //                   --- FOR USER FIREBASE ---
-    public Task<DocumentSnapshot> getUserData() { return firebaseHelperDataSource.getUserData();}
+    public Task<DocumentSnapshot> getUserData() { return firebaseHelperDataSource.getCurrentUserData();}
     public CollectionReference getUserCollection() { return firebaseHelperDataSource.getUsersCollection(); }
     public FirebaseUser getCurrentUser() { return firebaseHelperDataSource.getCurrentUser(); }
     public Task<Void> deleteFirebaseUser(Context context) { return firebaseHelperDataSource.deleteUser(context); }
@@ -85,31 +85,31 @@ public class UserAndRestaurantViewModel extends ViewModel {
 //        mapDataSource.requestForPlaceDetails(placeId, context, mRecyclerView, listViewAdapter);
     }
 
-    public void createRestaurantData(UserAndRestaurant userAndRestaurant) {
-        restaurantDataSource.createRestaurantData(userAndRestaurant);
+    public void createRestaurantData(RestaurantData restaurantData) {
+        restaurantDataSource.createRestaurantData(restaurantData);
     }
 
-    public LiveData<Map<String, UserAndRestaurant>> getRestaurantData() {
-        MutableLiveData<Map<String, UserAndRestaurant>> restaurantDataMutableLiveData = new MutableLiveData<>();
+    public LiveData<Map<String, RestaurantData>> getRestaurantData() {
+        MutableLiveData<Map<String, RestaurantData>> restaurantDataMutableLiveData = new MutableLiveData<>();
         restaurantDataMutableLiveData.setValue(restaurantDataSource.getRestaurantData().getValue());
         return restaurantDataMutableLiveData;
     }
 
-    public void updateRestaurantData(UserAndRestaurant userAndRestaurant) {
-        restaurantDataSource.updateRestaurantData(userAndRestaurant);
+    public void updateRestaurantData(RestaurantData restaurantData) {
+        restaurantDataSource.updateRestaurantData(restaurantData);
     }
 
-    public UserAndRestaurant getCurrentRestaurantData(String currentRestaurantId) {
+    public RestaurantData getCurrentRestaurantData(String currentRestaurantId) {
         return restaurantDataSource.getCurrentRestaurantData(currentRestaurantId);
     }
 
     public void initData() {
         restaurantDataSource.getRestaurantData();
         userDataSource.getListOfUsers();
+        userDataSource.onDataChangedUsersInterested();
     }
 
-    public void onDataChanged(String userId) {
-        userDataSource.onDataChangedToFalse(userId);
-        userDataSource.onDataChangedToTrue(userId);
+    public void onDataChanged(String restaurantName, String restaurantId, boolean restaurantIsSelected) {
+        userDataSource.onDataChangedToTrue(restaurantName, restaurantId,restaurantIsSelected);
     }
 }

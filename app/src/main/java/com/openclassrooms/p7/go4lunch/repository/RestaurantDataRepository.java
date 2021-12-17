@@ -12,15 +12,14 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantData;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class RestaurantDataRepository {
-    private final MutableLiveData<Map<String, UserAndRestaurant>> restaurantDataMap = new MutableLiveData<>();
+    private final MutableLiveData<Map<String, RestaurantData>> restaurantDataMap = new MutableLiveData<>();
     private static RestaurantDataRepository mRestaurantDataRepository;
     private final FirebaseHelper mFirebaseHelper;
 
@@ -35,28 +34,28 @@ public class RestaurantDataRepository {
         this.mFirebaseHelper = FirebaseHelper.getInstance();
     }
 
-    public void createRestaurantData(UserAndRestaurant userAndRestaurant) {
-        mFirebaseHelper.getRestaurantDataReference().document(userAndRestaurant.getRestaurantId()).set(userAndRestaurant);
+    public void createRestaurantData(RestaurantData restaurantData) {
+        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser().document(restaurantData.getRestaurantId()).set(restaurantData);
     }
 
-    public UserAndRestaurant getCurrentRestaurantData(String currentRestaurantId) {
-        UserAndRestaurant userAndRestaurant = null;
+    public RestaurantData getCurrentRestaurantData(String currentRestaurantId) {
+        RestaurantData restaurantData = null;
         if (restaurantDataMap.getValue() != null) {
-            for (Map.Entry<String, UserAndRestaurant> userAndRestaurantEntry : Objects.requireNonNull(restaurantDataMap.getValue()).entrySet()) {
+            for (Map.Entry<String, RestaurantData> userAndRestaurantEntry : Objects.requireNonNull(restaurantDataMap.getValue()).entrySet()) {
                 if (userAndRestaurantEntry.getValue().getRestaurantId().equals(currentRestaurantId)) {
-                    userAndRestaurant = userAndRestaurantEntry.getValue();
+                    restaurantData = userAndRestaurantEntry.getValue();
                 }
             }
         }
-        return userAndRestaurant;
+        return restaurantData;
     }
 
-    public MutableLiveData<Map<String, UserAndRestaurant>> getRestaurantData() {
+    public MutableLiveData<Map<String, RestaurantData>> getRestaurantData() {
         mFirebaseHelper.getRestaurantsDataCollection().addOnCompleteListener(task -> {
            if (task.isSuccessful()) {
-               Map<String, UserAndRestaurant> userAndRestaurantMap = new HashMap<>();
+               Map<String, RestaurantData> userAndRestaurantMap = new HashMap<>();
                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                   userAndRestaurantMap.put(documentSnapshot.toObject(UserAndRestaurant.class).getRestaurantId(), documentSnapshot.toObject(UserAndRestaurant.class));
+                   userAndRestaurantMap.put(documentSnapshot.toObject(RestaurantData.class).getRestaurantId(), documentSnapshot.toObject(RestaurantData.class));
                }
                restaurantDataMap.postValue(userAndRestaurantMap);
            } else {
@@ -68,14 +67,14 @@ public class RestaurantDataRepository {
         return restaurantDataMap;
     }
 
-    public void updateRestaurantData(UserAndRestaurant userAndRestaurant) {
-        mFirebaseHelper.getRestaurantDataReference()
-                .document(userAndRestaurant.getRestaurantId())
-                .update("selected", userAndRestaurant.isSelected());
-        mFirebaseHelper.getRestaurantDataReference()
-                .document(userAndRestaurant.getRestaurantId())
-                .update("favorite", userAndRestaurant.isFavorite());
-        onDataChanged(userAndRestaurant.getRestaurantId());
+    public void updateRestaurantData(RestaurantData restaurantData) {
+        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser()
+                .document(restaurantData.getRestaurantId())
+                .update("selected", restaurantData.isSelected());
+        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser()
+                .document(restaurantData.getRestaurantId())
+                .update("favorite", restaurantData.isFavorite());
+        onDataChanged(restaurantData.getRestaurantId());
     }
 
     public void deleteRestaurantData() {
@@ -83,7 +82,7 @@ public class RestaurantDataRepository {
     }
 
     private void onDataChanged(String restaurantId) {
-        mFirebaseHelper.getRestaurantDataReference().document(restaurantId).addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<DocumentSnapshot>() {
+        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser().document(restaurantId).addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -91,8 +90,8 @@ public class RestaurantDataRepository {
                     return;
                 }
                 if (value != null && value.exists()) {
-                    Map<String, UserAndRestaurant> restaurantMap = new HashMap<>();
-                    restaurantMap.put(value.getId(), value.toObject(UserAndRestaurant.class));
+                    Map<String, RestaurantData> restaurantMap = new HashMap<>();
+                    restaurantMap.put(value.getId(), value.toObject(RestaurantData.class));
                     restaurantDataMap.postValue(restaurantMap);
                 } else {
                     Log.d(TAG, "Current data: null");

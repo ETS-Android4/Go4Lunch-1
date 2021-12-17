@@ -9,7 +9,7 @@ import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantData;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -23,7 +23,7 @@ public class DummyApiService implements ApiService {
     // --- LIST ---
     private final List<Restaurant> mRestaurantList = DummyUserAndRestaurant.generateRestaurant();
     private final List<Restaurant> mSearchedRestaurant = DummyUserAndRestaurant.generateSearchedRestaurant();
-    private final List<UserAndRestaurant> mUserAndRestaurantList = DummyUserAndRestaurant.generateUserAndRestaurant();
+    private final List<RestaurantData> mRestaurantDataList = DummyUserAndRestaurant.generateUserAndRestaurant();
     private final List<User> mUserList = DummyUserAndRestaurant.generateUsers();
 
     // --- GET LIST ---
@@ -33,8 +33,8 @@ public class DummyApiService implements ApiService {
     }
 
     @Override
-    public List<UserAndRestaurant> getUserAndRestaurant() {
-        return mUserAndRestaurantList;
+    public List<RestaurantData> getUserAndRestaurant() {
+        return mRestaurantDataList;
     }
 
     @Override
@@ -49,8 +49,8 @@ public class DummyApiService implements ApiService {
 
     // --- ADD TO LIST ---
     @Override
-    public void addUserAndRestaurant(UserAndRestaurant userAndRestaurant) {
-        mUserAndRestaurantList.add(userAndRestaurant);
+    public void addUserAndRestaurant(RestaurantData restaurantData) {
+        mRestaurantDataList.add(restaurantData);
     }
 
     @Override
@@ -80,9 +80,9 @@ public class DummyApiService implements ApiService {
      * @return a UserAndRestaurant Map.
      */
     @Override
-    public Map<String, UserAndRestaurant> makeUserAndRestaurantMap(String currentUserId) {
-        Map<String, UserAndRestaurant> userAndRestaurantMap = new HashMap<>();
-        for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
+    public Map<String, RestaurantData> makeUserAndRestaurantMap(String currentUserId) {
+        Map<String, RestaurantData> userAndRestaurantMap = new HashMap<>();
+        for (RestaurantData restaurantData : getUserAndRestaurant()) {
 //            if (userAndRestaurant.getUserId().equals(currentUserId)) {
 //                userAndRestaurantMap.put(userAndRestaurant.getRestaurantId(), userAndRestaurant);
 //            }
@@ -222,16 +222,16 @@ public class DummyApiService implements ApiService {
 //    }
 
     @Override
-    public UserAndRestaurant searchSelectedRestaurant(Map<String, UserAndRestaurant> userAndRestaurant) {
-        UserAndRestaurant userAndRestaurantFound = null;
+    public RestaurantData searchSelectedRestaurant(Map<String, RestaurantData> userAndRestaurant) {
+        RestaurantData restaurantDataFound = null;
         if (userAndRestaurant != null) {
-            for (Map.Entry<String, UserAndRestaurant> userAndRestaurantEntry : userAndRestaurant.entrySet()) {
+            for (Map.Entry<String, RestaurantData> userAndRestaurantEntry : userAndRestaurant.entrySet()) {
                 if (userAndRestaurantEntry.getValue().isSelected()) {
-                    userAndRestaurantFound = userAndRestaurantEntry.getValue();
+                    restaurantDataFound = userAndRestaurantEntry.getValue();
                 }
             }
         }
-        return userAndRestaurantFound;
+        return restaurantDataFound;
     }
 
     /**

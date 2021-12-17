@@ -18,7 +18,7 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantData;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,7 +32,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -49,34 +48,34 @@ public class ServiceTest {
     public void setup() {
         service = DI.getRestaurantApiService();
 
-        UserAndRestaurant userAndRestaurantTest0 = new UserAndRestaurant( "AAAA", "Restaurant le jasmin", true, false);
-        UserAndRestaurant userAndRestaurantTest4 = new UserAndRestaurant( "BBBB", "RESTAURANT le goéland", false, true);
-        UserAndRestaurant userAndRestaurantTest1 = new UserAndRestaurant( "BBBB", "RESTAURANT le goéland", false, true);
-        UserAndRestaurant userAndRestaurantTest2 = new UserAndRestaurant( "CCCC", "restaurant le Kébab", true, false);
-        UserAndRestaurant userAndRestaurantTest3 = new UserAndRestaurant( "AAAA", "Restaurant le jasmin", true, false);
-        UserAndRestaurant userAndRestaurantTest5 = new UserAndRestaurant( "CCCC", "restaurant le Kébab", true, false);
-        UserAndRestaurant userAndRestaurantTest6 = new UserAndRestaurant( "BBBB", "RESTAURANT le goéland", false, false);
+        RestaurantData restaurantDataTest0 = new RestaurantData( "AAAA", "Restaurant le jasmin", true, false);
+        RestaurantData restaurantDataTest4 = new RestaurantData( "BBBB", "RESTAURANT le goéland", false, true);
+        RestaurantData restaurantDataTest1 = new RestaurantData( "BBBB", "RESTAURANT le goéland", false, true);
+        RestaurantData restaurantDataTest2 = new RestaurantData( "CCCC", "restaurant le Kébab", true, false);
+        RestaurantData restaurantDataTest3 = new RestaurantData( "AAAA", "Restaurant le jasmin", true, false);
+        RestaurantData restaurantDataTest5 = new RestaurantData( "CCCC", "restaurant le Kébab", true, false);
+        RestaurantData restaurantDataTest6 = new RestaurantData( "BBBB", "RESTAURANT le goéland", false, false);
 
-        service.getUserAndRestaurant().add(userAndRestaurantTest0);
-        service.getUserAndRestaurant().add(userAndRestaurantTest1);
-        service.getUserAndRestaurant().add(userAndRestaurantTest2);
-        service.getUserAndRestaurant().add(userAndRestaurantTest3);
-        service.getUserAndRestaurant().add(userAndRestaurantTest4);
-        service.getUserAndRestaurant().add(userAndRestaurantTest5);
-        service.getUserAndRestaurant().add(userAndRestaurantTest6);
+        service.getUserAndRestaurant().add(restaurantDataTest0);
+        service.getUserAndRestaurant().add(restaurantDataTest1);
+        service.getUserAndRestaurant().add(restaurantDataTest2);
+        service.getUserAndRestaurant().add(restaurantDataTest3);
+        service.getUserAndRestaurant().add(restaurantDataTest4);
+        service.getUserAndRestaurant().add(restaurantDataTest5);
+        service.getUserAndRestaurant().add(restaurantDataTest6);
 
-        Map<String, UserAndRestaurant> userAndRestaurantMapTest0 = new HashMap<>();
-        userAndRestaurantMapTest0.put(userAndRestaurantTest0.getRestaurantId(), userAndRestaurantTest0);
-        userAndRestaurantMapTest0.put(userAndRestaurantTest4.getRestaurantId(), userAndRestaurantTest4);
+        Map<String, RestaurantData> userAndRestaurantMapTest0 = new HashMap<>();
+        userAndRestaurantMapTest0.put(restaurantDataTest0.getRestaurantId(), restaurantDataTest0);
+        userAndRestaurantMapTest0.put(restaurantDataTest4.getRestaurantId(), restaurantDataTest4);
 
-        Map<String, UserAndRestaurant> userAndRestaurantMapTest1 = new HashMap<>();
-        userAndRestaurantMapTest1.put(userAndRestaurantTest2.getRestaurantId(), userAndRestaurantTest2);
-        userAndRestaurantMapTest1.put(userAndRestaurantTest6.getRestaurantId(), userAndRestaurantTest6);
+        Map<String, RestaurantData> userAndRestaurantMapTest1 = new HashMap<>();
+        userAndRestaurantMapTest1.put(restaurantDataTest2.getRestaurantId(), restaurantDataTest2);
+        userAndRestaurantMapTest1.put(restaurantDataTest6.getRestaurantId(), restaurantDataTest6);
 
-        Map<String, UserAndRestaurant> userAndRestaurantMapTest2 = new HashMap<>();
-        userAndRestaurantMapTest2.put(userAndRestaurantTest1.getRestaurantId(), userAndRestaurantTest1);
-        userAndRestaurantMapTest2.put(userAndRestaurantTest3.getRestaurantId(), userAndRestaurantTest3);
-        userAndRestaurantMapTest2.put(userAndRestaurantTest5.getRestaurantId(), userAndRestaurantTest5);
+        Map<String, RestaurantData> userAndRestaurantMapTest2 = new HashMap<>();
+        userAndRestaurantMapTest2.put(restaurantDataTest1.getRestaurantId(), restaurantDataTest1);
+        userAndRestaurantMapTest2.put(restaurantDataTest3.getRestaurantId(), restaurantDataTest3);
+        userAndRestaurantMapTest2.put(restaurantDataTest5.getRestaurantId(), restaurantDataTest5);
 
 
 //        User userTest0 = new User("1111", "one test", "https://i.pravatar.cc/150?u=a042581f4e29026704d", userAndRestaurantMapTest0);
@@ -150,8 +149,8 @@ public class ServiceTest {
         int listSizeExpected = 8;
 
         // ACT
-        UserAndRestaurant userAndRestaurantToAdd = new UserAndRestaurant( "987654321", "Restaurant le jasmin", true, true);
-        service.addUserAndRestaurant(userAndRestaurantToAdd);
+        RestaurantData restaurantDataToAdd = new RestaurantData( "987654321", "Restaurant le jasmin", true, true);
+        service.addUserAndRestaurant(restaurantDataToAdd);
 
         // ASSERT
         assertEquals(listSizeExpected, service.getUserAndRestaurant().size());
@@ -213,7 +212,7 @@ public class ServiceTest {
         String userIdToTest = "1111";
 
         // ACT
-        Map<String, UserAndRestaurant> userAndRestaurantMapToTest = service.makeUserAndRestaurantMap(userIdToTest);
+        Map<String, RestaurantData> userAndRestaurantMapToTest = service.makeUserAndRestaurantMap(userIdToTest);
 
         // ASSERT
         assertEquals(userAndRestaurantMapToTest.size(), 2);
@@ -340,11 +339,11 @@ public class ServiceTest {
     @Test
     public void searchSelectedUserAndRestaurantToDeselectWithSuccess() {
         // ARRANGE
-        UserAndRestaurant userAndRestaurantTest0 = new UserAndRestaurant( "AAAA", "Restaurant le jasmin", true, false);
-        UserAndRestaurant userAndRestaurantTest4 = new UserAndRestaurant( "BBBB", "RESTAURANT le goéland", false, true);
-        Map<String, UserAndRestaurant> userAndRestaurantMapTest0 = new HashMap<>();
-        userAndRestaurantMapTest0.put(userAndRestaurantTest0.getRestaurantId(), userAndRestaurantTest0);
-        userAndRestaurantMapTest0.put(userAndRestaurantTest4.getRestaurantId(), userAndRestaurantTest4);
+        RestaurantData restaurantDataTest0 = new RestaurantData( "AAAA", "Restaurant le jasmin", true, false);
+        RestaurantData restaurantDataTest4 = new RestaurantData( "BBBB", "RESTAURANT le goéland", false, true);
+        Map<String, RestaurantData> userAndRestaurantMapTest0 = new HashMap<>();
+        userAndRestaurantMapTest0.put(restaurantDataTest0.getRestaurantId(), restaurantDataTest0);
+        userAndRestaurantMapTest0.put(restaurantDataTest4.getRestaurantId(), restaurantDataTest4);
 //        User user = new User("1111", "one test", "https://i.pravatar.cc/150?u=a042581f4e29026704d", userAndRestaurantMapTest0);
 //        UserAndRestaurant userAndRestaurantSelected = user.getRestaurantDataMap().get("BBBB");
 //        String restaurantId = Objects.requireNonNull(user.getRestaurantDataMap().get("BBBB")).getRestaurantId();
@@ -359,28 +358,28 @@ public class ServiceTest {
     @Test
     public void likeOrSelectRestaurantLikeWithSuccess() {
         // ARRANGE
-        UserAndRestaurant userAndRestaurantToTest = service.getUserAndRestaurant().get(0);
-        assertTrue(userAndRestaurantToTest.isFavorite());
+        RestaurantData restaurantDataToTest = service.getUserAndRestaurant().get(0);
+        assertTrue(restaurantDataToTest.isFavorite());
         String userId = service.getUsers().get(0).getUid();
         String restaurantId = service.getRestaurant().get(0).getId();
         // ACT
 //        service.likeOrSelectRestaurant(userId, restaurantId, R.id.activity_detail_like_btn);
         // ASSERT
-        assertFalse(userAndRestaurantToTest.isFavorite());
+        assertFalse(restaurantDataToTest.isFavorite());
 
     }
 
     @Test
     public void likeOrSelectRestaurantSelectWithSuccess() {
         // ARRANGE
-        UserAndRestaurant userAndRestaurantToTest = service.getUserAndRestaurant().get(0);
-        assertFalse(userAndRestaurantToTest.isSelected());
+        RestaurantData restaurantDataToTest = service.getUserAndRestaurant().get(0);
+        assertFalse(restaurantDataToTest.isSelected());
         String userId = service.getUsers().get(0).getUid();
         String restaurantId = service.getRestaurant().get(0).getId();
         // ACT
 //        service.likeOrSelectRestaurant(userId, restaurantId, 12345);
         // ASSERT
-        assertTrue(userAndRestaurantToTest.isSelected());
+        assertTrue(restaurantDataToTest.isSelected());
 
     }
 

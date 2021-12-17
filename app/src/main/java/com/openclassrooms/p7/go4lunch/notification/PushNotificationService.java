@@ -27,7 +27,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.model.UserAndRestaurant;
 import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;

@@ -7,16 +7,18 @@ public class User {
     private String uid;
     private String userName;
     private String photoUrl;
+    private String restaurantName;
     private String restaurantId;
     private boolean restaurantIsSelected;
 
     // --- CONSTRUCTOR ---
     public User() { }
 
-    public User(String uid, String userName, String photoUrl, String restaurantId, boolean restaurantIsSelected) {
+    public User(String uid, String userName, String photoUrl, String restaurantName, String restaurantId, boolean restaurantIsSelected) {
         this.uid = uid;
         this.userName = userName;
         this.photoUrl = photoUrl;
+        this.restaurantName = restaurantName;
         this.restaurantId = restaurantId;
         this.restaurantIsSelected = restaurantIsSelected;
     }
@@ -31,6 +33,9 @@ public class User {
     public String getPhotoUrl() {
         return photoUrl;
     }
+    public String getRestaurantName() {
+        return restaurantName;
+    }
     public String getRestaurantId() {
         return restaurantId;
     }
@@ -39,6 +44,9 @@ public class User {
     }
 
     // --- SETTERS ---
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
     public void setRestaurantId(String restaurantId) {
         this.restaurantId = restaurantId;
     }

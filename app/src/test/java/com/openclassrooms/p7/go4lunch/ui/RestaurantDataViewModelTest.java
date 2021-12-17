@@ -24,7 +24,7 @@ import org.mockito.junit.MockitoRule;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UserAndRestaurantViewModelTest {
+public class RestaurantDataViewModelTest {
 
 
     @Before

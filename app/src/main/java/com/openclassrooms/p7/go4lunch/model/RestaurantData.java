@@ -1,15 +1,15 @@
 package com.openclassrooms.p7.go4lunch.model;
 
-public class UserAndRestaurant {
+public class RestaurantData {
 
     private String restaurantId;
     private String restaurantName;
     private boolean isFavorite;
     private Boolean isSelected;
 
-    public UserAndRestaurant() { }
+    public RestaurantData() { }
 
-    public UserAndRestaurant(String restaurantId, String restaurantName, boolean isFavorite, Boolean isSelected) {
+    public RestaurantData(String restaurantId, String restaurantName, boolean isFavorite, Boolean isSelected) {
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.isFavorite = isFavorite;

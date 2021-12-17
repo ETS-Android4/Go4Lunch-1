@@ -47,17 +47,9 @@ public class FirebaseHelper {
      * Call a task to do a request to the collection where current user.
      * @return A query task.
      */
-    public Task<DocumentSnapshot> getUserData() {
+    public Task<DocumentSnapshot> getCurrentUserData() {
         String uid = Objects.requireNonNull(this.getCurrentUser()).getUid();
         return this.getUsersCollection().document(uid).get();
-    }
-
-    /**
-     * Call a task to do a request to get all users in Firestore.
-     * @return A query task.
-     */
-    public Task<QuerySnapshot> getUserDataCollection() {
-        return this.getUsersCollection().get();
     }
 
     /**
@@ -78,19 +70,19 @@ public class FirebaseHelper {
         return AuthUI.getInstance().delete(context);
     }
 
-    public CollectionReference getRestaurantDataReference() {
+    public CollectionReference getRestaurantDataReferenceForCurrentUser() {
         return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME).document(Objects.requireNonNull(getCurrentUser()).getUid()).collection(RESTAURANT_COLLECTION_NAME);
     }
 
-    public Query onDataChangedToTrue() {
-        return getRestaurantDataReference().whereEqualTo("selected", true);
+    public Query onDataChangedToTrue(String selected) {
+        return getRestaurantDataReferenceForCurrentUser();
     }
 
     public Query onDataChangedToFalse() {
-        return getRestaurantDataReference().whereEqualTo("selected", false);
+        return getRestaurantDataReferenceForCurrentUser().whereEqualTo("selected", false);
     }
 
     public Task<QuerySnapshot> getRestaurantsDataCollection() {
-        return this.getRestaurantDataReference().get();
+        return this.getRestaurantDataReferenceForCurrentUser().get();
     }
 }
