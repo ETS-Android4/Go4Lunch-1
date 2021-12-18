@@ -2,6 +2,8 @@ package com.openclassrooms.p7.go4lunch.model;
 
 import androidx.annotation.Nullable;
 
+import java.util.Comparator;
+
 public class User {
 
     private String uid;
@@ -57,5 +59,12 @@ public class User {
     @Override
     public boolean equals(@Nullable Object obj) {
         return super.equals(obj);
+    }
+
+    public static class UserComparator implements Comparator<User> {
+        @Override
+        public int compare(User userLeft, User userRight) {
+            return userRight.restaurantName.compareTo(userLeft.restaurantName);
+        }
     }
 }

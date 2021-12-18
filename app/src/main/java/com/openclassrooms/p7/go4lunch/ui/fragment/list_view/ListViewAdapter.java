@@ -18,7 +18,6 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
-import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 
 import java.util.Locale;
 
@@ -26,7 +25,7 @@ import java.util.Locale;
 public class ListViewAdapter extends ListAdapter<Restaurant, ListViewAdapter.ListViewHolder> {
 
     protected ListViewAdapter() {
-        super(new ListNeighbourItemCallback());
+        super(new ListViewItemCallback());
     }
 
 
@@ -66,7 +65,7 @@ public class ListViewAdapter extends ListAdapter<Restaurant, ListViewAdapter.Lis
         }
 
         public void bind(Restaurant restaurant){
-            mBinding.listViewRowRestaurantNameTv.setText(mApiService.removeUselessWords(restaurant.getName()));
+            mBinding.listViewRowRestaurantNameTv.setText(mApiService.formatRestaurantName(restaurant.getName()));
             mBinding.listViewRowRestaurantAdressTv.setText(restaurant.getAdress());
             mBinding.listViewRowRestaurantIsOpenTv.setText(restaurant.getOpenningHours());
             mBinding.listViewRowDistanceTv.setText(String.format(Locale.ENGLISH,"%4.0fm",restaurant.getDistance()));
@@ -85,7 +84,7 @@ public class ListViewAdapter extends ListAdapter<Restaurant, ListViewAdapter.Lis
         }
     }
 
-    private static class ListNeighbourItemCallback extends DiffUtil.ItemCallback<Restaurant> {
+    private static class ListViewItemCallback extends DiffUtil.ItemCallback<Restaurant> {
 
         @Override
         public boolean areItemsTheSame(@NonNull Restaurant oldItem, @NonNull Restaurant newItem) {

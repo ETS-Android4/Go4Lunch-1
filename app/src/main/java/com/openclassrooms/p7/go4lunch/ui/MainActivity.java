@@ -188,10 +188,9 @@ public class MainActivity extends AppCompatActivity {
         ApiService apiService = DI.getRestaurantApiService();
         String currentUserId = mViewModel.getCurrentUser().getUid();
         User currentUser = mViewModel.getCurrentFirestoreUser(currentUserId);
-        String restaurantId = currentUser.getRestaurantId();
-        String restaurantName = getString(R.string.main_activity_no_restaurant_selected);
-        if (restaurantId != null) {
-            restaurantName = apiService.removeUselessWords(mViewModel.getCurrentRestaurantData(restaurantId).getRestaurantName());
+        String restaurantName = apiService.formatRestaurantName(currentUser.getRestaurantName());
+        if (restaurantName.equals("Z")) {
+            restaurantName = getString(R.string.main_activity_no_restaurant_selected);
         }
         AlertDialog.Builder restaurantSelectedPopup = new AlertDialog.Builder(this);
         restaurantSelectedPopup

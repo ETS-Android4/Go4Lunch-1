@@ -17,40 +17,11 @@ import java.util.Map;
  */
 public interface ApiService {
 
-    // --- GET DUMMY LIST ---
-    List<Restaurant> getRestaurant();
-    List<Restaurant> getSearchedRestaurant();
-    List<RestaurantData> getUserAndRestaurant();
-    List<User> getUsers();
-
-    // --- ADD TO ---
-    void addUserAndRestaurant(RestaurantData restaurantData);
-    void addRestaurant(Restaurant restaurant);
-    void addUser(User user);
-    void addSearchedRestaurant(Restaurant restaurant);
-
-    // --- DELETE ---
-    void deleteUser(User user);
-
     // --- MAKE ---
-    Map<String, RestaurantData> makeUserAndRestaurantMap(String currentUserId);
     String getCurrentDay(Calendar calendar);
-    String makeUserFirstName(String userName);
-    String makeInterestedFriendsString(List<User> interestedFriendList);
-    String removeUselessWords(String restaurantName);
+    String formatUserFirstName(String userName);
+    String formatRestaurantName(String restaurantName);
 
-    // --- SEARCH ---
-    User searchUserById(String uid);
-    Restaurant searchCurrentRestaurantById(String id);
-//    Restaurant searchUserAndRestaurantById(String RestaurantId);
-    RestaurantData searchSelectedRestaurant(Map<String, RestaurantData> userAndRestaurant);
-//    void likeOrSelectRestaurant(String currentUserId, String currentRestaurantId, int buttonId);
-//    UserAndRestaurant searchSelectedRestaurant(User user);
-
-    // --- GETTERS ---
-//    List<User> getUsersInterestedAtCurrentRestaurants(String currentUserId, Restaurant currentRestaurant);
-//    List<User> getUsersInterestedAtCurrentRestaurantForNotification(String currentUserId, String restaurantId);
-//    UserAndRestaurant getCurrentUserSelectedRestaurant(User currentUser);
     String getWebsiteUri(Uri websiteUri);
     double getRating(Double rating);
     float getDistance(LatLng latLng, LatLng currentLocation);
@@ -62,6 +33,6 @@ public interface ApiService {
     int setSelectedImage(boolean Selected);
 
     // --- ORDER ---
-    void listViewComparator();
-//    void filterUsersInterestedAtCurrentRestaurant();
+    void listViewComparator(List<Restaurant> restaurantList);
+    void workmatesViewComparator(List<User> userList);
 }

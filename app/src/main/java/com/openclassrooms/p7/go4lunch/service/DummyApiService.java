@@ -9,86 +9,13 @@ import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.model.RestaurantData;
 
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class DummyApiService implements ApiService {
-
-    // --- LIST ---
-    private final List<Restaurant> mRestaurantList = DummyUserAndRestaurant.generateRestaurant();
-    private final List<Restaurant> mSearchedRestaurant = DummyUserAndRestaurant.generateSearchedRestaurant();
-    private final List<RestaurantData> mRestaurantDataList = DummyUserAndRestaurant.generateUserAndRestaurant();
-    private final List<User> mUserList = DummyUserAndRestaurant.generateUsers();
-
-    // --- GET LIST ---
-    @Override
-    public List<Restaurant> getRestaurant() {
-        return mRestaurantList;
-    }
-
-    @Override
-    public List<RestaurantData> getUserAndRestaurant() {
-        return mRestaurantDataList;
-    }
-
-    @Override
-    public List<User> getUsers() {
-        return mUserList;
-    }
-
-    @Override
-    public List<Restaurant> getSearchedRestaurant() {
-        return mSearchedRestaurant;
-    }
-
-    // --- ADD TO LIST ---
-    @Override
-    public void addUserAndRestaurant(RestaurantData restaurantData) {
-        mRestaurantDataList.add(restaurantData);
-    }
-
-    @Override
-    public void addRestaurant(Restaurant restaurant) {
-        mRestaurantList.add(restaurant);
-    }
-
-    @Override
-    public void addUser(User user) {
-        mUserList.add(user);
-    }
-
-    @Override
-    public void deleteUser(User user) {
-        mUserList.remove(user);
-    }
-
-    @Override
-    public void addSearchedRestaurant(Restaurant restaurant) {
-        mSearchedRestaurant.add(restaurant);
-    }
-
-    /**
-     * Make a Map to copy it in the currentUser and send it to the Database.
-     *
-     * @param currentUserId the id of the current user.
-     * @return a UserAndRestaurant Map.
-     */
-    @Override
-    public Map<String, RestaurantData> makeUserAndRestaurantMap(String currentUserId) {
-        Map<String, RestaurantData> userAndRestaurantMap = new HashMap<>();
-        for (RestaurantData restaurantData : getUserAndRestaurant()) {
-//            if (userAndRestaurant.getUserId().equals(currentUserId)) {
-//                userAndRestaurantMap.put(userAndRestaurant.getRestaurantId(), userAndRestaurant);
-//            }
-        }
-        return userAndRestaurantMap;
-    }
 
     public String getCurrentDay(Calendar calendar) {
         int day = calendar.get(Calendar.DAY_OF_WEEK);
@@ -126,7 +53,7 @@ public class DummyApiService implements ApiService {
      * @return first name format.
      */
     @Override
-    public String makeUserFirstName(String userName) {
+    public String formatUserFirstName(String userName) {
         int i = userName.indexOf(' ');
         if (i > 0) {
             String firstName = userName.substring(0, i);
@@ -140,17 +67,7 @@ public class DummyApiService implements ApiService {
 
     //TODO comment
     @Override
-    public String makeInterestedFriendsString(List<User> interestedFriendList) {
-        String friendsInterested = "";
-        for (User user : interestedFriendList) {
-            friendsInterested = friendsInterested + "\n" + makeUserFirstName(user.getUserName());
-        }
-        return friendsInterested;
-    }
-
-    //TODO comment
-    @Override
-    public String removeUselessWords(String restaurantName) {
+    public String formatRestaurantName(String restaurantName) {
         restaurantName = restaurantName.replace("RESTAURANT ", "");
         restaurantName = restaurantName.replace("Restaurant ", "");
         restaurantName = restaurantName.replace("restaurant ", "");
@@ -159,176 +76,6 @@ public class DummyApiService implements ApiService {
         restaurantNameArray[0] = Character.toUpperCase(restaurantNameArray[0]);
         return new String(restaurantNameArray);
     }
-
-    /**
-     * Search User currently logged to the application.
-     *
-     * @param currentUserId id of the current User.
-     * @return current User.
-     */
-    @Override
-    public User searchUserById(String currentUserId) {
-        User userFound = null;
-        for (User user : getUsers()) {
-            if (currentUserId.equals(user.getUid())) {
-                userFound = user;
-            }
-        }
-        return userFound;
-    }
-
-    /**
-     * Search current Restaurant to detail it.
-     *
-     * @param restaurantId id of the clicked Restaurant.
-     * @return Restaurant to detail.
-     */
-    @Override
-    public Restaurant searchCurrentRestaurantById(String restaurantId) {
-        Restaurant restaurantFound = null;
-        if (!getSearchedRestaurant().isEmpty()) {
-            if (restaurantId.equals(getSearchedRestaurant().get(0).getId())) {
-                restaurantFound = getSearchedRestaurant().get(0);
-            }
-        }
-        for (Restaurant restaurant : getRestaurant()) {
-            if (restaurantId.equals(restaurant.getId())) {
-                restaurantFound = restaurant;
-            }
-        }
-        return restaurantFound;
-    }
-
-    /**
-     * Make a UserAndRestaurantList with all User contains Restaurant found nearby.
-     *
-//     * @param userId       current user id.
-//     * @param restaurantId current restaurant id.
-     * @return current userAndRestaurant.
-     * @param userAndRestaurant
-     */
-//    @Override
-//    public UserAndRestaurant searchUserAndRestaurantById(String userId, String restaurantId) {
-//        UserAndRestaurant userAndRestaurantFound = null;
-//        for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
-//            if (
-//                    userAndRestaurant.getUserId().equals(userId) &&
-//                            userAndRestaurant.getRestaurantId().equals(restaurantId)
-//            ) {
-//                userAndRestaurantFound = userAndRestaurant;
-//            }
-//        }
-//        return userAndRestaurantFound;
-//    }
-
-    @Override
-    public RestaurantData searchSelectedRestaurant(Map<String, RestaurantData> userAndRestaurant) {
-        RestaurantData restaurantDataFound = null;
-        if (userAndRestaurant != null) {
-            for (Map.Entry<String, RestaurantData> userAndRestaurantEntry : userAndRestaurant.entrySet()) {
-                if (userAndRestaurantEntry.getValue().isSelected()) {
-                    restaurantDataFound = userAndRestaurantEntry.getValue();
-                }
-            }
-        }
-        return restaurantDataFound;
-    }
-
-    /**
-     * Like or select Restaurant show in Details depend which button was clicked.
-     *
-     * @param currentUserId       current User id.
-     * @param currentRestaurantId current Restaurant id.
-     * @param buttonId            Clicked button id.
-     */
-//    @Override
-//    public void likeOrSelectRestaurant(String currentUserId, String currentRestaurantId, int buttonId) {
-//        for (int index = 0; index < getUserAndRestaurant().size(); index++) {
-//            if (
-//                    currentRestaurantId.equals(getUserAndRestaurant().get(index).getRestaurantId()) &&
-//                            currentUserId.equals(getUserAndRestaurant().get(index).getUserId())
-//            ) {
-//                if (buttonId == R.id.activity_detail_like_btn) {
-//                    getUserAndRestaurant().get(index).setFavorite(!getUserAndRestaurant().get(index).isFavorite());
-//                } else {
-//                    getUserAndRestaurant().get(index).setSelected(!getUserAndRestaurant().get(index).isSelected());
-//                }
-//            }
-//        }
-//    }
-
-    /**
-     * Call to search the selected Restaurant by the User and show it in the WorkmatesRecyclerView.
-     *
-     * @param user User in the Database.
-     * @return UserAndRestaurant selected.
-     */
-//    @Override
-//    public UserAndRestaurant searchSelectedRestaurant(User user) {
-//        UserAndRestaurant userAndRestaurantFound = null;
-//        for (UserAndRestaurant userAndRestaurant : getUserAndRestaurant()) {
-//            if (userAndRestaurant.isSelected() && user.getUid().equals(userAndRestaurant.getUserId())) {
-//                userAndRestaurantFound = userAndRestaurant;
-//            }
-//        }
-//        return userAndRestaurantFound;
-//    }
-
-    /**
-     * Call to know how many users are interested at current Restaurant for the ListViewFragment and the DetailsActivity RecyclerView.
-     * First we search the userId corresponding to the restaurant selected.
-     * Second we looking for the user with his id and add him to the list.
-     *
-//     * @param currentUserId     current User id.
-//     * @param currentRestaurant Restaurant to compare with UserAndRestaurant.
-     * @return List of User interested at the Restaurant.
-     */
-//    @Override
-//    public List<User> getUsersInterestedAtCurrentRestaurants(String currentUserId, Restaurant currentRestaurant) {
-//        List<User> usersInterested = new ArrayList<>();
-//        for (UserAndRestaurant restaurantSelected : getUserAndRestaurant()) {
-//            if (
-//                    restaurantSelected.isSelected() &&
-//                            !currentUserId.equals(restaurantSelected.getUserId()) &&
-//                            currentRestaurant.getId().equals(restaurantSelected.getRestaurantId())
-//            ) {
-//                User user = searchUserById(restaurantSelected.getUserId());
-//                usersInterested.add(user);
-//            }
-//        }
-//        currentRestaurant.setNumberOfFriendInterested(usersInterested.size());
-//        return usersInterested;
-//    }
-
-//    public List<User> getUsersInterestedAtCurrentRestaurantForNotification(String currentUserId, String restaurantId) {
-//        List<User> usersInterested = new ArrayList<>();
-//        for (User user : getUsers()) {
-//            for (Map.Entry<String, UserAndRestaurant> userAndRestaurantEntry : user.getUserAndRestaurant().entrySet()) {
-//                if (
-//                        userAndRestaurantEntry.getValue().isSelected() &&
-//                                !currentUserId.equals(userAndRestaurantEntry.getValue().getUserId()) &&
-//                                restaurantId.equals(userAndRestaurantEntry.getValue().getRestaurantId())
-//                ) {
-//                    usersInterested.add(user);
-//                }
-//            }
-//        }
-//        return usersInterested;
-//    }
-
-    //TODO comments
-//    @Override
-//    public UserAndRestaurant getCurrentUserSelectedRestaurant(User user) {
-//        for (Map.Entry<String, UserAndRestaurant> userAndRestaurant : user.getUserAndRestaurant().entrySet()) {
-//            if (
-//                    userAndRestaurant.getValue().getUserId().equals(user.getUid()) &&
-//                            userAndRestaurant.getValue().isSelected()
-//            ) {
-//                return userAndRestaurant.getValue();
-//            }
-//        }
-//        return null;
-//    }
 
     /**
      * Get the Restaurant website if available and format it to a String.
@@ -443,21 +190,12 @@ public class DummyApiService implements ApiService {
      * Call to sort restaurantList with most users interested first.
      */
     @Override
-    public void listViewComparator() {
-        Collections.sort(getRestaurant(), new Restaurant.RestaurantComparator());
+    public void listViewComparator(List<Restaurant> restaurantList) {
+        Collections.sort(restaurantList, new Restaurant.RestaurantComparator());
     }
 
-    /**
-     * Call to found user have selected a restaurant and set it to the top of userList.
-     */
-//    @Override
-//    public void filterUsersInterestedAtCurrentRestaurant() {
-//        for (UserAndRestaurant userAndRestaurants : getUserAndRestaurant()) {
-//            if (userAndRestaurants.isSelected()) {
-//                User userFound = searchUserById(userAndRestaurants.getUserId());
-//                deleteUser(userFound);
-//                getUsers().add(0, userFound);
-//            }
-//        }
-//    }
+    @Override
+    public void workmatesViewComparator(List<User> userList) {
+        Collections.sort(userList, new User.UserComparator());
+    }
 }

@@ -51,7 +51,7 @@ public class DetailActivityAdapter extends ListAdapter<User, DetailActivityAdapt
                     .load(user.getPhotoUrl())
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
-            mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s", mApiService.makeUserFirstName(user.getUserName()), view.getResources().getString(R.string.detail_viewHolder_is_joining)));
+            mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s", mApiService.formatUserFirstName(user.getUserName()), view.getResources().getString(R.string.detail_viewHolder_is_joining)));
         }
     }
 

@@ -25,8 +25,10 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -35,10 +37,14 @@ import java.util.Objects;
 public class MapViewRepository {
 
     private static volatile MapViewRepository INSTANCE;
+    private final GoogleMapsHelper mGoogleMapsHelper;
     private final ApiService mApiService = DI.getRestaurantApiService();
     private final MutableLiveData<List<Restaurant>> listOfRestaurant = new MutableLiveData<>();
+    private final ArrayList<Restaurant> restaurantList = new ArrayList<>();
 
-    private MapViewRepository() { }
+    private MapViewRepository() {
+        mGoogleMapsHelper = GoogleMapsHelper.getInstance();
+    }
 
     public static MapViewRepository getInstance() {
         MapViewRepository result = INSTANCE;
@@ -64,34 +70,12 @@ public class MapViewRepository {
      * @param isSearched usefull for the marker color.
      */
     public void requestForPlaceDetails(String placeId, Context context, boolean isSearched) {
-        getPlaceData(context, placeId).addOnSuccessListener((response) -> {
+        mGoogleMapsHelper.getPlaceData(context, placeId).addOnSuccessListener((response) -> {
             requestForPlacePhoto(response.getPlace(), context, isSearched);
         });
     }
 
-    /**
-     * Call to get a request for data
-     * @param context context of the fragment.
-     * @param placeId id of the place.
-     * @return fetch place task.
-     */
-    private Task<FetchPlaceResponse> getPlaceData(Context context, String placeId) {
-        PlacesClient placesClient = Places.createClient(context);
-        List<Place.Field> placeFields = Arrays.asList(
-                Place.Field.ID,
-                Place.Field.NAME,
-                Place.Field.ADDRESS,
-                Place.Field.RATING,
-                Place.Field.PHONE_NUMBER,
-                Place.Field.WEBSITE_URI,
-                Place.Field.OPENING_HOURS,
-                Place.Field.LAT_LNG,
-                Place.Field.PHOTO_METADATAS
-        );
-        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
-                .build();
-        return placesClient.fetchPlace(request);
-    }
+
 
     public Restaurant getCurrentRestaurant(String restaurantId) {
         Restaurant currentRestaurant = null;
@@ -110,17 +94,14 @@ public class MapViewRepository {
      * @param isSearched usefull for the marker color.
      */
     public void requestForPlacePhoto(Place place, Context context, boolean isSearched) {
-        if (getPhotoData(place, context) != null) {
-            getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
+        if (mGoogleMapsHelper.getPhotoData(place, context) != null) {
+            mGoogleMapsHelper.getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
                 Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
                 if (isSearched) {
-                    mApiService.getSearchedRestaurant().clear();
-                    mApiService.getSearchedRestaurant().add(restaurant);
-//                mApiService.setMarkerOnMap(restaurant, map, true);
+                    restaurantList.add(restaurant);
                 } else {
-                    mApiService.getRestaurant().add(restaurant);
-                    listOfRestaurant.postValue(mApiService.getRestaurant());
-//                mApiService.setMarkerOnMap(restaurant, map, false);
+                    restaurantList.add(restaurant);
+                    listOfRestaurant.postValue(restaurantList);
                 }
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
@@ -130,11 +111,10 @@ public class MapViewRepository {
         } else {
             Restaurant restaurant = createRestaurant(place, null, context);
             if (isSearched) {
-                mApiService.getSearchedRestaurant().clear();
-                mApiService.getSearchedRestaurant().add(restaurant);
+                restaurantList.add(restaurant);
             } else {
-                mApiService.getRestaurant().add(restaurant);
-                listOfRestaurant.postValue(mApiService.getRestaurant());
+                restaurantList.add(restaurant);
+                listOfRestaurant.postValue(restaurantList);
             }
         }
     }
@@ -145,21 +125,7 @@ public class MapViewRepository {
      * @param context context of the fragment.
      * @return fetch place task.
      */
-    public Task<FetchPhotoResponse> getPhotoData(Place place, Context context) {
-        PlacesClient placesClient = null;
-        FetchPhotoRequest photoRequest = null;
-        if (place.getPhotoMetadatas() != null) {
-            PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
-            photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                    .build();
-            placesClient = Places.createClient(context);
-        }
-        if (placesClient != null) {
-            return placesClient.fetchPhoto(photoRequest);
-        } else {
-            return null;
-        }
-    }
+
 
     private Restaurant createRestaurant(Place place, Bitmap placeImage, Context context) {
         return new Restaurant(
@@ -174,6 +140,16 @@ public class MapViewRepository {
                 place.getLatLng(),
                 placeImage,
                 0);
+    }
+
+    public void setNumberOfFriendInterested(List<User> listOfInterestedUsers) {
+        for (User u : listOfInterestedUsers) {
+            for (Restaurant restaurant : Objects.requireNonNull(listOfRestaurant.getValue())) {
+                if (u.getRestaurantId().equals(restaurant.getId())) {
+                    restaurant.setNumberOfFriendInterested(restaurant.getNumberOfFriendInterested()+1);
+                }
+            }
+        }
     }
 
     /**
@@ -220,48 +196,4 @@ public class MapViewRepository {
         }
         return context.getResources().getString(R.string.map_view_repository_still_closed);
     }
-
-    /**
-     * Do a request to search a place in ListViewFragment.
-     * @param placeId id of the place.
-     * @param context context of the fragment.
-     * @param mRecyclerView recyclerView of the fragment.
-     * @param listViewAdapter adapter of the fragment.
-     */
-//    public void requestForPlaceDetails(String placeId, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
-//        getPlaceData(context, placeId).addOnSuccessListener((response) -> {
-//            requestForPlacePhoto(response.getPlace(), context, mRecyclerView, listViewAdapter);
-//        });
-//    }
-
-    /**
-     * Do a request to get place photo for ListViewFragment.
-     //     * @param place the place contains photos.
-     //     * @param context context of the fragment.
-     //     * @param mRecyclerView recyclerView of the fragment.
-     //     * @param listViewAdapter adapter of the fragment.
-     */
-//    public void requestForPlacePhoto(Place place, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
-//        // Place have a photo.
-//        if (getPhotoData(place, context) != null) {
-//            getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
-//                createRestaurantAndShowIt(place, fetchPhotoResponse, context, mRecyclerView, listViewAdapter);
-//            }).addOnFailureListener((exception) -> {
-//                if (exception instanceof ApiException) {
-//                    Log.e(TAG, "Place not found: " + exception.getMessage());
-//                }
-//            });
-//        // Place don't have a photo.
-//        } else {
-//            createRestaurantAndShowIt(place, null, context, mRecyclerView, listViewAdapter);
-//        }
-//    }
-
-    //TODO comments
-//    private void createRestaurantAndShowIt(Place place, FetchPhotoResponse fetchPhotoResponse, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
-//        Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
-//        mApiService.getSearchedRestaurant().clear();
-//        restaurant.setNumberOfFriendInterested(mApiService.getUsersInterestedAtCurrentRestaurants(CURRENT_USER_ID, restaurant).size());
-//        mApiService.getSearchedRestaurant().add(restaurant);
-//    }
 }

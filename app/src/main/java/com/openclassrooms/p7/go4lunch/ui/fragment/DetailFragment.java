@@ -33,6 +33,7 @@ import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class DetailFragment extends Fragment {
 
@@ -69,7 +70,7 @@ public class DetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
-        mViewModel.getAllInterestedUsers(CURRENT_RESTAURANT_ID).observe(getViewLifecycleOwner(), mAdapter::submitList);
+        mViewModel.getAllInterestedUsersAtCurrentRestaurant(CURRENT_RESTAURANT_ID).observe(getViewLifecycleOwner(), mAdapter::submitList);
     }
 
     private void configureViewBinding() {
@@ -121,7 +122,7 @@ public class DetailFragment extends Fragment {
                     .centerCrop()
                     .into(mBinding.activityDetailImageHeader);
         }
-        mBinding.activityDetailRestaurantNameTv.setText(mApiService.removeUselessWords(mCurrentRestaurant.getName()));
+        mBinding.activityDetailRestaurantNameTv.setText(mApiService.formatRestaurantName(mCurrentRestaurant.getName()));
         mBinding.activityDetailRestaurantTypeAndAdressTv.setText(mCurrentRestaurant.getAdress());
         for (int index = 0; index < ratingStarsArray.length; index++) {
             ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, mCurrentRestaurant.getRating()));
@@ -133,7 +134,7 @@ public class DetailFragment extends Fragment {
         mBinding.activityDetailRecyclerview.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         mAdapter = new DetailActivityAdapter();
         mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
-        mViewModel.getAllInterestedUsers(CURRENT_RESTAURANT_ID).observe(getViewLifecycleOwner(), mAdapter::submitList);
+        mViewModel.getAllInterestedUsersAtCurrentRestaurant(CURRENT_RESTAURANT_ID).observe(getViewLifecycleOwner(), mAdapter::submitList);
     }
 
     private void configureListeners() {
@@ -182,13 +183,10 @@ public class DetailFragment extends Fragment {
     private void setFavoriteOrSelectedRestaurant(View view) {
         int buttonId = view.getId();
         if (buttonId == mBinding.activityDetailFab.getId()){
-            RestaurantData restaurantDataToUpdate = mApiService.searchSelectedRestaurant(mRestaurantDataMap);
-            if (restaurantDataToUpdate != null) {
-                if (!restaurantDataToUpdate.getRestaurantId().equals(CURRENT_RESTAURANT_ID)) {
-//                    Objects.requireNonNull(mRestaurantDataMap.get(userAndRestaurantToUpdate.getRestaurantId())).setSelected(false);
-                    restaurantDataToUpdate.setSelected(false);
-                    mViewModel.updateRestaurantData(restaurantDataToUpdate);
-                }
+            if (mCurrentUser.isRestaurantIsSelected()) {
+                RestaurantData restaurantToDeselect = mRestaurantDataMap.get(mCurrentUser.getRestaurantId());
+                Objects.requireNonNull(restaurantToDeselect).setSelected(false);
+                mViewModel.updateRestaurantData(restaurantToDeselect);
             }
         }
         if (mCurrentRestaurantData != null) {
@@ -207,7 +205,7 @@ public class DetailFragment extends Fragment {
             setSelectedImage(mCurrentRestaurantData.isSelected());
         }
         mViewModel.updateRestaurantData(mCurrentRestaurantData);
-        mViewModel.onDataChanged(mCurrentRestaurantData.getRestaurantName(), mCurrentRestaurantData.getRestaurantId(), mCurrentRestaurantData.isSelected());
+        mViewModel.onDataChanged(mCurrentRestaurantData);
     }
 
     private void createFavoriteOrSelectedRestaurant(int buttonId) {
@@ -218,7 +216,7 @@ public class DetailFragment extends Fragment {
             selected = true;
         }
         RestaurantData restaurantData = new RestaurantData(
-                CURRENT_RESTAURANT_ID,
+                mCurrentRestaurant.getId(),
                 mCurrentRestaurant.getName(),
                 favorite,
                 selected
@@ -226,7 +224,7 @@ public class DetailFragment extends Fragment {
 
         mCurrentRestaurantData = restaurantData;
         mViewModel.createRestaurantData(mCurrentRestaurantData);
-        mViewModel.onDataChanged(mCurrentRestaurantData.getRestaurantName(), mCurrentUser.getUid(), mCurrentRestaurantData.isSelected());
+        mViewModel.onDataChanged(mCurrentRestaurantData);
         setFavoriteImage(favorite);
         setSelectedImage(selected);
     }

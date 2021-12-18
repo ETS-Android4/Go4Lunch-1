@@ -4,17 +4,13 @@ import static android.content.ContentValues.TAG;
 
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.RestaurantData;
+import com.openclassrooms.p7.go4lunch.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +44,7 @@ public class UserRepository {
                 Objects.requireNonNull(user).getUid(),
                 user.getDisplayName(),
                 Objects.requireNonNull(user.getPhotoUrl()).toString(),
-                null,
+                "z",
                 null,
                 false
         );
@@ -89,7 +85,7 @@ public class UserRepository {
         return listOfUser;
     }
 
-    public MutableLiveData<List<User>> getListOfUsersInterested(String restaurantId) {
+    public MutableLiveData<List<User>> getListOfUsersInterestedAtCurrentRestaurant(String restaurantId) {
        MutableLiveData<List<User>> listMutableLiveData = new MutableLiveData<>();
        ArrayList<User> users = new ArrayList<>();
        for (User user : Objects.requireNonNull(listOfUserInterested.getValue())) {
@@ -107,10 +103,12 @@ public class UserRepository {
      * @param user user to update.
      */
     public void updateFirestoreUser(User user) {
-        mFirebaseHelper.getUsersCollection().document(user.getUid()).update("restaurantIsSelected", user.isRestaurantIsSelected());
-        mFirebaseHelper.getUsersCollection().document(user.getUid()).update("restaurantId", user.getRestaurantId());
-        mFirebaseHelper.getUsersCollection().document(user.getUid()).update("restaurantName", user.getRestaurantName());
-        onDataChangedUsersInterested();
+        mFirebaseHelper.getUsersCollection().document(user.getUid()).update(
+                            "restaurantIsSelected", user.isRestaurantIsSelected(),
+                "restaurantId", user.getRestaurantId(),
+                                  "restaurantName", user.getRestaurantName()
+        );
+        getListOfUserInterested();
     }
 
     /**
@@ -118,27 +116,27 @@ public class UserRepository {
      */
     public void deleteFirestoreUser() {
         String uid = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
+        mFirebaseHelper.getUsersCollection().document(uid).collection("restaurants").document().delete();
         mFirebaseHelper.getUsersCollection().document(uid).delete();
     }
 
     /**
      * Call when the user update the database for refresh listOfUser data.
-     * @param restaurantName
-     * @param restaurantId
+     * @param restaurantData
      */
-    public void onDataChangedToTrue(String restaurantName, String restaurantId, Boolean restaurantIsSelected) {
+    public void setUserInfo(RestaurantData restaurantData) {
         String userId = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
         ArrayList<User> users = new ArrayList<>();
         for (User user : Objects.requireNonNull(listOfUser.getValue())) {
             if (user.getUid().equals(userId)) {
-                if (restaurantIsSelected) {
-                    user.setRestaurantName(restaurantName);
-                    user.setRestaurantId(restaurantId);
+                if (restaurantData.isSelected()) {
+                    user.setRestaurantName(restaurantData.getRestaurantName());
+                    user.setRestaurantId(restaurantData.getRestaurantId());
                 } else {
-                    user.setRestaurantName(null);
+                    user.setRestaurantName("z");
                     user.setRestaurantId(null);
                 }
-                user.setRestaurantIsSelected(restaurantIsSelected);
+                user.setRestaurantIsSelected(restaurantData.isSelected());
                 updateFirestoreUser(user);
                 users.add(user);
             }
@@ -146,7 +144,7 @@ public class UserRepository {
         listOfUser.postValue(users);
     }
 
-    public void onDataChangedUsersInterested() {
+    public MutableLiveData<List<User>> getListOfUserInterested() {
         mFirebaseHelper.getUsersCollection().whereEqualTo("restaurantIsSelected", true).addSnapshotListener((value, error) -> {
             if (error != null) {
                 Log.w(TAG, "Listen failed.", error);
@@ -162,5 +160,6 @@ public class UserRepository {
                 Log.d(TAG, "Current data: null");
             }
         });
+        return listOfUserInterested;
     }
 }

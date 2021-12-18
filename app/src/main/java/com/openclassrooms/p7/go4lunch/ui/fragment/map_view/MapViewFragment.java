@@ -41,6 +41,7 @@ import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
@@ -67,7 +68,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                                                          GoogleMap.OnMarkerClickListener {
 
 
-    private MapView mMapView;
     private GoogleMap mMap = null;
     private Location lastKnownLocation;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -106,12 +106,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void configureListener() {
-        ((MainActivity) requireActivity()).setOnDataSelected(new MainActivity.HandleData() {
-            @Override
-            public void onDataSelect(Place place) {
-                mViewModel.requestForPlaceDetails(place.getId(), requireContext(), true);
-                //TODO new marker
-            }
+        ((MainActivity) requireActivity()).setOnDataSelected(place -> {
+            mViewModel.requestForPlaceDetails(place.getId(), requireContext(), true);
+            //TODO new marker
         });
     }
 
@@ -129,7 +126,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-//        mApiService.setMapTheme(requireActivity(), mMap);
         getLocationPermission();
         updateLocationUI();
         getDeviceLocation();
@@ -223,7 +219,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void createMap(Bundle savedInstanceState, View result) {
-        mMapView = result.findViewById(R.id.map);
+        MapView mMapView = result.findViewById(R.id.map);
         mMapView.getMapAsync(this);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
@@ -281,18 +277,14 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private int setMarkerIcon(String placeId, Boolean isSearched) {
-//        for (UserAndRestaurant userAndRestaurant : Objects.requireNonNull(mViewModel.getAllUserAndRestaurants().getValue())) {
-//            if (
-//                    userAndRestaurant.getRestaurantId().equals(placeId) &&
-//                            userAndRestaurant.isSelected() &&
-//                            !CURRENT_USER_ID.equals(userAndRestaurant.getUserId())
-//            ) {
-//                return R.drawable.baseline_place_cyan;
-//            }
+        for (User user : Objects.requireNonNull(mViewModel.getAllInterestedUsers().getValue())) {
+            if (user.getRestaurantId().equals(placeId)) {
+                return R.drawable.baseline_place_cyan;
+            }
 //            if (isSearched) {
 //                return R.drawable.baseline_place_green;
 //            }
-//        }
+        }
         return R.drawable.baseline_place_orange;
     }
 
@@ -336,7 +328,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         @Override
         protected void onPostExecute(List<HashMap<String, String>> hashMaps) {
             mMap.clear();
-            mApiService.getRestaurant().clear();
 //            for (int i = 0; i < hashMaps.size(); i++) {
             //TODO just for save some request.
             for (int i = 0; i < 3; i++) {

@@ -54,9 +54,9 @@ public class WorkmatesAdapter extends ListAdapter<User, WorkmatesAdapter.Workmat
                     .into(mBinding.workmatesListRowProfileImg);
             if (user.isRestaurantIsSelected()) {
                 //TODO get the restaurant name
-                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_is_eating_at), mApiService.removeUselessWords(user.getRestaurantName())));
+                mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s %s", mApiService.formatUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_is_eating_at), mApiService.formatRestaurantName(user.getRestaurantName())));
             } else {
-                mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s %s", mApiService.makeUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_not_decided)));
+                mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s %s", mApiService.formatUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_not_decided)));
                 mBinding.workmatesListRowEatingTypeTv.setHintTextColor(itemView.getResources().getColor(R.color.grey));
             }
         }

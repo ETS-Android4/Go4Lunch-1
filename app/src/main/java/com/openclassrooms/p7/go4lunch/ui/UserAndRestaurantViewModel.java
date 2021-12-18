@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.model.RestaurantData;
@@ -43,9 +41,15 @@ public class UserAndRestaurantViewModel extends ViewModel {
         return userMutableLiveData;
     }
 
-    public LiveData<List<User>> getAllInterestedUsers(String restaurantId) {
+    public LiveData<List<User>> getAllInterestedUsers() {
         MutableLiveData<List<User>> userMutableLiveData = new MutableLiveData<>();
-        userMutableLiveData.setValue(userDataSource.getListOfUsersInterested(restaurantId).getValue());
+        userMutableLiveData.setValue(userDataSource.getListOfUserInterested().getValue());
+        return userMutableLiveData;
+    }
+
+    public LiveData<List<User>> getAllInterestedUsersAtCurrentRestaurant(String restaurantId) {
+        MutableLiveData<List<User>> userMutableLiveData = new MutableLiveData<>();
+        userMutableLiveData.setValue(userDataSource.getListOfUsersInterestedAtCurrentRestaurant(restaurantId).getValue());
         return userMutableLiveData;
     }
 
@@ -61,8 +65,6 @@ public class UserAndRestaurantViewModel extends ViewModel {
 
 
     //                   --- FOR USER FIREBASE ---
-    public Task<DocumentSnapshot> getUserData() { return firebaseHelperDataSource.getCurrentUserData();}
-    public CollectionReference getUserCollection() { return firebaseHelperDataSource.getUsersCollection(); }
     public FirebaseUser getCurrentUser() { return firebaseHelperDataSource.getCurrentUser(); }
     public Task<Void> deleteFirebaseUser(Context context) { return firebaseHelperDataSource.deleteUser(context); }
     public Boolean isCurrentUserLogged() {
@@ -80,9 +82,6 @@ public class UserAndRestaurantViewModel extends ViewModel {
     //                  --- GOOGLE MAPS ---
     public void requestForPlaceDetails(String placeId, Context context, boolean isSearched) {
         mapDataSource.requestForPlaceDetails(placeId, context, isSearched);
-    }
-    public void requestForPlaceDetails(String placeId, Context context, RecyclerView mRecyclerView, ListViewAdapter listViewAdapter) {
-//        mapDataSource.requestForPlaceDetails(placeId, context, mRecyclerView, listViewAdapter);
     }
 
     public void createRestaurantData(RestaurantData restaurantData) {
@@ -103,13 +102,17 @@ public class UserAndRestaurantViewModel extends ViewModel {
         return restaurantDataSource.getCurrentRestaurantData(currentRestaurantId);
     }
 
-    public void initData() {
-        restaurantDataSource.getRestaurantData();
-        userDataSource.getListOfUsers();
-        userDataSource.onDataChangedUsersInterested();
+    public void setNumberOfFriendInterested(List<User> listOfUserInterested) {
+        mapDataSource.setNumberOfFriendInterested(listOfUserInterested);
     }
 
-    public void onDataChanged(String restaurantName, String restaurantId, boolean restaurantIsSelected) {
-        userDataSource.onDataChangedToTrue(restaurantName, restaurantId,restaurantIsSelected);
+    public void initData() {
+        userDataSource.getListOfUsers();
+        restaurantDataSource.getRestaurantData();
+        userDataSource.getListOfUserInterested().getValue();
+    }
+
+    public void onDataChanged(RestaurantData restaurantData) {
+        userDataSource.setUserInfo(restaurantData);
     }
 }

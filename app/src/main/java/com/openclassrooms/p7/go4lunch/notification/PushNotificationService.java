@@ -67,14 +67,14 @@ public class PushNotificationService extends Worker {
         List<DocumentSnapshot> documentSnapshotList = null;
         try {
             documentSnapshotList = Tasks.await(task).getDocuments();
-            if (mApiService.getUsers().isEmpty()) {
-                for (DocumentSnapshot document : documentSnapshotList) {
-                    User user = document.toObject(User.class);
-                    Log.d(TAG, "doWork: User name:" + Objects.requireNonNull(user).getUserName());
-                    mApiService.addUser(user);
-                }
-            }
-            createNotification(mApiService.searchUserById(userId));
+//            if (mApiService.getUsers().isEmpty()) {
+//                for (DocumentSnapshot document : documentSnapshotList) {
+//                    User user = document.toObject(User.class);
+//                    Log.d(TAG, "doWork: User name:" + Objects.requireNonNull(user).getUserName());
+//                    mApiService.addUser(user);
+//                }
+//            }
+//            createNotification(mApiService.searchUserById(userId));
             return Result.success();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
@@ -84,7 +84,7 @@ public class PushNotificationService extends Worker {
 
     private void createNotification(User user) {
 
-        String userName = mApiService.makeUserFirstName(user.getUserName());
+        String userName = mApiService.formatUserFirstName(user.getUserName());
 //        UserAndRestaurant userAndRestaurantSelected = mApiService.getCurrentUserSelectedRestaurant(user);
 //        List<User> interestedFriends = mApiService.getUsersInterestedAtCurrentRestaurantForNotification(user.getUid(), userAndRestaurantSelected.getRestaurantId());
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
