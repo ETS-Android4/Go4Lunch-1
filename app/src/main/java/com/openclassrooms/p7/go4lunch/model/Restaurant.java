@@ -15,8 +15,8 @@ public class Restaurant {
 
     private final String id;
     private final String name;
-    private final String adress;
-    private final String openningHours;
+    private final String address;
+    private final String openingHours;
     private final String phoneNumber;
     private final String uriWebsite;
     private final float distance;
@@ -29,8 +29,8 @@ public class Restaurant {
     public Restaurant(
             String id,
             String name,
-            String adress,
-            String openningHours,
+            String address,
+            String openingHours,
             String phoneNumber,
             String uriWebsite,
             float distance,
@@ -41,8 +41,8 @@ public class Restaurant {
 
         this.id = id;
         this.name = name;
-        this.adress = adress;
-        this.openningHours = openningHours;
+        this.address = address;
+        this.openingHours = openingHours;
         this.phoneNumber = phoneNumber;
         this.uriWebsite = uriWebsite;
         this.distance = distance;
@@ -55,8 +55,8 @@ public class Restaurant {
     // --- GETTERS ---
     public String getId() { return id; }
     public String getName() { return name; }
-    public String getAdress() { return adress; }
-    public String getOpenningHours() { return openningHours; }
+    public String getAddress() { return address; }
+    public String getOpeningHours() { return openingHours; }
     public String getPhoneNumber() { return phoneNumber; }
     public String getUriWebsite() { return uriWebsite; }
     public float getDistance() { return distance; }

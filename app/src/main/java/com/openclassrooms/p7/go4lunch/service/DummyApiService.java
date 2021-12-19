@@ -77,6 +77,15 @@ public class DummyApiService implements ApiService {
         return new String(restaurantNameArray);
     }
 
+    @Override
+    public String makeInterestedFriendsString(List<User> interestedFriendList) {
+        String friendsInterested = "";
+        for (User user : interestedFriendList) {
+            friendsInterested = friendsInterested + "\n" + formatUserFirstName(user.getUserName());
+        }
+        return friendsInterested;
+    }
+
     /**
      * Get the Restaurant website if available and format it to a String.
      *

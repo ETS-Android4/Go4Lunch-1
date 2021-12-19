@@ -43,11 +43,13 @@ public class FirebaseHelper {
      */
     public CollectionReference getUsersCollection() { return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME); }
 
+    public Task<QuerySnapshot> getAllUsers() { return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME).get(); }
+
     /**
      * Call a task to do a request to the collection where current user.
      * @return A query task.
      */
-    public Task<DocumentSnapshot> getCurrentUserData() {
+    public Task<DocumentSnapshot> getCurrentFirestoreUser() {
         String uid = Objects.requireNonNull(this.getCurrentUser()).getUid();
         return this.getUsersCollection().document(uid).get();
     }
@@ -71,15 +73,8 @@ public class FirebaseHelper {
     }
 
     public CollectionReference getRestaurantDataReferenceForCurrentUser() {
+        //TODO rename
         return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME).document(Objects.requireNonNull(getCurrentUser()).getUid()).collection(RESTAURANT_COLLECTION_NAME);
-    }
-
-    public Query onDataChangedToTrue(String selected) {
-        return getRestaurantDataReferenceForCurrentUser();
-    }
-
-    public Query onDataChangedToFalse() {
-        return getRestaurantDataReferenceForCurrentUser().whereEqualTo("selected", false);
     }
 
     public Task<QuerySnapshot> getRestaurantsDataCollection() {

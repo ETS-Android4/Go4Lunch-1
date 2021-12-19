@@ -12,14 +12,14 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.openclassrooms.p7.go4lunch.model.RestaurantData;
+import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class RestaurantDataRepository {
-    private final MutableLiveData<Map<String, RestaurantData>> restaurantDataMap = new MutableLiveData<>();
+    private final MutableLiveData<Map<String, RestaurantFavorite>> restaurantDataMap = new MutableLiveData<>();
     private static RestaurantDataRepository mRestaurantDataRepository;
     private final FirebaseHelper mFirebaseHelper;
 
@@ -34,30 +34,30 @@ public class RestaurantDataRepository {
         this.mFirebaseHelper = FirebaseHelper.getInstance();
     }
 
-    public void createRestaurantData(RestaurantData restaurantData) {
-        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser().document(restaurantData.getRestaurantId()).set(restaurantData);
+    public void createRestaurantData(RestaurantFavorite restaurantFavorite) {
+        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser().document(restaurantFavorite.getRestaurantId()).set(restaurantFavorite);
     }
 
-    public RestaurantData getCurrentRestaurantData(String currentRestaurantId) {
-        RestaurantData restaurantData = null;
+    public RestaurantFavorite getCurrentRestaurantData(String currentRestaurantId) {
+        RestaurantFavorite restaurantFavorite = null;
         if (restaurantDataMap.getValue() != null) {
-            for (Map.Entry<String, RestaurantData> userAndRestaurantEntry : Objects.requireNonNull(restaurantDataMap.getValue()).entrySet()) {
+            for (Map.Entry<String, RestaurantFavorite> userAndRestaurantEntry : Objects.requireNonNull(restaurantDataMap.getValue()).entrySet()) {
                 if (userAndRestaurantEntry.getValue().getRestaurantId().equals(currentRestaurantId)) {
-                    restaurantData = userAndRestaurantEntry.getValue();
+                    restaurantFavorite = userAndRestaurantEntry.getValue();
                 }
             }
         }
-        return restaurantData;
+        return restaurantFavorite;
     }
 
-    public MutableLiveData<Map<String, RestaurantData>> getRestaurantData() {
+    public MutableLiveData<Map<String, RestaurantFavorite>> getRestaurantData() {
         mFirebaseHelper.getRestaurantsDataCollection().addOnCompleteListener(task -> {
            if (task.isSuccessful()) {
-               Map<String, RestaurantData> userAndRestaurantMap = new HashMap<>();
+               Map<String, RestaurantFavorite> restaurantFavoriteMap = new HashMap<>();
                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                   userAndRestaurantMap.put(documentSnapshot.toObject(RestaurantData.class).getRestaurantId(), documentSnapshot.toObject(RestaurantData.class));
+                   restaurantFavoriteMap.put(documentSnapshot.toObject(RestaurantFavorite.class).getRestaurantId(), documentSnapshot.toObject(RestaurantFavorite.class));
                }
-               restaurantDataMap.postValue(userAndRestaurantMap);
+               restaurantDataMap.postValue(restaurantFavoriteMap);
            } else {
                Log.d("Error", "Error getting documents: ", task.getException());
            }
@@ -67,35 +67,31 @@ public class RestaurantDataRepository {
         return restaurantDataMap;
     }
 
-    public void updateRestaurantData(RestaurantData restaurantData) {
+    public void updateRestaurantData(RestaurantFavorite restaurantFavorite) {
         mFirebaseHelper.getRestaurantDataReferenceForCurrentUser()
-                .document(restaurantData.getRestaurantId())
-                .update("selected", restaurantData.isSelected());
-        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser()
-                .document(restaurantData.getRestaurantId())
-                .update("favorite", restaurantData.isFavorite());
-        onDataChanged(restaurantData.getRestaurantId());
+                .document(restaurantFavorite.getRestaurantId())
+                .update("favorite", restaurantFavorite.isFavorite());
+//        onDataChanged(restaurantFavorite.getRestaurantId());
     }
 
-    public void deleteRestaurantData() {
-
+    public void deleteRestaurantData(RestaurantFavorite restaurantFavorite) {
+        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser()
+                .document(restaurantFavorite.getRestaurantId())
+                .delete();
     }
 
     private void onDataChanged(String restaurantId) {
-        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser().document(restaurantId).addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.w(TAG, "Listen failed.", error);
-                    return;
-                }
-                if (value != null && value.exists()) {
-                    Map<String, RestaurantData> restaurantMap = new HashMap<>();
-                    restaurantMap.put(value.getId(), value.toObject(RestaurantData.class));
-                    restaurantDataMap.postValue(restaurantMap);
-                } else {
-                    Log.d(TAG, "Current data: null");
-                }
+        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser().document(restaurantId).addSnapshotListener(MetadataChanges.INCLUDE, (value, error) -> {
+            if (error != null) {
+                Log.w(TAG, "Listen failed.", error);
+                return;
+            }
+            if (value != null && value.exists()) {
+                Map<String, RestaurantFavorite> restaurantMap = new HashMap<>();
+                restaurantMap.put(value.getId(), value.toObject(RestaurantFavorite.class));
+                restaurantDataMap.postValue(restaurantMap);
+            } else {
+                Log.d(TAG, "Current data: null");
             }
         });
     }

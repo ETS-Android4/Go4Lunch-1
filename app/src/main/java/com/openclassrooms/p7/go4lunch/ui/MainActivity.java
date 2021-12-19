@@ -79,7 +79,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         this.updateHeader();
-        this.initLists();
+        if (mViewModel.isCurrentUserLogged()) {
+            this.initLists();
+        }
     }
 
     @Override
@@ -121,15 +123,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViewModelAndService() {
         mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
-        if (mViewModel.isCurrentUserLogged()) {
-            CURRENT_USER_ID = mViewModel.getCurrentUser().getUid();
-        }
+//        if (mViewModel.isCurrentUserLogged()) {
+//            CURRENT_USER_ID = mViewModel.getCurrentUser().getUid();
+//            this.initLists();
+//        }
     }
 
     private void startSignActivity() {
         if (!mViewModel.isCurrentUserLogged()) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+        } else {
+            mViewModel.createUser();
         }
     }
 

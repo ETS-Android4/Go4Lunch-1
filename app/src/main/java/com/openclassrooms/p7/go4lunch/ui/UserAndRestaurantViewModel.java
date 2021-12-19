@@ -5,18 +5,16 @@ import android.content.Context;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.model.RestaurantData;
 import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
 import com.openclassrooms.p7.go4lunch.repository.RestaurantDataRepository;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
-import com.openclassrooms.p7.go4lunch.ui.fragment.list_view.ListViewAdapter;
 
 import java.util.List;
 import java.util.Map;
@@ -65,7 +63,9 @@ public class UserAndRestaurantViewModel extends ViewModel {
 
 
     //                   --- FOR USER FIREBASE ---
-    public FirebaseUser getCurrentUser() { return firebaseHelperDataSource.getCurrentUser(); }
+    public FirebaseUser getCurrentUser() {
+        return firebaseHelperDataSource.getCurrentUser();
+    }
     public Task<Void> deleteFirebaseUser(Context context) { return firebaseHelperDataSource.deleteUser(context); }
     public Boolean isCurrentUserLogged() {
         return (this.getCurrentUser() != null);
@@ -77,33 +77,25 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public void createUser(){
         userDataSource.createFireStoreUser();
     }
-    public void updateUser(User user) { userDataSource.updateFirestoreUser(user);}
+    public void updateUser(User user) {
+//        userDataSource.updateNumberOfFriendInterested(user.getRestaurantId());
+        userDataSource.updateFirestoreUser(user);
+        userDataSource.getListOfUsers();
+    }
     public void deleteUserFromFirestore() { userDataSource.deleteFirestoreUser(); }
     //                  --- GOOGLE MAPS ---
-    public void requestForPlaceDetails(String placeId, Context context, boolean isSearched) {
-        mapDataSource.requestForPlaceDetails(placeId, context, isSearched);
+    public void requestForPlaceDetails(List<String> listOfPlaceId, Context context, boolean isSearched) {
+        mapDataSource.requestForPlaceDetails(listOfPlaceId, context, isSearched);
     }
 
-    public void createRestaurantData(RestaurantData restaurantData) {
-        restaurantDataSource.createRestaurantData(restaurantData);
-    }
-
-    public LiveData<Map<String, RestaurantData>> getRestaurantData() {
-        MutableLiveData<Map<String, RestaurantData>> restaurantDataMutableLiveData = new MutableLiveData<>();
+    public LiveData<Map<String, RestaurantFavorite>> getRestaurantData() {
+        MutableLiveData<Map<String, RestaurantFavorite>> restaurantDataMutableLiveData = new MutableLiveData<>();
         restaurantDataMutableLiveData.setValue(restaurantDataSource.getRestaurantData().getValue());
         return restaurantDataMutableLiveData;
     }
 
-    public void updateRestaurantData(RestaurantData restaurantData) {
-        restaurantDataSource.updateRestaurantData(restaurantData);
-    }
-
-    public RestaurantData getCurrentRestaurantData(String currentRestaurantId) {
+    public RestaurantFavorite getCurrentRestaurantData(String currentRestaurantId) {
         return restaurantDataSource.getCurrentRestaurantData(currentRestaurantId);
-    }
-
-    public void setNumberOfFriendInterested(List<User> listOfUserInterested) {
-        mapDataSource.setNumberOfFriendInterested(listOfUserInterested);
     }
 
     public void initData() {
@@ -112,7 +104,17 @@ public class UserAndRestaurantViewModel extends ViewModel {
         userDataSource.getListOfUserInterested().getValue();
     }
 
-    public void onDataChanged(RestaurantData restaurantData) {
-        userDataSource.setUserInfo(restaurantData);
+    public void createRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
+        restaurantDataSource.createRestaurantData(restaurantFavorite);
+        restaurantDataSource.getRestaurantData();
+    }
+
+    public void deleteRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
+        restaurantDataSource.deleteRestaurantData(restaurantFavorite);
+        restaurantDataSource.getRestaurantData();
+    }
+
+    public void setNumberOfFriendInterested(LiveData<List<User>> allInterestedUsers) {
+        mapDataSource.setNumberOfFriendInterested(allInterestedUsers.getValue());
     }
 }

@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.configureBinding();
-        initViewModel();
+        this.initViewModel();
         this.configureListeners();
         this.currentUserLogged();
 
@@ -75,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void currentUserLogged() {
         if (mViewModel.isCurrentUserLogged()) {
-            mViewModel.createUser();
             startActivity(new Intent(this, MainActivity.class));
         }
     }

@@ -15,12 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
-
-import java.util.Collections;
-import java.util.Objects;
 
 /**
  * Created by lleotraas on 14.
@@ -30,6 +26,7 @@ public class WorkmatesFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private UserAndRestaurantViewModel mViewModel;
     private WorkmatesAdapter workmatesAdapter;
+    private ApiService mApiService;
 
     public WorkmatesFragment() { }
 
@@ -45,15 +42,15 @@ public class WorkmatesFragment extends Fragment {
 
     private void configureServiceAndViewModel() {
         mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
+        mApiService = DI.getRestaurantApiService();
     }
 
     private void initList() {
-        ApiService apiService = DI.getRestaurantApiService();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         workmatesAdapter = new WorkmatesAdapter();
         mRecyclerView.setAdapter(workmatesAdapter);
-        apiService.workmatesViewComparator(mViewModel.getAllUsers().getValue());
+        mApiService.workmatesViewComparator(mViewModel.getAllUsers().getValue());
         mViewModel.getAllUsers().observe(getViewLifecycleOwner(), workmatesAdapter::submitList);
     }
 
@@ -61,6 +58,7 @@ public class WorkmatesFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mRecyclerView.setAdapter(workmatesAdapter);
+        mApiService.workmatesViewComparator(mViewModel.getAllUsers().getValue());
         mViewModel.getAllUsers().observe(getViewLifecycleOwner(), workmatesAdapter::submitList);
     }
 }

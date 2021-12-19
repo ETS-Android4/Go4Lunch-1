@@ -25,15 +25,14 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.FragmentDetailBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.model.RestaurantData;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivityAdapter;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class DetailFragment extends Fragment {
 
@@ -43,8 +42,8 @@ public class DetailFragment extends Fragment {
     private FragmentDetailBinding mBinding;
     private User mCurrentUser;
     private Restaurant mCurrentRestaurant;
-    private RestaurantData mCurrentRestaurantData;
-    private Map<String, RestaurantData> mRestaurantDataMap;
+    private RestaurantFavorite mCurrentRestaurantFavorite;
+    private Map<String, RestaurantFavorite> mRestaurantDataMap;
     private ApiService mApiService;
     private UserAndRestaurantViewModel mViewModel;
     private final ImageView[] ratingStarsArray = new ImageView[3];
@@ -95,17 +94,15 @@ public class DetailFragment extends Fragment {
         CURRENT_RESTAURANT_ID = mainActivityIntent.getStringExtra("restaurantId");
         mCurrentRestaurant = mViewModel.getCurrentRestaurant(CURRENT_RESTAURANT_ID);
         mCurrentUser = mViewModel.getCurrentFirestoreUser(currentUserId);
-        mCurrentRestaurantData = mViewModel.getCurrentRestaurantData(CURRENT_RESTAURANT_ID);
-        if (mCurrentRestaurantData != null) {
-            this.setImageAtStart();
-        }
+        mCurrentRestaurantFavorite = mViewModel.getCurrentRestaurantData(CURRENT_RESTAURANT_ID);
+        this.setImageAtStart();
     }
 
     private void setImageAtStart() {
-        if (mCurrentRestaurantData.isFavorite()) {
+        if (mCurrentRestaurantFavorite != null) {
             this.setFavoriteImage(true);
         }
-        if (mCurrentRestaurantData.isSelected()) {
+        if (mCurrentUser.isRestaurantSelected()) {
             this.setSelectedImage(true);
         }
     }
@@ -123,7 +120,7 @@ public class DetailFragment extends Fragment {
                     .into(mBinding.activityDetailImageHeader);
         }
         mBinding.activityDetailRestaurantNameTv.setText(mApiService.formatRestaurantName(mCurrentRestaurant.getName()));
-        mBinding.activityDetailRestaurantTypeAndAdressTv.setText(mCurrentRestaurant.getAdress());
+        mBinding.activityDetailRestaurantTypeAndAdressTv.setText(mCurrentRestaurant.getAddress());
         for (int index = 0; index < ratingStarsArray.length; index++) {
             ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, mCurrentRestaurant.getRating()));
         }
@@ -143,9 +140,9 @@ public class DetailFragment extends Fragment {
         // Go to the website of the restaurant
         mBinding.activityDetailWebsiteBtn.setOnClickListener(view -> goToWebsite());
         // Make Restaurant as Favorite Button
-        mBinding.activityDetailLikeBtn.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
+        mBinding.activityDetailLikeBtn.setOnClickListener(view -> updateRestaurantFavorite());
         // Select Restaurant to lunch Button
-        mBinding.activityDetailFab.setOnClickListener(this::setFavoriteOrSelectedRestaurant);
+        mBinding.activityDetailFab.setOnClickListener(view -> updateRestaurantSelected());
     }
 
     private void permissionToCall() {
@@ -178,55 +175,40 @@ public class DetailFragment extends Fragment {
      * Check if the FavoriteRestaurant exist in the DB
      * if exist, update the corresponding boolean
      * if not exist, create it.
-     * @param view button id.
      */
-    private void setFavoriteOrSelectedRestaurant(View view) {
-        int buttonId = view.getId();
-        if (buttonId == mBinding.activityDetailFab.getId()){
-            if (mCurrentUser.isRestaurantIsSelected()) {
-                RestaurantData restaurantToDeselect = mRestaurantDataMap.get(mCurrentUser.getRestaurantId());
-                Objects.requireNonNull(restaurantToDeselect).setSelected(false);
-                mViewModel.updateRestaurantData(restaurantToDeselect);
-            }
-        }
-        if (mCurrentRestaurantData != null) {
-            updateFavoriteOrSelectedRestaurant(buttonId);
+    private void updateRestaurantSelected() {
+        if (mCurrentUser.getRestaurantId().equals(mCurrentRestaurant.getId())) {
+            mCurrentUser.setRestaurantSelected(false);
+            mCurrentUser.setRestaurantName("z");
+            mCurrentUser.setRestaurantId("");
         } else {
-            createFavoriteOrSelectedRestaurant(buttonId);
+            mCurrentUser.setRestaurantSelected(true);
+            mCurrentUser.setRestaurantName(mCurrentRestaurant.getName());
+            mCurrentUser.setRestaurantId(mCurrentRestaurant.getId());
+        }
+        setSelectedImage(mCurrentUser.isRestaurantSelected());
+        mViewModel.updateUser(mCurrentUser);
+    }
+
+    private void updateRestaurantFavorite() {
+        if (mCurrentRestaurantFavorite != null) {
+            mViewModel.deleteRestaurantFavorite(mCurrentRestaurantFavorite);
+            mCurrentRestaurantFavorite.setFavorite(false);
+            mCurrentRestaurantFavorite = null;
+            setFavoriteImage(false);
+        } else {
+            mViewModel.createRestaurantFavorite(createRestaurantFavorite());
         }
     }
 
-    private void updateFavoriteOrSelectedRestaurant(int buttonId) {
-        if (buttonId == LIKE_BTN_TAG) {
-            setFavoriteImage(!mCurrentRestaurantData.isFavorite());
-            mCurrentRestaurantData.setFavorite(!mCurrentRestaurantData.isFavorite());
-        } else {
-            mCurrentRestaurantData.setSelected(!mCurrentRestaurantData.isSelected());
-            setSelectedImage(mCurrentRestaurantData.isSelected());
-        }
-        mViewModel.updateRestaurantData(mCurrentRestaurantData);
-        mViewModel.onDataChanged(mCurrentRestaurantData);
-    }
-
-    private void createFavoriteOrSelectedRestaurant(int buttonId) {
-        boolean favorite = false, selected = false;
-        if (buttonId == LIKE_BTN_TAG) {
-            favorite = true;
-        } else {
-            selected = true;
-        }
-        RestaurantData restaurantData = new RestaurantData(
+    private RestaurantFavorite createRestaurantFavorite() {
+        setFavoriteImage(true);
+        RestaurantFavorite restaurantFavorite = new RestaurantFavorite(
                 mCurrentRestaurant.getId(),
-                mCurrentRestaurant.getName(),
-                favorite,
-                selected
+                true
         );
-
-        mCurrentRestaurantData = restaurantData;
-        mViewModel.createRestaurantData(mCurrentRestaurantData);
-        mViewModel.onDataChanged(mCurrentRestaurantData);
-        setFavoriteImage(favorite);
-        setSelectedImage(selected);
+        mCurrentRestaurantFavorite = restaurantFavorite;
+        return restaurantFavorite;
     }
 
     private void setFavoriteImage(boolean favorite) {

@@ -4,13 +4,11 @@ import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.openclassrooms.p7.go4lunch.model.RestaurantData;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by lleotraas on 21.
@@ -35,4 +33,6 @@ public interface ApiService {
     // --- ORDER ---
     void listViewComparator(List<Restaurant> restaurantList);
     void workmatesViewComparator(List<User> userList);
+
+    String makeInterestedFriendsString(List<User> userList);
 }

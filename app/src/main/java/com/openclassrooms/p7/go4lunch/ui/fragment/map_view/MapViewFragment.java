@@ -36,7 +36,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
 import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
@@ -44,7 +43,6 @@ import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
-import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 import org.json.JSONException;
@@ -56,6 +54,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -106,10 +105,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void configureListener() {
-        ((MainActivity) requireActivity()).setOnDataSelected(place -> {
-            mViewModel.requestForPlaceDetails(place.getId(), requireContext(), true);
+//        ((MainActivity) requireActivity()).setOnDataSelected(place -> {
+//            mViewModel.requestForPlaceDetails(place.getId(), requireContext(), true);
             //TODO new marker
-        });
+//        });
     }
 
     @Override
@@ -330,15 +329,17 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             mMap.clear();
 //            for (int i = 0; i < hashMaps.size(); i++) {
             //TODO just for save some request.
+            List<String> listOfPlaceId = new ArrayList<>();
             for (int i = 0; i < 3; i++) {
                 String placeId = hashMaps.get(i).get("placeId");
+                listOfPlaceId.add(placeId);
                 double lat = Double.parseDouble(Objects.requireNonNull(hashMaps.get(i).get("latitude")));
                 double lng = Double.parseDouble(Objects.requireNonNull(hashMaps.get(i).get("longitude")));
-                mViewModel.requestForPlaceDetails(placeId, requireContext(), false);
                 MarkerOptions markerOptions = setMarkerOnMap(placeId, lat, lng);
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(placeId, false)));
                 mMap.addMarker(markerOptions);
             }
+            mViewModel.requestForPlaceDetails(listOfPlaceId, requireContext(), false);
         }
     }
 }

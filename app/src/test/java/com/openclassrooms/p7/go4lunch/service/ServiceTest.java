@@ -17,8 +17,7 @@ import com.google.android.libraries.places.api.model.TimeOfWeek;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
-import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.model.RestaurantData;
+import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 
 import org.junit.After;
 import org.junit.Before;
@@ -48,28 +47,28 @@ public class ServiceTest {
     public void setup() {
         service = DI.getRestaurantApiService();
 
-        RestaurantData restaurantDataTest0 = new RestaurantData( "AAAA", "Restaurant le jasmin", true, false);
-        RestaurantData restaurantDataTest4 = new RestaurantData( "BBBB", "RESTAURANT le goéland", false, true);
-        RestaurantData restaurantDataTest1 = new RestaurantData( "BBBB", "RESTAURANT le goéland", false, true);
-        RestaurantData restaurantDataTest2 = new RestaurantData( "CCCC", "restaurant le Kébab", true, false);
-        RestaurantData restaurantDataTest3 = new RestaurantData( "AAAA", "Restaurant le jasmin", true, false);
-        RestaurantData restaurantDataTest5 = new RestaurantData( "CCCC", "restaurant le Kébab", true, false);
-        RestaurantData restaurantDataTest6 = new RestaurantData( "BBBB", "RESTAURANT le goéland", false, false);
+        RestaurantFavorite restaurantFavoriteTest0 = new RestaurantFavorite( "AAAA", "Restaurant le jasmin", true, false);
+        RestaurantFavorite restaurantFavoriteTest4 = new RestaurantFavorite( "BBBB", "RESTAURANT le goéland", false, true);
+        RestaurantFavorite restaurantFavoriteTest1 = new RestaurantFavorite( "BBBB", "RESTAURANT le goéland", false, true);
+        RestaurantFavorite restaurantFavoriteTest2 = new RestaurantFavorite( "CCCC", "restaurant le Kébab", true, false);
+        RestaurantFavorite restaurantFavoriteTest3 = new RestaurantFavorite( "AAAA", "Restaurant le jasmin", true, false);
+        RestaurantFavorite restaurantFavoriteTest5 = new RestaurantFavorite( "CCCC", "restaurant le Kébab", true, false);
+        RestaurantFavorite restaurantFavoriteTest6 = new RestaurantFavorite( "BBBB", "RESTAURANT le goéland", false, false);
 
 
 
-        Map<String, RestaurantData> userAndRestaurantMapTest0 = new HashMap<>();
-        userAndRestaurantMapTest0.put(restaurantDataTest0.getRestaurantId(), restaurantDataTest0);
-        userAndRestaurantMapTest0.put(restaurantDataTest4.getRestaurantId(), restaurantDataTest4);
+        Map<String, RestaurantFavorite> userAndRestaurantMapTest0 = new HashMap<>();
+        userAndRestaurantMapTest0.put(restaurantFavoriteTest0.getRestaurantId(), restaurantFavoriteTest0);
+        userAndRestaurantMapTest0.put(restaurantFavoriteTest4.getRestaurantId(), restaurantFavoriteTest4);
 
-        Map<String, RestaurantData> userAndRestaurantMapTest1 = new HashMap<>();
-        userAndRestaurantMapTest1.put(restaurantDataTest2.getRestaurantId(), restaurantDataTest2);
-        userAndRestaurantMapTest1.put(restaurantDataTest6.getRestaurantId(), restaurantDataTest6);
+        Map<String, RestaurantFavorite> userAndRestaurantMapTest1 = new HashMap<>();
+        userAndRestaurantMapTest1.put(restaurantFavoriteTest2.getRestaurantId(), restaurantFavoriteTest2);
+        userAndRestaurantMapTest1.put(restaurantFavoriteTest6.getRestaurantId(), restaurantFavoriteTest6);
 
-        Map<String, RestaurantData> userAndRestaurantMapTest2 = new HashMap<>();
-        userAndRestaurantMapTest2.put(restaurantDataTest1.getRestaurantId(), restaurantDataTest1);
-        userAndRestaurantMapTest2.put(restaurantDataTest3.getRestaurantId(), restaurantDataTest3);
-        userAndRestaurantMapTest2.put(restaurantDataTest5.getRestaurantId(), restaurantDataTest5);
+        Map<String, RestaurantFavorite> userAndRestaurantMapTest2 = new HashMap<>();
+        userAndRestaurantMapTest2.put(restaurantFavoriteTest1.getRestaurantId(), restaurantFavoriteTest1);
+        userAndRestaurantMapTest2.put(restaurantFavoriteTest3.getRestaurantId(), restaurantFavoriteTest3);
+        userAndRestaurantMapTest2.put(restaurantFavoriteTest5.getRestaurantId(), restaurantFavoriteTest5);
 
 
 //        User userTest0 = new User("1111", "one test", "https://i.pravatar.cc/150?u=a042581f4e29026704d", userAndRestaurantMapTest0);

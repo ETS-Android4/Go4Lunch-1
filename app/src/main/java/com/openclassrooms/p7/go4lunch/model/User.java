@@ -11,18 +11,17 @@ public class User {
     private String photoUrl;
     private String restaurantName;
     private String restaurantId;
-    private boolean restaurantIsSelected;
+    private boolean restaurantSelected;
 
     // --- CONSTRUCTOR ---
     public User() { }
-
-    public User(String uid, String userName, String photoUrl, String restaurantName, String restaurantId, boolean restaurantIsSelected) {
+    public User(String uid, String userName, String photoUrl, String restaurantName, String restaurantId, boolean restaurantSelected) {
         this.uid = uid;
         this.userName = userName;
         this.photoUrl = photoUrl;
         this.restaurantName = restaurantName;
         this.restaurantId = restaurantId;
-        this.restaurantIsSelected = restaurantIsSelected;
+        this.restaurantSelected = restaurantSelected;
     }
 
     // --- GETTERS ---
@@ -41,8 +40,8 @@ public class User {
     public String getRestaurantId() {
         return restaurantId;
     }
-    public boolean isRestaurantIsSelected() {
-        return restaurantIsSelected;
+    public boolean isRestaurantSelected() {
+        return restaurantSelected;
     }
 
     // --- SETTERS ---
@@ -52,8 +51,8 @@ public class User {
     public void setRestaurantId(String restaurantId) {
         this.restaurantId = restaurantId;
     }
-    public void setRestaurantIsSelected(boolean restaurantIsSelected) {
-        this.restaurantIsSelected = restaurantIsSelected;
+    public void setRestaurantSelected(boolean restaurantSelected) {
+        this.restaurantSelected = restaurantSelected;
     }
 
     @Override

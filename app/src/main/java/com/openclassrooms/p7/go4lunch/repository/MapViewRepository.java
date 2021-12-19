@@ -10,18 +10,10 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.LocalTime;
 import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Period;
-import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPhotoRequest;
-import com.google.android.libraries.places.api.net.FetchPhotoResponse;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.FetchPlaceResponse;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
@@ -29,7 +21,6 @@ import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +31,6 @@ public class MapViewRepository {
     private final GoogleMapsHelper mGoogleMapsHelper;
     private final ApiService mApiService = DI.getRestaurantApiService();
     private final MutableLiveData<List<Restaurant>> listOfRestaurant = new MutableLiveData<>();
-    private final ArrayList<Restaurant> restaurantList = new ArrayList<>();
 
     private MapViewRepository() {
         mGoogleMapsHelper = GoogleMapsHelper.getInstance();
@@ -69,13 +59,28 @@ public class MapViewRepository {
      * @param context context of the fragment.
      * @param isSearched usefull for the marker color.
      */
-    public void requestForPlaceDetails(String placeId, Context context, boolean isSearched) {
-        mGoogleMapsHelper.getPlaceData(context, placeId).addOnSuccessListener((response) -> {
-            requestForPlacePhoto(response.getPlace(), context, isSearched);
-        });
+    public void requestForPlaceDetails(List<String> placeId, Context context, boolean isSearched) {
+        List<Restaurant> restaurantList = new ArrayList<>();
+        for (String id : placeId) {
+            mGoogleMapsHelper.getPlaceData(context, id).addOnSuccessListener((response) -> {
+                Place place = response.getPlace();
+                if (mGoogleMapsHelper.getPhotoData(place, context) != null) {
+                    mGoogleMapsHelper.getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
+                        Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
+                        restaurantList.add(restaurant);
+                    }).addOnFailureListener((exception) -> {
+                        if (exception instanceof ApiException) {
+                            Log.e(TAG, "Place not found: " + exception.getMessage());
+                        }
+                    });
+                } else {
+                    Restaurant restaurant = createRestaurant(place, null, context);
+                    restaurantList.add(restaurant);
+                }
+            });
+        }
+        listOfRestaurant.postValue(restaurantList);
     }
-
-
 
     public Restaurant getCurrentRestaurant(String restaurantId) {
         Restaurant currentRestaurant = null;
@@ -88,45 +93,11 @@ public class MapViewRepository {
     }
 
     /**
-     * Do a request to get place photo for MapViewFragment when user search for a place.
-     * @param place the place contains photos.
-     * @param context context of the fragment.
-     * @param isSearched usefull for the marker color.
-     */
-    public void requestForPlacePhoto(Place place, Context context, boolean isSearched) {
-        if (mGoogleMapsHelper.getPhotoData(place, context) != null) {
-            mGoogleMapsHelper.getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
-                Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
-                if (isSearched) {
-                    restaurantList.add(restaurant);
-                } else {
-                    restaurantList.add(restaurant);
-                    listOfRestaurant.postValue(restaurantList);
-                }
-            }).addOnFailureListener((exception) -> {
-                if (exception instanceof ApiException) {
-                    Log.e(TAG, "Place not found: " + exception.getMessage());
-                }
-            });
-        } else {
-            Restaurant restaurant = createRestaurant(place, null, context);
-            if (isSearched) {
-                restaurantList.add(restaurant);
-            } else {
-                restaurantList.add(restaurant);
-                listOfRestaurant.postValue(restaurantList);
-            }
-        }
-    }
-
-    /**
      * Call to get a request for photo.
      * @param place id of the place.
      * @param context context of the fragment.
      * @return fetch place task.
      */
-
-
     private Restaurant createRestaurant(Place place, Bitmap placeImage, Context context) {
         return new Restaurant(
                 place.getId(),
@@ -142,13 +113,16 @@ public class MapViewRepository {
                 0);
     }
 
-    public void setNumberOfFriendInterested(List<User> listOfInterestedUsers) {
-        for (User u : listOfInterestedUsers) {
-            for (Restaurant restaurant : Objects.requireNonNull(listOfRestaurant.getValue())) {
-                if (u.getRestaurantId().equals(restaurant.getId())) {
-                    restaurant.setNumberOfFriendInterested(restaurant.getNumberOfFriendInterested()+1);
+    public void setNumberOfFriendInterested(List<User> userInterestedList) {
+        List<User> userList = new ArrayList<>();
+        for (Restaurant restaurant : Objects.requireNonNull(listOfRestaurant.getValue())) {
+            for (User user : userInterestedList) {
+                if (user.getRestaurantId().equals(restaurant.getId())) {
+                    userList.add(user);
                 }
             }
+            restaurant.setNumberOfFriendInterested(userList.size());
+            userList.clear();
         }
     }
 

@@ -48,7 +48,7 @@ public class ListViewAdapter extends ListAdapter<Restaurant, ListViewAdapter.Lis
         });
     }
 
-    public class ListViewHolder extends RecyclerView.ViewHolder {
+    public static class ListViewHolder extends RecyclerView.ViewHolder {
 
         private final ListViewRowBinding mBinding;
         private final ImageView[] ratingStarsArray = new ImageView[3];
@@ -66,8 +66,8 @@ public class ListViewAdapter extends ListAdapter<Restaurant, ListViewAdapter.Lis
 
         public void bind(Restaurant restaurant){
             mBinding.listViewRowRestaurantNameTv.setText(mApiService.formatRestaurantName(restaurant.getName()));
-            mBinding.listViewRowRestaurantAdressTv.setText(restaurant.getAdress());
-            mBinding.listViewRowRestaurantIsOpenTv.setText(restaurant.getOpenningHours());
+            mBinding.listViewRowRestaurantAdressTv.setText(restaurant.getAddress());
+            mBinding.listViewRowRestaurantIsOpenTv.setText(restaurant.getOpeningHours());
             mBinding.listViewRowDistanceTv.setText(String.format(Locale.ENGLISH,"%4.0fm",restaurant.getDistance()));
 
             if (restaurant.getPictureUrl() != null) {

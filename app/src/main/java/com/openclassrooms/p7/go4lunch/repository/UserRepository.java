@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.openclassrooms.p7.go4lunch.model.RestaurantData;
 import com.openclassrooms.p7.go4lunch.model.User;
 
 import java.util.ArrayList;
@@ -45,14 +44,21 @@ public class UserRepository {
                 user.getDisplayName(),
                 Objects.requireNonNull(user.getPhotoUrl()).toString(),
                 "z",
-                null,
+                "",
                 false
         );
-        if (getFirestoreUser(mFirebaseHelper.getCurrentUser().getUid()) == null) {
-            mFirebaseHelper.getCurrentUserData().addOnSuccessListener(documentSnapshot -> {
-                mFirebaseHelper.getUsersCollection().document(user.getUid()).set(userToCreate);
-            });
-        }
+        mFirebaseHelper.getCurrentFirestoreUser().addOnCompleteListener(documentSnapshot -> {
+            if (documentSnapshot.isSuccessful()) {
+                if (!documentSnapshot.getResult().exists()) {
+                    mFirebaseHelper.getUsersCollection().document(user.getUid()).set(userToCreate);
+                } else {
+                    Log.d(TAG, "createFireStoreUser: ça existe");
+                }
+            }
+        }).addOnFailureListener(exception -> {
+
+        });
+
     }
 
     public User getFirestoreUser(String userId) {
@@ -69,7 +75,7 @@ public class UserRepository {
      * Get userList from Firestore and store it in DUMMY_USER.
      */
     public MutableLiveData<List<User>> getListOfUsers() {
-        mFirebaseHelper.getUsersCollection().get().addOnCompleteListener(task -> {
+        mFirebaseHelper.getAllUsers().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 ArrayList<User> users = new ArrayList<>();
                 for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
@@ -85,67 +91,8 @@ public class UserRepository {
         return listOfUser;
     }
 
-    public MutableLiveData<List<User>> getListOfUsersInterestedAtCurrentRestaurant(String restaurantId) {
-       MutableLiveData<List<User>> listMutableLiveData = new MutableLiveData<>();
-       ArrayList<User> users = new ArrayList<>();
-       for (User user : Objects.requireNonNull(listOfUserInterested.getValue())) {
-           if (user.getRestaurantId().equals(restaurantId) &&
-                !user.getUid().equals(Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid())) {
-               users.add(user);
-           }
-       }
-       listMutableLiveData.setValue(users);
-        return listMutableLiveData;
-    }
-
-    /**
-     * Update current user Map. Fetch Stored Map , add new content to the previous map and update user Map to avoid erase previous content.
-     * @param user user to update.
-     */
-    public void updateFirestoreUser(User user) {
-        mFirebaseHelper.getUsersCollection().document(user.getUid()).update(
-                            "restaurantIsSelected", user.isRestaurantIsSelected(),
-                "restaurantId", user.getRestaurantId(),
-                                  "restaurantName", user.getRestaurantName()
-        );
-        getListOfUserInterested();
-    }
-
-    /**
-     * Delete user from Firestore.
-     */
-    public void deleteFirestoreUser() {
-        String uid = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
-        mFirebaseHelper.getUsersCollection().document(uid).collection("restaurants").document().delete();
-        mFirebaseHelper.getUsersCollection().document(uid).delete();
-    }
-
-    /**
-     * Call when the user update the database for refresh listOfUser data.
-     * @param restaurantData
-     */
-    public void setUserInfo(RestaurantData restaurantData) {
-        String userId = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
-        ArrayList<User> users = new ArrayList<>();
-        for (User user : Objects.requireNonNull(listOfUser.getValue())) {
-            if (user.getUid().equals(userId)) {
-                if (restaurantData.isSelected()) {
-                    user.setRestaurantName(restaurantData.getRestaurantName());
-                    user.setRestaurantId(restaurantData.getRestaurantId());
-                } else {
-                    user.setRestaurantName("z");
-                    user.setRestaurantId(null);
-                }
-                user.setRestaurantIsSelected(restaurantData.isSelected());
-                updateFirestoreUser(user);
-                users.add(user);
-            }
-        }
-        listOfUser.postValue(users);
-    }
-
     public MutableLiveData<List<User>> getListOfUserInterested() {
-        mFirebaseHelper.getUsersCollection().whereEqualTo("restaurantIsSelected", true).addSnapshotListener((value, error) -> {
+        mFirebaseHelper.getUsersCollection().whereEqualTo("restaurantSelected", true).addSnapshotListener((value, error) -> {
             if (error != null) {
                 Log.w(TAG, "Listen failed.", error);
                 return;
@@ -161,5 +108,47 @@ public class UserRepository {
             }
         });
         return listOfUserInterested;
+    }
+
+    public MutableLiveData<List<User>> getListOfUsersInterestedAtCurrentRestaurant(String restaurantId) {
+       MutableLiveData<List<User>> listMutableLiveData = new MutableLiveData<>();
+       ArrayList<User> users = new ArrayList<>();
+       for (User user : Objects.requireNonNull(listOfUserInterested.getValue())) {
+           if (user.getRestaurantId().equals(restaurantId) &&
+                !user.getUid().equals(Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid())) {
+               users.add(user);
+           }
+       }
+       listMutableLiveData.setValue(users);
+        return listMutableLiveData;
+    }
+
+//    public void updateNumberOfFriendInterested(String restaurantId) {
+//        for (User u : Objects.requireNonNull(listOfUserInterested.getValue())) {
+//            if (u.getRestaurantId().equals(restaurantId)) {
+//                u.setNumberOfFriendInterested(u.getNumberOfFriendInterested()+1);
+//            }
+//        }
+//    }
+
+    /**
+     * Update current user.
+     * @param user user to update.
+     */
+    public void updateFirestoreUser(User user) {
+        mFirebaseHelper.getUsersCollection().document(user.getUid()).update(
+                "restaurantId", user.getRestaurantId(),
+                "restaurantName", user.getRestaurantName(),
+                "restaurantSelected", user.isRestaurantSelected()
+        );
+    }
+
+    /**
+     * Delete user from Firestore.
+     */
+    public void deleteFirestoreUser() {
+        String uid = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
+        mFirebaseHelper.getUsersCollection().document(uid).collection("restaurants").document().delete();
+        mFirebaseHelper.getUsersCollection().document(uid).delete();
     }
 }

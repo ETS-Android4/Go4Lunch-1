@@ -45,7 +45,6 @@ public class ListViewFragment extends Fragment {
 
     private void configureServiceAndViewModel() {
         mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
-        mViewModel.setNumberOfFriendInterested(mViewModel.getAllInterestedUsers().getValue());
         mApiService = DI.getRestaurantApiService();
     }
 
@@ -72,6 +71,8 @@ public class ListViewFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mRecyclerView.setAdapter(listViewAdapter);
+        mViewModel.setNumberOfFriendInterested(mViewModel.getAllInterestedUsers());
+        mApiService.listViewComparator(mViewModel.getAllRestaurants().getValue());
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), listViewAdapter::submitList);
     }
 }
