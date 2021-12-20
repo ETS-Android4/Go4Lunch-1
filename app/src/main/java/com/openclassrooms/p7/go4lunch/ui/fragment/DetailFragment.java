@@ -37,13 +37,11 @@ import java.util.Map;
 public class DetailFragment extends Fragment {
 
     private static final int PERMISSION_CODE = 100;
-    private String CURRENT_RESTAURANT_ID;
     public static int LIKE_BTN_TAG;
     private FragmentDetailBinding mBinding;
     private User mCurrentUser;
     private Restaurant mCurrentRestaurant;
     private RestaurantFavorite mCurrentRestaurantFavorite;
-    private Map<String, RestaurantFavorite> mRestaurantDataMap;
     private ApiService mApiService;
     private UserAndRestaurantViewModel mViewModel;
     private final ImageView[] ratingStarsArray = new ImageView[3];
@@ -69,7 +67,7 @@ public class DetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
-        mViewModel.getAllInterestedUsersAtCurrentRestaurant(CURRENT_RESTAURANT_ID).observe(getViewLifecycleOwner(), mAdapter::submitList);
+        mViewModel.getAllInterestedUsersAtCurrentRestaurant(mCurrentRestaurant.getId()).observe(getViewLifecycleOwner(), mAdapter::submitList);
     }
 
     private void configureViewBinding() {
@@ -82,7 +80,7 @@ public class DetailFragment extends Fragment {
     private void initServiceAndViewModel() {
         mApiService = DI.getRestaurantApiService();
         mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
-        mRestaurantDataMap = mViewModel.getRestaurantData().getValue();
+        Map<String, RestaurantFavorite> mRestaurantDataMap = mViewModel.getRestaurantData().getValue();
         if (mRestaurantDataMap == null) {
             mRestaurantDataMap = new HashMap<>();
         }
@@ -91,7 +89,7 @@ public class DetailFragment extends Fragment {
     private void searchById() {
         Intent mainActivityIntent = requireActivity().getIntent();
         String currentUserId = mViewModel.getCurrentUser().getUid();
-        CURRENT_RESTAURANT_ID = mainActivityIntent.getStringExtra("restaurantId");
+        String CURRENT_RESTAURANT_ID = mainActivityIntent.getStringExtra("restaurantId");
         mCurrentRestaurant = mViewModel.getCurrentRestaurant(CURRENT_RESTAURANT_ID);
         mCurrentUser = mViewModel.getCurrentFirestoreUser(currentUserId);
         mCurrentRestaurantFavorite = mViewModel.getCurrentRestaurantData(CURRENT_RESTAURANT_ID);
@@ -102,7 +100,7 @@ public class DetailFragment extends Fragment {
         if (mCurrentRestaurantFavorite != null) {
             this.setFavoriteImage(true);
         }
-        if (mCurrentUser.isRestaurantSelected()) {
+        if (mCurrentUser.isRestaurantSelected() && mCurrentUser.getRestaurantId().equals(mCurrentRestaurant.getId())) {
             this.setSelectedImage(true);
         }
     }
@@ -131,7 +129,7 @@ public class DetailFragment extends Fragment {
         mBinding.activityDetailRecyclerview.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         mAdapter = new DetailActivityAdapter();
         mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
-        mViewModel.getAllInterestedUsersAtCurrentRestaurant(CURRENT_RESTAURANT_ID).observe(getViewLifecycleOwner(), mAdapter::submitList);
+        mViewModel.getAllInterestedUsersAtCurrentRestaurant(mCurrentRestaurant.getId()).observe(getViewLifecycleOwner(), mAdapter::submitList);
     }
 
     private void configureListeners() {
@@ -179,7 +177,7 @@ public class DetailFragment extends Fragment {
     private void updateRestaurantSelected() {
         if (mCurrentUser.getRestaurantId().equals(mCurrentRestaurant.getId())) {
             mCurrentUser.setRestaurantSelected(false);
-            mCurrentUser.setRestaurantName("z");
+            mCurrentUser.setRestaurantName("");
             mCurrentUser.setRestaurantId("");
         } else {
             mCurrentUser.setRestaurantSelected(true);

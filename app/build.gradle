@@ -39,6 +39,7 @@ android {
     }
     testOptions {
         unitTests.includeAndroidResources = true
+        unitTests.returnDefaultValues = true
     }
     packagingOptions {
         exclude 'META-INF/LICENSE.md'

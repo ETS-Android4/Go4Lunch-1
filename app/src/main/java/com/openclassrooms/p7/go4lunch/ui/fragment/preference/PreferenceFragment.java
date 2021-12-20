@@ -1,9 +1,5 @@
 package com.openclassrooms.p7.go4lunch.ui.fragment.preference;
 
-import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION;
-import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_DISABLED;
-import static com.openclassrooms.p7.go4lunch.model.UserSettings.NOTIFICATION_ENABLED;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,7 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,12 +16,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.FragmentPreferenceSettingsBinding;
-import com.openclassrooms.p7.go4lunch.model.UserSettings;
-import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
-
-import java.util.Objects;
 
 public class PreferenceFragment extends Fragment {
 

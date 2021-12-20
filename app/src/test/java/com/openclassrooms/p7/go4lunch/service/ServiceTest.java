@@ -47,13 +47,13 @@ public class ServiceTest {
     public void setup() {
         service = DI.getRestaurantApiService();
 
-        RestaurantFavorite restaurantFavoriteTest0 = new RestaurantFavorite( "AAAA", "Restaurant le jasmin", true, false);
-        RestaurantFavorite restaurantFavoriteTest4 = new RestaurantFavorite( "BBBB", "RESTAURANT le goéland", false, true);
-        RestaurantFavorite restaurantFavoriteTest1 = new RestaurantFavorite( "BBBB", "RESTAURANT le goéland", false, true);
-        RestaurantFavorite restaurantFavoriteTest2 = new RestaurantFavorite( "CCCC", "restaurant le Kébab", true, false);
-        RestaurantFavorite restaurantFavoriteTest3 = new RestaurantFavorite( "AAAA", "Restaurant le jasmin", true, false);
-        RestaurantFavorite restaurantFavoriteTest5 = new RestaurantFavorite( "CCCC", "restaurant le Kébab", true, false);
-        RestaurantFavorite restaurantFavoriteTest6 = new RestaurantFavorite( "BBBB", "RESTAURANT le goéland", false, false);
+        RestaurantFavorite restaurantFavoriteTest0 = new RestaurantFavorite( "AAAA",  true);
+        RestaurantFavorite restaurantFavoriteTest4 = new RestaurantFavorite( "BBBB" , false);
+        RestaurantFavorite restaurantFavoriteTest1 = new RestaurantFavorite( "BBBB", false);
+        RestaurantFavorite restaurantFavoriteTest2 = new RestaurantFavorite( "CCCC", true);
+        RestaurantFavorite restaurantFavoriteTest3 = new RestaurantFavorite( "AAAA", true);
+        RestaurantFavorite restaurantFavoriteTest5 = new RestaurantFavorite( "CCCC", true);
+        RestaurantFavorite restaurantFavoriteTest6 = new RestaurantFavorite( "BBBB", false);
 
 
 

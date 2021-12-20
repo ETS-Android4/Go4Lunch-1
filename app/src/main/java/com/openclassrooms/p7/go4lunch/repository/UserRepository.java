@@ -2,10 +2,12 @@ package com.openclassrooms.p7.go4lunch.repository;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -43,7 +45,7 @@ public class UserRepository {
                 Objects.requireNonNull(user).getUid(),
                 user.getDisplayName(),
                 Objects.requireNonNull(user.getPhotoUrl()).toString(),
-                "z",
+                "",
                 "",
                 false
         );
@@ -107,6 +109,13 @@ public class UserRepository {
                 Log.d(TAG, "Current data: null");
             }
         });
+//        List<User> userList = new ArrayList<>();
+//        for (User user : Objects.requireNonNull(listOfUser.getValue())) {
+//            if (user.isRestaurantSelected()) {
+//                userList.add(user);
+//            }
+//        }
+//        listOfUserInterested.postValue(userList);
         return listOfUserInterested;
     }
 
@@ -150,5 +159,17 @@ public class UserRepository {
         String uid = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
         mFirebaseHelper.getUsersCollection().document(uid).collection("restaurants").document().delete();
         mFirebaseHelper.getUsersCollection().document(uid).delete();
+    }
+
+    public FirebaseUser getCurrentUser() {
+        return mFirebaseHelper.getCurrentUser();
+    }
+
+    public Task<Void> deleteUser(Context context) {
+        return mFirebaseHelper.deleteUser(context);
+    }
+
+    public Task<Void> signOut(Context context) {
+        return mFirebaseHelper.signOut(context);
     }
 }

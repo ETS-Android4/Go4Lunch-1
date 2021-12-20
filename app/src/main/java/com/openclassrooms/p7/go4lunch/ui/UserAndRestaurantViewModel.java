@@ -24,13 +24,11 @@ public class UserAndRestaurantViewModel extends ViewModel {
     private final UserRepository userDataSource;
     private final RestaurantDataRepository restaurantDataSource;
     private final MapViewRepository mapDataSource;
-    private final FirebaseHelper firebaseHelperDataSource;
 
     public UserAndRestaurantViewModel() {
         userDataSource = UserRepository.getInstance();
         restaurantDataSource = RestaurantDataRepository.getInstance();
         mapDataSource = MapViewRepository.getInstance();
-        firebaseHelperDataSource = FirebaseHelper.getInstance();
     }
 
     public LiveData<List<User>> getAllUsers() {
@@ -64,21 +62,20 @@ public class UserAndRestaurantViewModel extends ViewModel {
 
     //                   --- FOR USER FIREBASE ---
     public FirebaseUser getCurrentUser() {
-        return firebaseHelperDataSource.getCurrentUser();
+        return userDataSource.getCurrentUser();
     }
-    public Task<Void> deleteFirebaseUser(Context context) { return firebaseHelperDataSource.deleteUser(context); }
+    public Task<Void> deleteFirebaseUser(Context context) { return userDataSource.deleteUser(context); }
     public Boolean isCurrentUserLogged() {
         return (this.getCurrentUser() != null);
     }
     public Task<Void> signOut(Context context) {
-        return firebaseHelperDataSource.signOut(context);
+        return userDataSource.signOut(context);
     }
     //                   --- FOR USER FIRESTORE---
     public void createUser(){
         userDataSource.createFireStoreUser();
     }
     public void updateUser(User user) {
-//        userDataSource.updateNumberOfFriendInterested(user.getRestaurantId());
         userDataSource.updateFirestoreUser(user);
         userDataSource.getListOfUsers();
     }
