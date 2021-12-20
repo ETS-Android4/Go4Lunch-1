@@ -76,39 +76,39 @@ public class UserRepository {
     /**
      * Get userList from Firestore and store it in DUMMY_USER.
      */
-    public MutableLiveData<List<User>> getListOfUsers() {
-        mFirebaseHelper.getAllUsers().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                ArrayList<User> users = new ArrayList<>();
-                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                    users.add(documentSnapshot.toObject(User.class));
-                }
-                listOfUser.postValue(users);
-            } else {
-                Log.d("Error", "Error getting documents: ", task.getException());
-            }
-        }).addOnFailureListener(exception -> {
+//    public MutableLiveData<List<User>> getListOfUsers() {
+//        mFirebaseHelper.getAllUsers().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                ArrayList<User> users = new ArrayList<>();
+//                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+//                    users.add(documentSnapshot.toObject(User.class));
+//                }
+//                listOfUser.postValue(users);
+//            } else {
+//                Log.d("Error", "Error getting documents: ", task.getException());
+//            }
+//        }).addOnFailureListener(exception -> {
+//
+//        });
+//        return listOfUser;
+//    }
 
-        });
-        return listOfUser;
-    }
-
-    public MutableLiveData<List<User>> getListOfUserInterested() {
-        mFirebaseHelper.getUsersCollection().whereEqualTo("restaurantSelected", true).addSnapshotListener((value, error) -> {
-            if (error != null) {
-                Log.w(TAG, "Listen failed.", error);
-                return;
-            }
-            if (value != null) {
-                ArrayList<User> users = new ArrayList<>();
-                for (DocumentSnapshot document : value.getDocuments()) {
-                    users.add(document.toObject(User.class));
-                }
-                listOfUserInterested.postValue(users);
-            } else {
-                Log.d(TAG, "Current data: null");
-            }
-        });
+//    public MutableLiveData<List<User>> getListOfUserInterested() {
+//        mFirebaseHelper.getUsersCollection().whereEqualTo("restaurantSelected", true).addSnapshotListener((value, error) -> {
+//            if (error != null) {
+//                Log.w(TAG, "Listen failed.", error);
+//                return;
+//            }
+//            if (value != null) {
+//                ArrayList<User> users = new ArrayList<>();
+//                for (DocumentSnapshot document : value.getDocuments()) {
+//                    users.add(document.toObject(User.class));
+//                }
+//                listOfUserInterested.postValue(users);
+//            } else {
+//                Log.d(TAG, "Current data: null");
+//            }
+//        });
 //        List<User> userList = new ArrayList<>();
 //        for (User user : Objects.requireNonNull(listOfUser.getValue())) {
 //            if (user.isRestaurantSelected()) {
@@ -116,8 +116,8 @@ public class UserRepository {
 //            }
 //        }
 //        listOfUserInterested.postValue(userList);
-        return listOfUserInterested;
-    }
+//        return listOfUserInterested;
+//    }
 
     public MutableLiveData<List<User>> getListOfUsersInterestedAtCurrentRestaurant(String restaurantId) {
        MutableLiveData<List<User>> listMutableLiveData = new MutableLiveData<>();

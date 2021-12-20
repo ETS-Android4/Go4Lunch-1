@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
      * Initialize User List and Favorite Restaurant List
      */
     private void initLists() {
-        mViewModel.initData();
+//        mViewModel.initData();
     }
 
     public void startAutocompleteActivity(MenuItem item) {

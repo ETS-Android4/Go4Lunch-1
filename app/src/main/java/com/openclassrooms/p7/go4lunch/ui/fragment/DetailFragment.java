@@ -81,16 +81,6 @@ public class DetailFragment extends Fragment {
     private void initServiceAndViewModel() {
         mApiService = DI.getRestaurantApiService();
         mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
-        mViewModel.getRestaurantData().observe(getViewLifecycleOwner(), new Observer<Map<String, RestaurantFavorite>>() {
-            @Override
-            public void onChanged(Map<String, RestaurantFavorite> stringRestaurantFavoriteMap) {
-
-            }
-        });
-        Map<String, RestaurantFavorite> mRestaurantDataMap = mViewModel.getRestaurantData().getValue();
-        if (mRestaurantDataMap == null) {
-            mRestaurantDataMap = new HashMap<>();
-        }
     }
 
     private void searchById() {

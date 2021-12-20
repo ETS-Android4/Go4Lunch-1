@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -181,11 +182,17 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         super.onResume();
         if (mMap != null) {
             mMap.clear();
-            for (Restaurant restaurant : Objects.requireNonNull(mViewModel.getAllRestaurants().getValue())) {
-                MarkerOptions markerOptions = setMarkerOnMap(restaurant.getId(), restaurant.getPosition().latitude, restaurant.getPosition().longitude);
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), false)));
-                mMap.addMarker(markerOptions);
-            }
+            mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), new Observer<List<Restaurant>>() {
+                @Override
+                public void onChanged(List<Restaurant> restaurants) {
+                    for (Restaurant restaurant : restaurants) {
+                        MarkerOptions markerOptions = setMarkerOnMap(restaurant.getId(), restaurant.getPosition().latitude, restaurant.getPosition().longitude);
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), false)));
+                        mMap.addMarker(markerOptions);
+                    }
+                }
+            });
+
         }
         this.configureListener();
     }
@@ -276,7 +283,15 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private int setMarkerIcon(String placeId, Boolean isSearched) {
-        for (User user : Objects.requireNonNull(mViewModel.getAllInterestedUsers().getValue())) {
+        List<User> users = new ArrayList<>();
+        mViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+            @Override
+            public void onChanged(List<User> userList) {
+                users.clear();
+                users.addAll(userList);
+            }
+        });
+        for (User user : users) {
             if (user.getRestaurantId().equals(placeId)) {
                 return R.drawable.baseline_place_cyan;
             }
@@ -327,9 +342,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         @Override
         protected void onPostExecute(List<HashMap<String, String>> hashMaps) {
             mMap.clear();
-//            for (int i = 0; i < hashMaps.size(); i++) {
+
             //TODO just for save some request.
             List<String> listOfPlaceId = new ArrayList<>();
+//            for (int i = 0; i < hashMaps.size(); i++) {
             for (int i = 0; i < 3; i++) {
                 String placeId = hashMaps.get(i).get("placeId");
                 listOfPlaceId.add(placeId);

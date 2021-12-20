@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,8 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
+
+import java.util.List;
 
 /**
  * Created by lleotraas on 14.
@@ -48,17 +52,11 @@ public class WorkmatesFragment extends Fragment {
     private void initList() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
-        workmatesAdapter = new WorkmatesAdapter();
-        mRecyclerView.setAdapter(workmatesAdapter);
-        mApiService.workmatesViewComparator(mViewModel.getAllUsers().getValue());
-        mViewModel.getAllUsers().observe(getViewLifecycleOwner(), workmatesAdapter::submitList);
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mRecyclerView.setAdapter(workmatesAdapter);
-        mApiService.workmatesViewComparator(mViewModel.getAllUsers().getValue());
-        mViewModel.getAllUsers().observe(getViewLifecycleOwner(), workmatesAdapter::submitList);
+        mViewModel.getAllUsers().observe(getViewLifecycleOwner(), userList -> {
+            workmatesAdapter = new WorkmatesAdapter(userList);
+            mRecyclerView.setAdapter(workmatesAdapter);
+            mApiService.workmatesViewComparator(userList);
+        });
     }
 }

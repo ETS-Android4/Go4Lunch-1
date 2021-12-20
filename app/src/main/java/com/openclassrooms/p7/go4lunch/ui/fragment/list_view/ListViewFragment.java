@@ -64,24 +64,15 @@ public class ListViewFragment extends Fragment {
     private void initList() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
-
-        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), new Observer<List<Restaurant>>() {
-            @Override
-            public void onChanged(List<Restaurant> restaurantList) {
-                listViewAdapter = new ListViewAdapter();
-                mRecyclerView.setAdapter(listViewAdapter);
-                mApiService.listViewComparator(restaurantList);
-            }
-        });
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mRecyclerView.setAdapter(listViewAdapter);
-        mViewModel.setNumberOfFriendInterested(mViewModel.getAllInterestedUsers());
-        mApiService.listViewComparator(mViewModel.getAllRestaurants().getValue());
-//        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), listViewAdapter::submitList);
+        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurantList -> {
+            listViewAdapter = new ListViewAdapter(restaurantList);
+            mRecyclerView.setAdapter(listViewAdapter);
+            mApiService.listViewComparator(restaurantList);
+        });
     }
 }

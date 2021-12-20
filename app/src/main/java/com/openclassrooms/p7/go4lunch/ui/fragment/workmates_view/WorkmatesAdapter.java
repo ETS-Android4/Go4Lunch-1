@@ -16,13 +16,16 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
-public class WorkmatesAdapter extends ListAdapter<User, WorkmatesAdapter.WorkmatesViewHolder> {
+import java.util.List;
+
+public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.WorkmatesViewHolder> {
 
 
     private ApiService mApiService;
+    private List<User> mUserList;
 
-    public WorkmatesAdapter() {
-        super(new ListNeighbourItemCallback());
+    public WorkmatesAdapter(List<User> mUserList) {
+        this.mUserList = mUserList;
     }
 
     @NonNull
@@ -35,7 +38,12 @@ public class WorkmatesAdapter extends ListAdapter<User, WorkmatesAdapter.Workmat
 
     @Override
     public void onBindViewHolder(@NonNull WorkmatesViewHolder holder, int position) {
-        holder.bind(getItem(position));
+        holder.bind(mUserList.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        return mUserList.size();
     }
 
     public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
@@ -59,19 +67,6 @@ public class WorkmatesAdapter extends ListAdapter<User, WorkmatesAdapter.Workmat
                 mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s %s", mApiService.formatUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_not_decided)));
                 mBinding.workmatesListRowEatingTypeTv.setHintTextColor(itemView.getResources().getColor(R.color.grey));
             }
-        }
-    }
-
-    private static class ListNeighbourItemCallback extends DiffUtil.ItemCallback<User> {
-
-        @Override
-        public boolean areItemsTheSame(@NonNull User oldItem, @NonNull User newItem) {
-            return oldItem.getUid().equals(newItem.getUid());
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull User oldItem, @NonNull User newItem) {
-            return oldItem.equals(newItem);
         }
     }
 }

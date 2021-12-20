@@ -19,15 +19,17 @@ import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 
+import java.util.List;
 import java.util.Locale;
 
 
-public class ListViewAdapter extends ListAdapter<Restaurant, ListViewAdapter.ListViewHolder> {
+public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListViewHolder> {
 
-    protected ListViewAdapter() {
-        super(new ListViewItemCallback());
+    private List<Restaurant> mRestaurantList;
+
+    public ListViewAdapter(List<Restaurant> mRestaurantList) {
+        this.mRestaurantList = mRestaurantList;
     }
-
 
     @NonNull
     @Override
@@ -38,14 +40,19 @@ public class ListViewAdapter extends ListAdapter<Restaurant, ListViewAdapter.Lis
 
     @Override
     public void onBindViewHolder(@NonNull ListViewAdapter.ListViewHolder holder, int position) {
-        holder.bind(getItem(position));
+        holder.bind(mRestaurantList.get(position));
         //TODO number of friend interested
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
-            String id = getItem(position).getId();
+            String id = mRestaurantList.get(position).getId();
             intent.putExtra("restaurantId", id);
             view.getContext().startActivity(intent);
         });
+    }
+
+    @Override
+    public int getItemCount() {
+        return mRestaurantList.size();
     }
 
     public static class ListViewHolder extends RecyclerView.ViewHolder {
@@ -81,19 +88,6 @@ public class ListViewAdapter extends ListAdapter<Restaurant, ListViewAdapter.Lis
                 ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, restaurant.getRating()));
             }
             mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",restaurant.getNumberOfFriendInterested()));
-        }
-    }
-
-    private static class ListViewItemCallback extends DiffUtil.ItemCallback<Restaurant> {
-
-        @Override
-        public boolean areItemsTheSame(@NonNull Restaurant oldItem, @NonNull Restaurant newItem) {
-            return oldItem.getId().equals(newItem.getId());
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull Restaurant oldItem, @NonNull Restaurant newItem) {
-            return oldItem.equals(newItem);
         }
     }
 }
