@@ -98,7 +98,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public void initData() {
         userDataSource.getListOfUsers();
         restaurantDataSource.getRestaurantData();
-        userDataSource.getListOfUserInterested().getValue();
+        userDataSource.getListOfUserInterested();
     }
 
     public void createRestaurantFavorite(RestaurantFavorite restaurantFavorite) {

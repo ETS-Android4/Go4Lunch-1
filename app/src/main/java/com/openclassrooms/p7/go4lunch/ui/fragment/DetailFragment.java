@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -80,6 +81,12 @@ public class DetailFragment extends Fragment {
     private void initServiceAndViewModel() {
         mApiService = DI.getRestaurantApiService();
         mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
+        mViewModel.getRestaurantData().observe(getViewLifecycleOwner(), new Observer<Map<String, RestaurantFavorite>>() {
+            @Override
+            public void onChanged(Map<String, RestaurantFavorite> stringRestaurantFavoriteMap) {
+
+            }
+        });
         Map<String, RestaurantFavorite> mRestaurantDataMap = mViewModel.getRestaurantData().getValue();
         if (mRestaurantDataMap == null) {
             mRestaurantDataMap = new HashMap<>();

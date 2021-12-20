@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,9 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.libraries.places.api.model.Place;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
+
+import java.util.List;
 
 /**
  * Created by lleotraas on 14.
@@ -60,10 +64,15 @@ public class ListViewFragment extends Fragment {
     private void initList() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
-        listViewAdapter = new ListViewAdapter();
-        mRecyclerView.setAdapter(listViewAdapter);
-        mApiService.listViewComparator(mViewModel.getAllRestaurants().getValue());
-        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), listViewAdapter::submitList);
+
+        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), new Observer<List<Restaurant>>() {
+            @Override
+            public void onChanged(List<Restaurant> restaurantList) {
+                listViewAdapter = new ListViewAdapter();
+                mRecyclerView.setAdapter(listViewAdapter);
+                mApiService.listViewComparator(restaurantList);
+            }
+        });
 
     }
 
@@ -73,6 +82,6 @@ public class ListViewFragment extends Fragment {
         mRecyclerView.setAdapter(listViewAdapter);
         mViewModel.setNumberOfFriendInterested(mViewModel.getAllInterestedUsers());
         mApiService.listViewComparator(mViewModel.getAllRestaurants().getValue());
-        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), listViewAdapter::submitList);
+//        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), listViewAdapter::submitList);
     }
 }
