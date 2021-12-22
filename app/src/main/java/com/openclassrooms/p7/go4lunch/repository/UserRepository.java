@@ -19,6 +19,7 @@ import java.util.Objects;
 
 public class UserRepository {
 
+    private final MutableLiveData<User> currentUser = new MutableLiveData<>();
     private final MutableLiveData<List<User>> listOfUser = new MutableLiveData<>();
     private final MutableLiveData<List<User>> listOfUserInterested = new MutableLiveData<>();
 
@@ -36,6 +37,9 @@ public class UserRepository {
         mFirebaseHelper = FirebaseHelper.getInstance();
     }
 
+    public MutableLiveData<User> getCurrentFirestoreUser() {
+        return currentUser;
+    }
     /**
      * Create user in Firestore, if user already exist just update it.
      */
@@ -49,86 +53,75 @@ public class UserRepository {
                 "",
                 false
         );
-        mFirebaseHelper.getCurrentFirestoreUser().addOnCompleteListener(documentSnapshot -> {
-            if (documentSnapshot.isSuccessful()) {
-                if (!documentSnapshot.getResult().exists()) {
+        mFirebaseHelper.getCurrentFirestoreUser().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (!task.getResult().exists()) {
                     mFirebaseHelper.getUsersCollection().document(user.getUid()).set(userToCreate);
+                    getCurrentFirestoreUser().postValue(userToCreate);
                 } else {
-                    Log.d(TAG, "createFireStoreUser: ça existe");
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    User u = documentSnapshot.toObject(User.class);
+                    getCurrentFirestoreUser().postValue(u);
+                    Log.d(TAG, "createUser: ");
                 }
+
             }
         }).addOnFailureListener(exception -> {
 
         });
-
-    }
-
-    public User getFirestoreUser(String userId) {
-        User userFound = null;
-        for (User user : Objects.requireNonNull(listOfUser.getValue())) {
-            if (user.getUid().equals(userId)) {
-                userFound = user;
-            }
-        }
-        return userFound;
     }
 
     /**
      * Get userList from Firestore and store it in DUMMY_USER.
      */
-//    public MutableLiveData<List<User>> getListOfUsers() {
-//        mFirebaseHelper.getAllUsers().addOnCompleteListener(task -> {
+    public MutableLiveData<List<User>> getAllUsers() {
+        mFirebaseHelper.getAllUsers().addOnSuccessListener(task -> {
 //            if (task.isSuccessful()) {
-//                ArrayList<User> users = new ArrayList<>();
-//                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-//                    users.add(documentSnapshot.toObject(User.class));
-//                }
-//                listOfUser.postValue(users);
+                List<DocumentSnapshot> documentSnapshot = task.getDocuments();
+                ArrayList<User> users = new ArrayList<>();
+                for (DocumentSnapshot document : documentSnapshot) {
+                    users.add(document.toObject(User.class));
+                }
+                listOfUser.postValue(users);
 //            } else {
 //                Log.d("Error", "Error getting documents: ", task.getException());
 //            }
-//        }).addOnFailureListener(exception -> {
-//
-//        });
-//        return listOfUser;
-//    }
+        }).addOnFailureListener(exception -> {
 
-//    public MutableLiveData<List<User>> getListOfUserInterested() {
-//        mFirebaseHelper.getUsersCollection().whereEqualTo("restaurantSelected", true).addSnapshotListener((value, error) -> {
-//            if (error != null) {
-//                Log.w(TAG, "Listen failed.", error);
-//                return;
-//            }
-//            if (value != null) {
-//                ArrayList<User> users = new ArrayList<>();
-//                for (DocumentSnapshot document : value.getDocuments()) {
-//                    users.add(document.toObject(User.class));
-//                }
-//                listOfUserInterested.postValue(users);
-//            } else {
-//                Log.d(TAG, "Current data: null");
-//            }
-//        });
-//        List<User> userList = new ArrayList<>();
-//        for (User user : Objects.requireNonNull(listOfUser.getValue())) {
-//            if (user.isRestaurantSelected()) {
-//                userList.add(user);
-//            }
-//        }
-//        listOfUserInterested.postValue(userList);
-//        return listOfUserInterested;
-//    }
+        });
+        return listOfUser;
+    }
 
-    public MutableLiveData<List<User>> getListOfUsersInterestedAtCurrentRestaurant(String restaurantId) {
-       MutableLiveData<List<User>> listMutableLiveData = new MutableLiveData<>();
-       ArrayList<User> users = new ArrayList<>();
-       for (User user : Objects.requireNonNull(listOfUserInterested.getValue())) {
-           if (user.getRestaurantId().equals(restaurantId) &&
-                !user.getUid().equals(Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid())) {
-               users.add(user);
-           }
-       }
-       listMutableLiveData.setValue(users);
+    public MutableLiveData<List<User>> getAllInterestedUsers() {
+        mFirebaseHelper.getUsersCollection().whereEqualTo("restaurantSelected", true).addSnapshotListener((value, error) -> {
+            if (error != null) {
+                Log.w(TAG, "Listen failed.", error);
+                return;
+            }
+            if (value != null) {
+                ArrayList<User> users = new ArrayList<>();
+                for (DocumentSnapshot document : value.getDocuments()) {
+                    users.add(document.toObject(User.class));
+                }
+                listOfUserInterested.postValue(users);
+            } else {
+                Log.d(TAG, "Current data: null");
+            }
+        });
+        return listOfUserInterested;
+    }
+
+    public List<User> getAllInterestedUsersAtCurrentRestaurant(String restaurantId, List<User> users) {
+        List<User> listMutableLiveData = new ArrayList<>();
+        String userId = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
+        for (User user : users) {
+            if (
+                    user.getRestaurantId().equals(restaurantId)
+//                            && !user.getUid().equals(userId)
+            ) {
+                listMutableLiveData.add(user);
+            }
+        }
         return listMutableLiveData;
     }
 

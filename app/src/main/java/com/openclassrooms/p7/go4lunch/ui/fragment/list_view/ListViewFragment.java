@@ -53,11 +53,8 @@ public class ListViewFragment extends Fragment {
     }
 
     private void configureListener() {
-        ((MainActivity) requireActivity()).setOnDataSelected(new MainActivity.HandleData() {
-            @Override
-            public void onDataSelect(Place place) {
+        ((MainActivity) requireActivity()).setOnDataSelected(place -> {
 
-            }
         });
     }
 

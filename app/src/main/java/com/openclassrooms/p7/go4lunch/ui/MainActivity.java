@@ -2,6 +2,7 @@ package com.openclassrooms.p7.go4lunch.ui;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -45,7 +47,9 @@ import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.fragment.preference.PreferenceFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -55,9 +59,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView email;
     private TextView username;
     private ImageView userPicture;
-    public static String CURRENT_USER_ID;
     private ActivityMainBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
+    private User currentUser;
     private HandleData mHandleData;
 
     @Override
@@ -72,16 +76,12 @@ public class MainActivity extends AppCompatActivity {
         this.configureListeners();
         this.updateHeader();
         this.initNotification();
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         this.updateHeader();
-        if (mViewModel.isCurrentUserLogged()) {
-            this.initLists();
-        }
     }
 
     @Override
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void configureToolbar() {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.toolbar, null);
+        inflater.inflate(R.layout.toolbar, null);
         setSupportActionBar(mBinding.activityMainToolbar.toolbar);
     }
 
@@ -123,10 +123,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViewModelAndService() {
         mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
-//        if (mViewModel.isCurrentUserLogged()) {
-//            CURRENT_USER_ID = mViewModel.getCurrentUser().getUid();
-//            this.initLists();
-//        }
     }
 
     private void startSignActivity() {
@@ -153,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.your_lunch:
                     showRestaurantSelected();
                     break;
+
                 case R.id.settings:
                     clearToolbarAndTabs();
                     mBinding.activityMainToolbar.getRoot().setNavigationOnClickListener(new View.OnClickListener() {
@@ -166,8 +163,8 @@ public class MainActivity extends AppCompatActivity {
                             updateHeader();
                         }
                     });
-
                     break;
+
                 case R.id.logout:
                     signOutAlertPopup();
                     break;
@@ -191,10 +188,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void showRestaurantSelected() {
         ApiService apiService = DI.getRestaurantApiService();
-        String currentUserId = mViewModel.getCurrentUser().getUid();
-        User currentUser = mViewModel.getCurrentFirestoreUser(currentUserId);
+        mViewModel.getCurrentFirestoreUser().observe(this, user -> {
+            currentUser = user;
+        });
         String restaurantName = apiService.formatRestaurantName(currentUser.getRestaurantName());
-        if (restaurantName.equals("Z")) {
+        if (restaurantName.equals("")) {
             restaurantName = getString(R.string.main_activity_no_restaurant_selected);
         }
         AlertDialog.Builder restaurantSelectedPopup = new AlertDialog.Builder(this);
@@ -278,13 +276,6 @@ public class MainActivity extends AppCompatActivity {
         email.setText(user.getEmail());
     }
 
-    /**
-     * Initialize User List and Favorite Restaurant List
-     */
-    private void initLists() {
-//        mViewModel.initData();
-    }
-
     public void startAutocompleteActivity(MenuItem item) {
         ApiService apiService = DI.getRestaurantApiService();
         Intent intent = new Autocomplete.IntentBuilder(
@@ -301,7 +292,10 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == MainActivity.AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(data);
+                Place place = Autocomplete.getPlaceFromIntent(Objects.requireNonNull(data));
+//                List<String> placesId = new ArrayList<>();
+//                placesId.add(place.getId());
+//                mViewModel.requestForPlaceDetails(placesId, getApplicationContext(), true);
                 mHandleData.onDataSelect(place);
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 Status status = Autocomplete.getStatusFromIntent(data);

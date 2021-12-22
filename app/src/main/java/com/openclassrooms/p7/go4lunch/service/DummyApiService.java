@@ -68,13 +68,16 @@ public class DummyApiService implements ApiService {
     //TODO comment
     @Override
     public String formatRestaurantName(String restaurantName) {
-        restaurantName = restaurantName.replace("RESTAURANT ", "");
-        restaurantName = restaurantName.replace("Restaurant ", "");
-        restaurantName = restaurantName.replace("restaurant ", "");
-        String restaurant = restaurantName.toLowerCase();
-        char[] restaurantNameArray = restaurant.toCharArray();
-        restaurantNameArray[0] = Character.toUpperCase(restaurantNameArray[0]);
-        return new String(restaurantNameArray);
+        if (!restaurantName.equals("")) {
+            restaurantName = restaurantName.replace("RESTAURANT ", "");
+            restaurantName = restaurantName.replace("Restaurant ", "");
+            restaurantName = restaurantName.replace("restaurant ", "");
+            String restaurant = restaurantName.toLowerCase();
+            char[] restaurantNameArray = restaurant.toCharArray();
+            restaurantNameArray[0] = Character.toUpperCase(restaurantNameArray[0]);
+            return new String(restaurantNameArray);
+        }
+        return restaurantName;
     }
 
     @Override

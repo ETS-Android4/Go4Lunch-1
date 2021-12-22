@@ -32,7 +32,9 @@ import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivityAdapter;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DetailFragment extends Fragment {
@@ -64,13 +66,6 @@ public class DetailFragment extends Fragment {
         return root;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
-        mViewModel.getAllInterestedUsersAtCurrentRestaurant(mCurrentRestaurant.getId()).observe(getViewLifecycleOwner(), mAdapter::submitList);
-    }
-
     private void configureViewBinding() {
         ratingStarsArray[0] = mBinding.activityDetailFirstRatingImg;
         ratingStarsArray[1] = mBinding.activityDetailSecondRatingImg;
@@ -85,10 +80,15 @@ public class DetailFragment extends Fragment {
 
     private void searchById() {
         Intent mainActivityIntent = requireActivity().getIntent();
-        String currentUserId = mViewModel.getCurrentUser().getUid();
         String CURRENT_RESTAURANT_ID = mainActivityIntent.getStringExtra("restaurantId");
         mCurrentRestaurant = mViewModel.getCurrentRestaurant(CURRENT_RESTAURANT_ID);
-        mCurrentUser = mViewModel.getCurrentFirestoreUser(currentUserId);
+//        mViewModel.getCurrentFirestoreUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+//            @Override
+//            public void onChanged(User user) {
+//                mCurrentUser = user;
+//            }
+//        });
+        mCurrentUser = mViewModel.getCurrentFirestoreUser().getValue();
         mCurrentRestaurantFavorite = mViewModel.getCurrentRestaurantData(CURRENT_RESTAURANT_ID);
         this.setImageAtStart();
     }
@@ -124,9 +124,13 @@ public class DetailFragment extends Fragment {
     private void initRecyclerView() {
         mBinding.activityDetailRecyclerview.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mBinding.activityDetailRecyclerview.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
-        mAdapter = new DetailActivityAdapter();
-        mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
-        mViewModel.getAllInterestedUsersAtCurrentRestaurant(mCurrentRestaurant.getId()).observe(getViewLifecycleOwner(), mAdapter::submitList);
+        mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+            @Override
+            public void onChanged(List<User> users) {
+                mAdapter = new DetailActivityAdapter(mViewModel.getAllInterestedUsersAtCurrentRestaurant(mCurrentRestaurant.getId(), users));
+                mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
+            }
+        });
     }
 
     private void configureListeners() {

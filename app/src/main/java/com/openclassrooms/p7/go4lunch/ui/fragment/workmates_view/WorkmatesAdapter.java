@@ -5,8 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -22,7 +20,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
 
     private ApiService mApiService;
-    private List<User> mUserList;
+    private final List<User> mUserList;
 
     public WorkmatesAdapter(List<User> mUserList) {
         this.mUserList = mUserList;
@@ -48,7 +46,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
     public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
 
-        private WorkmatesListRowBinding mBinding;
+        private final WorkmatesListRowBinding mBinding;
 
         public WorkmatesViewHolder(@NonNull View itemView) {
             super(itemView);

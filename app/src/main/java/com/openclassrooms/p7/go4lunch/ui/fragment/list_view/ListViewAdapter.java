@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,7 +42,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     @Override
     public void onBindViewHolder(@NonNull ListViewAdapter.ListViewHolder holder, int position) {
         holder.bind(mRestaurantList.get(position));
-        //TODO number of friend interested
+        //TODO commit detail fragment
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
             String id = mRestaurantList.get(position).getId();

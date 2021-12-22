@@ -15,10 +15,14 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
-public class DetailActivityAdapter extends ListAdapter<User, DetailActivityAdapter.DetailActivityViewHolder> {
+import java.util.List;
 
-    public DetailActivityAdapter() {
-        super(new ListNeighbourItemCallback());
+public class DetailActivityAdapter extends RecyclerView.Adapter<DetailActivityAdapter.DetailActivityViewHolder> {
+
+    private final List<User> mUserList;
+
+    public DetailActivityAdapter(List<User> mUserList) {
+        this.mUserList = mUserList;
     }
 
     @NonNull
@@ -30,7 +34,12 @@ public class DetailActivityAdapter extends ListAdapter<User, DetailActivityAdapt
 
     @Override
     public void onBindViewHolder(@NonNull DetailActivityViewHolder holder, int position) {
-        holder.bind(getItem(position));
+        holder.bind(mUserList.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        return mUserList.size();
     }
 
     public static class DetailActivityViewHolder extends RecyclerView.ViewHolder {
@@ -52,18 +61,6 @@ public class DetailActivityAdapter extends ListAdapter<User, DetailActivityAdapt
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
             mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s", mApiService.formatUserFirstName(user.getUserName()), view.getResources().getString(R.string.detail_viewHolder_is_joining)));
-        }
-    }
-
-    private static class ListNeighbourItemCallback extends androidx.recyclerview.widget.DiffUtil.ItemCallback<User> {
-        @Override
-        public boolean areItemsTheSame(@NonNull User oldItem, @NonNull User newItem) {
-            return oldItem.getUid().equals(newItem.getUid());
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull User oldItem, @NonNull User newItem) {
-            return oldItem.equals(newItem);
         }
     }
 }

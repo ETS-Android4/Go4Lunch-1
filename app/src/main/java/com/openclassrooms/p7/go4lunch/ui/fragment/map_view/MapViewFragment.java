@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -44,6 +45,7 @@ import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
+import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 import org.json.JSONException;
@@ -65,7 +67,7 @@ import java.util.Objects;
  * Created by lleotraas on 14.
  */
 public class MapViewFragment extends Fragment implements OnMapReadyCallback,
-                                                         GoogleMap.OnMarkerClickListener {
+                                                         GoogleMap.OnMarkerClickListener{
 
 
     private GoogleMap mMap = null;
@@ -81,10 +83,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
 
     private boolean locationPermissionGranted;
-    private ApiService mApiService;
     UserAndRestaurantViewModel mViewModel;
-
-    public MapViewFragment(){}
 
     @Nullable
     @Override
@@ -97,19 +96,49 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity().getApplicationContext());
         Places.initialize(requireActivity().getApplicationContext(), BuildConfig.GMP_KEY);
         this.configureServiceAndViewModel();
+        this.configureListener();
         return result;
     }
 
+    private void changeTheMap() {
+        if (mMap != null) {
+            mMap.clear();
+            mViewModel.getAllRestaurants().observe(this.getViewLifecycleOwner(), new Observer<List<Restaurant>>() {
+                @Override
+                public void onChanged(List<Restaurant> restaurants) {
+                    for (Restaurant restaurant : restaurants) {
+                        MarkerOptions markerOptions = setMarkerOnMap(restaurant.getId(), restaurant.getPosition().latitude, restaurant.getPosition().longitude);
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), false)));
+                        mMap.addMarker(markerOptions);
+                    }
+                }
+            });
+
+        }
+    }
+
     private void configureServiceAndViewModel() {
-        mViewModel = new ViewModelProvider(this.requireActivity()).get(UserAndRestaurantViewModel.class);
-        mApiService = DI.getRestaurantApiService();
+        mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
+        ApiService mApiService = DI.getRestaurantApiService();
     }
 
     private void configureListener() {
-//        ((MainActivity) requireActivity()).setOnDataSelected(place -> {
-//            mViewModel.requestForPlaceDetails(place.getId(), requireContext(), true);
-            //TODO new marker
-//        });
+        ((MainActivity) requireActivity()).setOnDataSelected(place -> {
+            List<String> placeIdList = new ArrayList<>();
+            placeIdList.add(place.getId());
+            mViewModel.requestForPlaceDetails(placeIdList, requireActivity().getApplicationContext(), true);
+//            mMap.clear();
+//            mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), new Observer<List<Restaurant>>() {
+//                @Override
+//                public void onChanged(List<Restaurant> restaurants) {
+//                    for (Restaurant restaurant : restaurants) {
+//                        MarkerOptions markerOptions = setMarkerOnMap(restaurant.getId(), restaurant.getPosition().latitude, restaurant.getPosition().longitude);
+//                        markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), true)));
+//                        mMap.addMarker(markerOptions);
+//                    }
+//                }
+//            });
+        });
     }
 
     @Override
@@ -130,6 +159,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         updateLocationUI();
         getDeviceLocation();
         googleMap.setOnMarkerClickListener(this);
+        changeTheMap();
     }
 
 
@@ -180,21 +210,22 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onResume() {
         super.onResume();
-        if (mMap != null) {
-            mMap.clear();
-            mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), new Observer<List<Restaurant>>() {
-                @Override
-                public void onChanged(List<Restaurant> restaurants) {
-                    for (Restaurant restaurant : restaurants) {
-                        MarkerOptions markerOptions = setMarkerOnMap(restaurant.getId(), restaurant.getPosition().latitude, restaurant.getPosition().longitude);
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), false)));
-                        mMap.addMarker(markerOptions);
-                    }
-                }
-            });
-
-        }
-        this.configureListener();
+        changeTheMap();
+//        if (mMap != null) {
+//            mMap.clear();
+//            mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), new Observer<List<Restaurant>>() {
+//                @Override
+//                public void onChanged(List<Restaurant> restaurants) {
+//                    for (Restaurant restaurant : restaurants) {
+//                        MarkerOptions markerOptions = setMarkerOnMap(restaurant.getId(), restaurant.getPosition().latitude, restaurant.getPosition().longitude);
+//                        markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), false)));
+//                        mMap.addMarker(markerOptions);
+//                    }
+//                }
+//            });
+//
+//        }
+//        this.configureListener();
     }
 
     private void getDeviceLocation() {
@@ -275,7 +306,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     private MarkerOptions setMarkerOnMap(String placeId, double latitude, double longitude) {
         MarkerOptions options = new MarkerOptions();
-        options.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(placeId, false)));
+//        options.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(placeId, false)));
         LatLng latLng = new LatLng(latitude, longitude);
         options.position(latLng);
         options.snippet(placeId);
@@ -283,23 +314,13 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private int setMarkerIcon(String placeId, Boolean isSearched) {
-        List<User> users = new ArrayList<>();
-        mViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
-            @Override
-            public void onChanged(List<User> userList) {
-                users.clear();
-                users.addAll(userList);
-            }
-        });
-        for (User user : users) {
-            if (user.getRestaurantId().equals(placeId)) {
-                return R.drawable.baseline_place_cyan;
-            }
-//            if (isSearched) {
-//                return R.drawable.baseline_place_green;
+//            if (user.getRestaurantId().equals(placeId)) {
+//                return R.drawable.baseline_place_cyan;
 //            }
-        }
-        return R.drawable.baseline_place_orange;
+            if (isSearched) {
+                return R.drawable.baseline_place_green;
+            }
+            return R.drawable.baseline_place_orange;
     }
 
     private class PlaceTask extends AsyncTask<String, Integer, String> {
