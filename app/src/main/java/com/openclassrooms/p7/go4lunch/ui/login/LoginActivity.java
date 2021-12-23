@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityLoginBinding;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
@@ -56,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initViewModel() {
-        mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
+        mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserAndRestaurantViewModel.class);
     }
 
     private void configureListeners() {

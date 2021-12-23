@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.openclassrooms.p7.go4lunch.LiveDataTestUtils;
@@ -24,7 +25,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ViewModelTest {
@@ -38,8 +38,6 @@ public class ViewModelTest {
     private RestaurantDataRepository restaurantDataRepository;
     @Mock
     private MapViewRepository mapViewRepository;
-    @Mock
-    private FirebaseHelper firebaseHelper;
 
     private UserAndRestaurantViewModel viewModel;
 
@@ -49,30 +47,36 @@ public class ViewModelTest {
         List<User> userList = getDefaultUser();
         listMutableLiveData.setValue(userList);
 
-        given(userRepository.getListOfUsers()).willReturn(listMutableLiveData);
+        given(userRepository.getAllUsers()  ).willReturn(listMutableLiveData);
 
-        viewModel = new UserAndRestaurantViewModel();
+        viewModel = new UserAndRestaurantViewModel(userRepository, restaurantDataRepository, mapViewRepository);
     }
 
     @Test
     public void getAllUsersWithSuccess() {
-        MutableLiveData<List<User>> listMutableLiveData = new MutableLiveData<>();
-        listMutableLiveData.setValue(getDefaultUser());
-        given((userRepository.getListOfUsers())).willReturn(listMutableLiveData);
-        viewModel.getAllUsers();
-        assertEquals(Objects.requireNonNull(listMutableLiveData.getValue()).size(), 3);
+        List<User> userList = new ArrayList<>();
+        LiveDataTestUtils.observeForTesting(viewModel.getAllUsers(), new LiveDataTestUtils.OnObservedListener<List<User>>() {
+            @Override
+            public void onObserved(LiveData<List<User>> liveData) {
+                userList.addAll(liveData.getValue());
+            }
+        });
+
+        assertEquals(userList.size(), 3);
     }
 
     @Test
     public void getAllInterestedUserWithSuccess() {
         MutableLiveData<List<User>> listMutableLiveData = new MutableLiveData<>();
         listMutableLiveData.setValue(getDefaultUser());
-        given((userRepository.getListOfUsers())).willReturn(listMutableLiveData);
+        given((userRepository.getAllInterestedUsers())).willReturn(listMutableLiveData);
+        List<User> userList = new ArrayList<>();
+        LiveDataTestUtils.observeForTesting(viewModel.getAllInterestedUsers(), liveData -> {
+            userList.addAll(liveData.getValue());
 
-        LiveDataTestUtils.observeForTesting(userRepository.getListOfUsers(), liveData -> {
-            viewModel.getAllInterestedUsers();
         });
-        Mockito.verify(userRepository, times(1)).getListOfUserInterested();
+        Mockito.verify(userRepository, times(1)).getAllInterestedUsers();
+        assertEquals(userList.size(), 2);
     }
 
     private List<User> getDefaultUser() {

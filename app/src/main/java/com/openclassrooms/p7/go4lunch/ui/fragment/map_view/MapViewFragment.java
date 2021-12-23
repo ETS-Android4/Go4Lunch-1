@@ -40,6 +40,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
@@ -118,7 +119,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void configureServiceAndViewModel() {
-        mViewModel = new ViewModelProvider(this).get(UserAndRestaurantViewModel.class);
+        mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserAndRestaurantViewModel.class);
         ApiService mApiService = DI.getRestaurantApiService();
     }
 
@@ -159,7 +160,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         updateLocationUI();
         getDeviceLocation();
         googleMap.setOnMarkerClickListener(this);
-        changeTheMap();
     }
 
 
@@ -211,21 +211,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     public void onResume() {
         super.onResume();
         changeTheMap();
-//        if (mMap != null) {
-//            mMap.clear();
-//            mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), new Observer<List<Restaurant>>() {
-//                @Override
-//                public void onChanged(List<Restaurant> restaurants) {
-//                    for (Restaurant restaurant : restaurants) {
-//                        MarkerOptions markerOptions = setMarkerOnMap(restaurant.getId(), restaurant.getPosition().latitude, restaurant.getPosition().longitude);
-//                        markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), false)));
-//                        mMap.addMarker(markerOptions);
-//                    }
-//                }
-//            });
-//
-//        }
-//        this.configureListener();
     }
 
     private void getDeviceLocation() {

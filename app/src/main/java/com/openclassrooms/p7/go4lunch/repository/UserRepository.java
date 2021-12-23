@@ -19,22 +19,26 @@ import java.util.Objects;
 
 public class UserRepository {
 
-    private final MutableLiveData<User> currentUser = new MutableLiveData<>();
-    private final MutableLiveData<List<User>> listOfUser = new MutableLiveData<>();
-    private final MutableLiveData<List<User>> listOfUserInterested = new MutableLiveData<>();
+    private final MutableLiveData<User> currentUser;
+    private final MutableLiveData<List<User>> listOfUser;
+    private final MutableLiveData<List<User>> listOfUserInterested;
 
     private static UserRepository mUserRepository;
     private final FirebaseHelper mFirebaseHelper;
 
     public static UserRepository getInstance() {
         if (mUserRepository == null) {
-            mUserRepository = new UserRepository();
+            FirebaseHelper firebaseHelper = new FirebaseHelper();
+            mUserRepository = new UserRepository(firebaseHelper);
         }
         return mUserRepository;
     }
 
-    public UserRepository() {
-        mFirebaseHelper = FirebaseHelper.getInstance();
+    public UserRepository(FirebaseHelper firebaseHelper) {
+        mFirebaseHelper = firebaseHelper;
+        currentUser = new MutableLiveData<>();
+        listOfUser = new MutableLiveData<>();
+        listOfUserInterested = new MutableLiveData<>();
     }
 
     public MutableLiveData<User> getCurrentFirestoreUser() {
@@ -71,21 +75,33 @@ public class UserRepository {
         });
     }
 
+    public void updateUser(User user) {
+        mFirebaseHelper.getUsersCollection().document(user.getUid()).update(
+                "restaurantId", user.getRestaurantId(),
+                "restaurantName", user.getRestaurantName(),
+                "restaurantSelected", user.isRestaurantSelected()
+        );
+    }
+
+    public void deleteUserFromFirestore() {
+        String uid = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
+        mFirebaseHelper.getUsersCollection().document(uid).collection("restaurants").document().delete();
+        mFirebaseHelper.getUsersCollection().document(uid).delete();
+    }
     /**
      * Get userList from Firestore and store it in DUMMY_USER.
      */
     public MutableLiveData<List<User>> getAllUsers() {
-        mFirebaseHelper.getAllUsers().addOnSuccessListener(task -> {
-//            if (task.isSuccessful()) {
-                List<DocumentSnapshot> documentSnapshot = task.getDocuments();
+        mFirebaseHelper.getAllUsers().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
                 ArrayList<User> users = new ArrayList<>();
-                for (DocumentSnapshot document : documentSnapshot) {
+                for (DocumentSnapshot document : task.getResult()) {
                     users.add(document.toObject(User.class));
                 }
                 listOfUser.postValue(users);
-//            } else {
-//                Log.d("Error", "Error getting documents: ", task.getException());
-//            }
+            } else {
+                Log.d("Error", "Error getting documents: ", task.getException());
+            }
         }).addOnFailureListener(exception -> {
 
         });

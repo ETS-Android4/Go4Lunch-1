@@ -32,7 +32,7 @@ public class MapViewRepository {
     private final ApiService mApiService = DI.getRestaurantApiService();
     private final MutableLiveData<List<Restaurant>> listOfRestaurant = new MutableLiveData<>();
 
-    private MapViewRepository() {
+    public MapViewRepository() {
         mGoogleMapsHelper = GoogleMapsHelper.getInstance();
     }
 

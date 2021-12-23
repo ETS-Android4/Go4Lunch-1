@@ -1,9 +1,6 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -11,24 +8,19 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
 import com.openclassrooms.p7.go4lunch.repository.RestaurantDataRepository;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class UserAndRestaurantViewModel extends ViewModel {
 
-    private final FirebaseHelper mFirebaseHelper;
+
     private final UserRepository userDataSource;
     private final RestaurantDataRepository restaurantDataSource;
     private final MapViewRepository mapDataSource;
@@ -37,35 +29,27 @@ public class UserAndRestaurantViewModel extends ViewModel {
 //    private final MutableLiveData<List<User>> listOfUser = new MutableLiveData<>();
 //    private final MutableLiveData<List<User>> listOfUserInterested = new MutableLiveData<>();
 
-    public UserAndRestaurantViewModel() {
-        mFirebaseHelper = FirebaseHelper.getInstance();
-        userDataSource = UserRepository.getInstance();
-        restaurantDataSource = RestaurantDataRepository.getInstance();
-        mapDataSource = MapViewRepository.getInstance();
+    public UserAndRestaurantViewModel(UserRepository userRepository, RestaurantDataRepository restaurantDataRepository, MapViewRepository mapViewRepository) {
+        userDataSource = userRepository;
+        restaurantDataSource = restaurantDataRepository;
+        mapDataSource = mapViewRepository;
     }
     public void createUser(){
         userDataSource.createFireStoreUser();
     }
     public void updateUser(User user) {
-        mFirebaseHelper.getUsersCollection().document(user.getUid()).update(
-                "restaurantId", user.getRestaurantId(),
-                "restaurantName", user.getRestaurantName(),
-                "restaurantSelected", user.isRestaurantSelected()
-        );
+        userDataSource.updateUser(user);
     }
     public void deleteUserFromFirestore() {
-        String uid = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
-        mFirebaseHelper.getUsersCollection().document(uid).collection("restaurants").document().delete();
-        mFirebaseHelper.getUsersCollection().document(uid).delete();
+        userDataSource.deleteUserFromFirestore();
     }
+
     public LiveData<List<User>> getAllUsers() {
         return userDataSource.getAllUsers();
     }
-
     public LiveData<List<User>> getAllInterestedUsers() {
         return userDataSource.getAllInterestedUsers();
     }
-
     public List<User> getAllInterestedUsersAtCurrentRestaurant(String restaurantId, List<User> users) {
         return userDataSource.getAllInterestedUsersAtCurrentRestaurant(restaurantId, users);
     }
@@ -87,14 +71,14 @@ public class UserAndRestaurantViewModel extends ViewModel {
 
     //                   --- FOR USER FIREBASE ---
     public FirebaseUser getCurrentUser() {
-        return mFirebaseHelper.getCurrentUser();
+        return userDataSource.getCurrentUser();
     }
-    public Task<Void> deleteFirebaseUser(Context context) { return mFirebaseHelper.deleteUser(context); }
+    public Task<Void> deleteFirebaseUser(Context context) { return userDataSource.deleteUser(context); }
     public Boolean isCurrentUserLogged() {
         return (this.getCurrentUser() != null);
     }
     public Task<Void> signOut(Context context) {
-        return mFirebaseHelper.signOut(context);
+        return userDataSource.signOut(context);
     }
     //                   --- FOR USER FIRESTORE---
 
