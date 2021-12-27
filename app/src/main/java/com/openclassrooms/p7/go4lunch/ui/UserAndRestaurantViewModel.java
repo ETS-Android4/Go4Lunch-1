@@ -62,6 +62,10 @@ public class UserAndRestaurantViewModel extends ViewModel {
         return mapDataSource.getAllRestaurantList();
     }
 
+    public MutableLiveData<List<Restaurant>> getRestaurantListSearched() {
+        return mapDataSource.getRestaurantListSearched();
+    }
+
     public void requestForPlaceDetails(List<String> listOfPlaceId, Context context, boolean isSearched) {
         mapDataSource.requestForPlaceDetails(listOfPlaceId, context, isSearched);
     }
@@ -95,12 +99,6 @@ public class UserAndRestaurantViewModel extends ViewModel {
         return restaurantDataSource.getCurrentRestaurantData(currentRestaurantId);
     }
 
-//    public void initData() {
-//        userDataSource.getListOfUsers();
-//        restaurantDataSource.getRestaurantData();
-//        userDataSource.getListOfUserInterested();
-//    }
-
     public void createRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
         restaurantDataSource.createRestaurantData(restaurantFavorite);
         restaurantDataSource.getRestaurantData();
@@ -111,7 +109,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
         restaurantDataSource.getRestaurantData();
     }
 
-    public void setNumberOfFriendInterested(LiveData<List<User>> allInterestedUsers) {
-        mapDataSource.setNumberOfFriendInterested(allInterestedUsers.getValue());
+    public void setNumberOfFriendInterested(List<User> allInterestedUsers) {
+        mapDataSource.setNumberOfFriendInterested(allInterestedUsers);
     }
 }

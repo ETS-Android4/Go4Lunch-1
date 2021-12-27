@@ -26,7 +26,7 @@ import java.util.Locale;
 
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListViewHolder> {
 
-    private List<Restaurant> mRestaurantList;
+    private final List<Restaurant> mRestaurantList;
 
     public ListViewAdapter(List<Restaurant> mRestaurantList) {
         this.mRestaurantList = mRestaurantList;

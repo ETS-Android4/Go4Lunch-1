@@ -12,6 +12,9 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,5 +67,10 @@ public class GoogleMapsHelper {
         } else {
             return null;
         }
+    }
+
+    public HttpURLConnection getData(String url) throws IOException {
+        URL urlToConnect = new URL(url);
+        return (HttpURLConnection) urlToConnect.openConnection();
     }
 }

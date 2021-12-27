@@ -128,6 +128,7 @@ public class DetailFragment extends Fragment {
         mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
+                mViewModel.setNumberOfFriendInterested(users);
                 mAdapter = new DetailActivityAdapter(mViewModel.getAllInterestedUsersAtCurrentRestaurant(mCurrentRestaurant.getId(), users));
                 mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
             }

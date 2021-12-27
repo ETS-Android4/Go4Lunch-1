@@ -49,10 +49,13 @@
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/menu/navigation_drawer_menu.xml" value="0.146875" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/menu/toolbar_menu.xml" value="0.1" />
         <entry key="..\:/Users/charl/OneDrive/Documents/P7/Go4Lunch/app/src/main/res/xml/preference.xml" value="0.18" />
+        <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/activity_main.xml" value="0.21875" />
+        <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_map_view.xml" value="0.21875" />
+        <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/menu/toolbar_menu.xml" value="0.21875" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_15" project-jdk-name="corretto-15" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="corretto-15" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

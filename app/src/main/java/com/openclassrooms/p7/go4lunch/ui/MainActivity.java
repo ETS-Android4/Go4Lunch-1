@@ -56,14 +56,12 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int AUTOCOMPLETE_REQUEST_CODE = 23;
     private TextView email;
     private TextView username;
     private ImageView userPicture;
     private ActivityMainBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
     private User currentUser;
-    private HandleData mHandleData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -277,42 +275,41 @@ public class MainActivity extends AppCompatActivity {
         email.setText(user.getEmail());
     }
 
-    public void startAutocompleteActivity(MenuItem item) {
-        ApiService apiService = DI.getRestaurantApiService();
-        Intent intent = new Autocomplete.IntentBuilder(
-                AutocompleteActivityMode.OVERLAY,
-                Arrays.asList(Place.Field.ID))
-                .setTypeFilter(TypeFilter.ESTABLISHMENT)
-                .setLocationBias(apiService.getRectangularBound(MapViewFragment.currentLocation))
-                .setCountry("FR")
-                .build(this);
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == MainActivity.AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(Objects.requireNonNull(data));
+//    public void startAutocompleteActivity(MenuItem item) {
+//        ApiService apiService = DI.getRestaurantApiService();
+//        Intent intent = new Autocomplete.IntentBuilder(
+//                AutocompleteActivityMode.OVERLAY,
+//                Arrays.asList(Place.Field.ID))
+//                .setTypeFilter(TypeFilter.ESTABLISHMENT)
+//                .setLocationBias(apiService.getRectangularBound(MapViewFragment.currentLocation))
+//                .setCountry("FR")
+//                .build(this);
+//        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+//    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == MainActivity.AUTOCOMPLETE_REQUEST_CODE) {
+//            if (resultCode == RESULT_OK) {
+//                Place place = Autocomplete.getPlaceFromIntent(Objects.requireNonNull(data));
 //                List<String> placesId = new ArrayList<>();
 //                placesId.add(place.getId());
 //                mViewModel.requestForPlaceDetails(placesId, getApplicationContext(), true);
-                mHandleData.onDataSelect(place);
-            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                Status status = Autocomplete.getStatusFromIntent(data);
-                Log.i(TAG, status.getStatusMessage());
-            } else if (resultCode == RESULT_CANCELED) {
-
-            }
-        }
-    }
-
-    public void setOnDataSelected(HandleData handleData) {
-        mHandleData = handleData;
-    }
-
-    public interface HandleData {
-        void onDataSelect(Place place);
-    }
+//                mHandleData.onDataSelect(place);
+//            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+//                Status status = Autocomplete.getStatusFromIntent(data);
+//                Log.i(TAG, status.getStatusMessage());
+//            } else if (resultCode == RESULT_CANCELED) {
+//
+//            }
+//        }
+//    }
+//    public void setOnDataSelected(HandleData handleData) {
+//        mHandleData = handleData;
+//    }
+//
+//    public interface HandleData {
+//        void onDataSelect(Place place);
+//    }
 
 }

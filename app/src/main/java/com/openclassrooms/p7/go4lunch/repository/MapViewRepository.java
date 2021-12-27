@@ -14,15 +14,24 @@ import com.google.android.libraries.places.api.model.LocalTime;
 import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Period;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.gson.JsonObject;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class MapViewRepository {
@@ -31,6 +40,7 @@ public class MapViewRepository {
     private final GoogleMapsHelper mGoogleMapsHelper;
     private final ApiService mApiService = DI.getRestaurantApiService();
     private final MutableLiveData<List<Restaurant>> listOfRestaurant = new MutableLiveData<>();
+    private final MutableLiveData<List<Restaurant>> listOfRestaurantSearched = new MutableLiveData<>();
 
     public MapViewRepository() {
         mGoogleMapsHelper = GoogleMapsHelper.getInstance();
@@ -53,6 +63,10 @@ public class MapViewRepository {
         return listOfRestaurant;
     }
 
+    public MutableLiveData<List<Restaurant>> getRestaurantListSearched() {
+        return listOfRestaurantSearched;
+    }
+
     /**
      * Do a request to search a place in MapViewFragment.
      * @param placeId id of the place.
@@ -68,6 +82,11 @@ public class MapViewRepository {
                     mGoogleMapsHelper.getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
                         Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
                         restaurantList.add(restaurant);
+                        if (isSearched) {
+                            listOfRestaurantSearched.postValue(restaurantList);
+                        } else {
+                            listOfRestaurant.postValue(restaurantList);
+                        }
                     }).addOnFailureListener((exception) -> {
                         if (exception instanceof ApiException) {
                             Log.e(TAG, "Place not found: " + exception.getMessage());
@@ -76,10 +95,15 @@ public class MapViewRepository {
                 } else {
                     Restaurant restaurant = createRestaurant(place, null, context);
                     restaurantList.add(restaurant);
+                    if (isSearched) {
+                        listOfRestaurantSearched.postValue(restaurantList);
+                    } else {
+                        listOfRestaurant.postValue(restaurantList);
+                    }
                 }
             });
         }
-        listOfRestaurant.postValue(restaurantList);
+
     }
 
     public Restaurant getCurrentRestaurant(String restaurantId) {
@@ -88,6 +112,9 @@ public class MapViewRepository {
             if (restaurant.getId().equals(restaurantId)) {
                 currentRestaurant = restaurant;
             }
+        }
+        if (currentRestaurant == null) {
+            currentRestaurant = Objects.requireNonNull(listOfRestaurantSearched.getValue()).get(0);
         }
         return currentRestaurant;
     }
@@ -124,6 +151,31 @@ public class MapViewRepository {
             restaurant.setNumberOfFriendInterested(userList.size());
             userList.clear();
         }
+    }
+
+    public String getJson(String url) throws IOException {
+        HttpURLConnection connection = mGoogleMapsHelper.getData(url);
+        connection.connect();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuilder builder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            builder.append(line);
+        }
+        reader.close();
+        return builder.toString();
+    }
+
+    public void handleJson(String url) throws IOException {
+        JSONObject jsonObject;
+        List<Map<String, String>> mapList = null;
+        try {
+            jsonObject = new JSONObject(getJson(url));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**

@@ -23,6 +23,7 @@ import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,11 +52,8 @@ public class ListViewFragment extends Fragment {
     private void configureServiceAndViewModel() {
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserAndRestaurantViewModel.class);
         mApiService = DI.getRestaurantApiService();
-    }
-
-    private void configureListener() {
-        ((MainActivity) requireActivity()).setOnDataSelected(place -> {
-
+        mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), users -> {
+            mViewModel.setNumberOfFriendInterested(users);
         });
     }
 
@@ -67,10 +65,18 @@ public class ListViewFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        List<Restaurant> restaurants = new ArrayList<>();
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurantList -> {
+            restaurants.addAll(restaurantList);
             listViewAdapter = new ListViewAdapter(restaurantList);
             mRecyclerView.setAdapter(listViewAdapter);
             mApiService.listViewComparator(restaurantList);
+        });
+        mViewModel.getRestaurantListSearched().observe(getViewLifecycleOwner(), restaurantList -> {
+            restaurants.add(restaurantList.get(0));
+            listViewAdapter = new ListViewAdapter(restaurants);
+            mRecyclerView.setAdapter(listViewAdapter);
+            mApiService.listViewComparator(restaurants);
         });
     }
 }

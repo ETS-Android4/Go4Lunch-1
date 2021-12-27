@@ -44,6 +44,7 @@ public class UserRepository {
     public MutableLiveData<User> getCurrentFirestoreUser() {
         return currentUser;
     }
+
     /**
      * Create user in Firestore, if user already exist just update it.
      */
@@ -139,35 +140,6 @@ public class UserRepository {
             }
         }
         return listMutableLiveData;
-    }
-
-//    public void updateNumberOfFriendInterested(String restaurantId) {
-//        for (User u : Objects.requireNonNull(listOfUserInterested.getValue())) {
-//            if (u.getRestaurantId().equals(restaurantId)) {
-//                u.setNumberOfFriendInterested(u.getNumberOfFriendInterested()+1);
-//            }
-//        }
-//    }
-
-    /**
-     * Update current user.
-     * @param user user to update.
-     */
-    public void updateFirestoreUser(User user) {
-        mFirebaseHelper.getUsersCollection().document(user.getUid()).update(
-                "restaurantId", user.getRestaurantId(),
-                "restaurantName", user.getRestaurantName(),
-                "restaurantSelected", user.isRestaurantSelected()
-        );
-    }
-
-    /**
-     * Delete user from Firestore.
-     */
-    public void deleteFirestoreUser() {
-        String uid = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
-        mFirebaseHelper.getUsersCollection().document(uid).collection("restaurants").document().delete();
-        mFirebaseHelper.getUsersCollection().document(uid).delete();
     }
 
     public FirebaseUser getCurrentUser() {
