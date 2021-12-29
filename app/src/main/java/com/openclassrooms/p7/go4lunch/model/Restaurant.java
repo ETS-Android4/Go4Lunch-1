@@ -24,21 +24,12 @@ public class Restaurant {
     private final LatLng position;
     private final Bitmap pictureUrl;
     private Integer numberOfFriendInterested;
+    private boolean isSearched;
 
     // --- CONSTRUCTOR ---
-    public Restaurant(
-            String id,
-            String name,
-            String address,
-            String openingHours,
-            String phoneNumber,
-            String uriWebsite,
-            float distance,
-            double rating,
-            LatLng position,
-            Bitmap pictureUrl,
-            Integer numberOfFriendInterested) {
 
+
+    public Restaurant(String id, String name, String address, String openingHours, String phoneNumber, String uriWebsite, float distance, double rating, LatLng position, Bitmap pictureUrl, Integer numberOfFriendInterested, boolean isSearched) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -50,6 +41,7 @@ public class Restaurant {
         this.position = position;
         this.pictureUrl = pictureUrl;
         this.numberOfFriendInterested = numberOfFriendInterested;
+        this.isSearched = isSearched;
     }
 
     // --- GETTERS ---
@@ -68,10 +60,16 @@ public class Restaurant {
     public Integer getNumberOfFriendInterested() {
         return numberOfFriendInterested;
     }
+    public boolean isSearched() {
+        return isSearched;
+    }
 
     // --- SETTERS ---
     public void setNumberOfFriendInterested(int numberOfFriendInterested) {
         this.numberOfFriendInterested = numberOfFriendInterested;
+    }
+    public void setSearched(boolean searched) {
+        isSearched = searched;
     }
 
     @Override

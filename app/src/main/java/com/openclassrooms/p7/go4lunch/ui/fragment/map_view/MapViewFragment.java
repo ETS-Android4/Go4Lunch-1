@@ -18,14 +18,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.common.api.Status;
@@ -54,7 +52,6 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
-import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 import org.json.JSONException;
@@ -115,6 +112,19 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private void configureServiceAndViewModel() {
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserAndRestaurantViewModel.class);
         mApiService = DI.getRestaurantApiService();
+        mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), users -> {});
+    }
+
+    private void putMarkerOnMap() {
+        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
+            mMap.clear();
+            mViewModel.setNumberOfFriendInterested(mViewModel.getAllInterestedUsers().getValue());
+            for (Restaurant restaurant : restaurants) {
+                MarkerOptions markerOptions = setMarkerOnMap(restaurant);
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant)));
+                mMap.addMarker(markerOptions);
+            }
+        });
     }
 
     @Override
@@ -217,27 +227,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onResume() {
         super.onResume();
-        mViewModel.getRestaurantListSearched().observe(getViewLifecycleOwner(), new Observer<List<Restaurant>>() {
-            @Override
-            public void onChanged(List<Restaurant> restaurants) {
-                for (Restaurant restaurant: restaurants) {
-                    MarkerOptions markerOptions = setMarkerOnMap(restaurant.getId(), restaurant.getPosition().latitude, restaurant.getPosition().longitude);
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), true)));
-                    mMap.addMarker(markerOptions);
-                }
-            }
-        });
-        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), new Observer<List<Restaurant>>() {
-            @Override
-            public void onChanged(List<Restaurant> restaurants) {
-                mMap.clear();
-                for (Restaurant restaurant : restaurants) {
-                    MarkerOptions markerOptions = setMarkerOnMap(restaurant.getId(), restaurant.getPosition().latitude, restaurant.getPosition().longitude);
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant.getId(), false)));
-                    mMap.addMarker(markerOptions);
-                }
-            }
-        });
+        this.putMarkerOnMap();
     }
 
     private void getDeviceLocation() {
@@ -316,20 +306,19 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         return data;
     }
 
-    private MarkerOptions setMarkerOnMap(String placeId, double latitude, double longitude) {
+    private MarkerOptions setMarkerOnMap(Restaurant restaurant) {
         MarkerOptions options = new MarkerOptions();
-//        options.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(placeId, false)));
-        LatLng latLng = new LatLng(latitude, longitude);
+        LatLng latLng = new LatLng(restaurant.getPosition().latitude, restaurant.getPosition().longitude);
         options.position(latLng);
-        options.snippet(placeId);
+        options.snippet(restaurant.getId());
         return options;
     }
 
-    private int setMarkerIcon(String placeId, Boolean isSearched) {
-//            if (restaurant.getNumberOfFriendInterested() > 0) {
-//                return R.drawable.baseline_place_cyan;
-//            }
-            if (isSearched) {
+    private int setMarkerIcon(Restaurant restaurant) {
+            if (restaurant.getNumberOfFriendInterested() > 0) {
+                return R.drawable.baseline_place_cyan;
+            }
+            if (restaurant.isSearched()) {
                 return R.drawable.baseline_place_green;
             }
             return R.drawable.baseline_place_orange;

@@ -134,7 +134,7 @@ public class UserRepository {
         for (User user : users) {
             if (
                     user.getRestaurantId().equals(restaurantId)
-//                            && !user.getUid().equals(userId)
+                            && !user.getUid().equals(userId)
             ) {
                 listMutableLiveData.add(user);
             }

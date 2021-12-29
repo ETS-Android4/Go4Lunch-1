@@ -1,10 +1,13 @@
 package com.openclassrooms.p7.go4lunch;
 
+import static org.mockito.Mockito.when;
+
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
@@ -12,6 +15,7 @@ import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -31,14 +35,8 @@ public class UserRepositoryTest {
     private FirebaseHelper firebaseHelper;
     @Mock
     private FirebaseFirestore firebaseFirestore ;
-
     private UserRepository userRepository;
-    private Task<AuthResult> addonSuccessListener;
-    private Task<AuthResult> addonFailureListener;
-    private final String result = "UNDEF";
-    private final int SUCCESS = 1;
-    private final int FAILURE = -1;
-    private final int UNDEF = 0;
+
 
     @Before
     public void setup() {
@@ -46,8 +44,10 @@ public class UserRepositoryTest {
         userRepository = new UserRepository(firebaseHelper);
     }
 
-    private void getAllUsers() {
+    @Test
+    public void createFirestoreUserWithSuccess() {
 
+//        when(firebaseHelper.getCurrentUser()).thenReturn()
     }
 
     private List<User> getDefaultUser() {
@@ -62,4 +62,6 @@ public class UserRepositoryTest {
 
         return userList;
     }
+
+
 }

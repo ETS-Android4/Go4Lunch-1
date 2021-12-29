@@ -65,18 +65,10 @@ public class ListViewFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        List<Restaurant> restaurants = new ArrayList<>();
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurantList -> {
-            restaurants.addAll(restaurantList);
             listViewAdapter = new ListViewAdapter(restaurantList);
             mRecyclerView.setAdapter(listViewAdapter);
             mApiService.listViewComparator(restaurantList);
-        });
-        mViewModel.getRestaurantListSearched().observe(getViewLifecycleOwner(), restaurantList -> {
-            restaurants.add(restaurantList.get(0));
-            listViewAdapter = new ListViewAdapter(restaurants);
-            mRecyclerView.setAdapter(listViewAdapter);
-            mApiService.listViewComparator(restaurants);
         });
     }
 }

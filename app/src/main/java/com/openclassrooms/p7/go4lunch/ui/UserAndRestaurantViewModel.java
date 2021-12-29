@@ -25,10 +25,6 @@ public class UserAndRestaurantViewModel extends ViewModel {
     private final RestaurantDataRepository restaurantDataSource;
     private final MapViewRepository mapDataSource;
 
-//    private final MutableLiveData<User> currentUser = new MutableLiveData<>();
-//    private final MutableLiveData<List<User>> listOfUser = new MutableLiveData<>();
-//    private final MutableLiveData<List<User>> listOfUserInterested = new MutableLiveData<>();
-
     public UserAndRestaurantViewModel(UserRepository userRepository, RestaurantDataRepository restaurantDataRepository, MapViewRepository mapViewRepository) {
         userDataSource = userRepository;
         restaurantDataSource = restaurantDataRepository;
@@ -62,10 +58,6 @@ public class UserAndRestaurantViewModel extends ViewModel {
         return mapDataSource.getAllRestaurantList();
     }
 
-    public MutableLiveData<List<Restaurant>> getRestaurantListSearched() {
-        return mapDataSource.getRestaurantListSearched();
-    }
-
     public void requestForPlaceDetails(List<String> listOfPlaceId, Context context, boolean isSearched) {
         mapDataSource.requestForPlaceDetails(listOfPlaceId, context, isSearched);
     }
@@ -88,12 +80,6 @@ public class UserAndRestaurantViewModel extends ViewModel {
 
     //                  --- GOOGLE MAPS ---
 
-
-    public LiveData<Map<String, RestaurantFavorite>> getRestaurantData() {
-        MutableLiveData<Map<String, RestaurantFavorite>> restaurantDataMutableLiveData = new MutableLiveData<>();
-        restaurantDataMutableLiveData.setValue(restaurantDataSource.getRestaurantData().getValue());
-        return restaurantDataMutableLiveData;
-    }
 
     public RestaurantFavorite getCurrentRestaurantData(String currentRestaurantId) {
         return restaurantDataSource.getCurrentRestaurantData(currentRestaurantId);

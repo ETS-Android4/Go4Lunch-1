@@ -14,7 +14,6 @@ import com.google.android.libraries.places.api.model.LocalTime;
 import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Period;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.gson.JsonObject;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
@@ -39,8 +38,8 @@ public class MapViewRepository {
     private static volatile MapViewRepository INSTANCE;
     private final GoogleMapsHelper mGoogleMapsHelper;
     private final ApiService mApiService = DI.getRestaurantApiService();
+    private static int RESTAURANT_SIZE;
     private final MutableLiveData<List<Restaurant>> listOfRestaurant = new MutableLiveData<>();
-    private final MutableLiveData<List<Restaurant>> listOfRestaurantSearched = new MutableLiveData<>();
 
     public MapViewRepository() {
         mGoogleMapsHelper = GoogleMapsHelper.getInstance();
@@ -63,10 +62,6 @@ public class MapViewRepository {
         return listOfRestaurant;
     }
 
-    public MutableLiveData<List<Restaurant>> getRestaurantListSearched() {
-        return listOfRestaurantSearched;
-    }
-
     /**
      * Do a request to search a place in MapViewFragment.
      * @param placeId id of the place.
@@ -74,32 +69,33 @@ public class MapViewRepository {
      * @param isSearched usefull for the marker color.
      */
     public void requestForPlaceDetails(List<String> placeId, Context context, boolean isSearched) {
+        if (placeId.size() > 1) {
+            RESTAURANT_SIZE = placeId.size();
+        }
         List<Restaurant> restaurantList = new ArrayList<>();
+        if (placeId.size() == 1) {
+            restaurantList.addAll(Objects.requireNonNull(listOfRestaurant.getValue()));
+            if (restaurantList.size() > RESTAURANT_SIZE) {
+                restaurantList.remove(restaurantList.size() - 1);
+            }
+        }
         for (String id : placeId) {
             mGoogleMapsHelper.getPlaceData(context, id).addOnSuccessListener((response) -> {
                 Place place = response.getPlace();
                 if (mGoogleMapsHelper.getPhotoData(place, context) != null) {
                     mGoogleMapsHelper.getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
-                        Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context);
+                        Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context, isSearched);
                         restaurantList.add(restaurant);
-                        if (isSearched) {
-                            listOfRestaurantSearched.postValue(restaurantList);
-                        } else {
-                            listOfRestaurant.postValue(restaurantList);
-                        }
+                        listOfRestaurant.postValue(restaurantList);
                     }).addOnFailureListener((exception) -> {
                         if (exception instanceof ApiException) {
                             Log.e(TAG, "Place not found: " + exception.getMessage());
                         }
                     });
                 } else {
-                    Restaurant restaurant = createRestaurant(place, null, context);
+                    Restaurant restaurant = createRestaurant(place, null, context, isSearched);
                     restaurantList.add(restaurant);
-                    if (isSearched) {
-                        listOfRestaurantSearched.postValue(restaurantList);
-                    } else {
-                        listOfRestaurant.postValue(restaurantList);
-                    }
+                    listOfRestaurant.postValue(restaurantList);
                 }
             });
         }
@@ -113,9 +109,6 @@ public class MapViewRepository {
                 currentRestaurant = restaurant;
             }
         }
-        if (currentRestaurant == null) {
-            currentRestaurant = Objects.requireNonNull(listOfRestaurantSearched.getValue()).get(0);
-        }
         return currentRestaurant;
     }
 
@@ -123,9 +116,10 @@ public class MapViewRepository {
      * Call to get a request for photo.
      * @param place id of the place.
      * @param context context of the fragment.
+     * @param isSearched
      * @return fetch place task.
      */
-    private Restaurant createRestaurant(Place place, Bitmap placeImage, Context context) {
+    private Restaurant createRestaurant(Place place, Bitmap placeImage, Context context, boolean isSearched) {
         return new Restaurant(
                 place.getId(),
                 place.getName(),
@@ -137,7 +131,8 @@ public class MapViewRepository {
                 mApiService.getRating(place.getRating()),
                 place.getLatLng(),
                 placeImage,
-                0);
+                0,
+                isSearched);
     }
 
     public void setNumberOfFriendInterested(List<User> userInterestedList) {
@@ -210,13 +205,13 @@ public class MapViewRepository {
 
 
                 if (openMinute > 0 && openHour > currentHour) {
-                    return String.format("%s %s:%s", context.getResources().getString(R.string.map_view_repository_open_at), openHour, openMinute);
+                    return String.format("%s %s:%s%s", context.getResources().getString(R.string.map_view_repository_open_at), openHour, openMinute, context.getResources().getString(R.string.map_view_repository_hour));
                 }
                 if (openHour > currentHour) {
-                    return String.format("%s %s", context.getResources().getString(R.string.map_view_repository_open_at), openHour);
+                    return String.format("%s %s%s", context.getResources().getString(R.string.map_view_repository_open_at), openHour, context.getResources().getString(R.string.map_view_repository_hour));
                 }
                 if (closeHour > currentHour || closeHour < 3) {
-                    return String.format("%s %s", context.getResources().getString(R.string.map_view_repository_open_until), Math.abs(closeHour - currentHour));
+                    return String.format("%s %s%s", context.getResources().getString(R.string.map_view_repository_open_until), Math.abs(closeHour - currentHour), context.getResources().getString(R.string.map_view_repository_hour));
                 }
             }
         }
