@@ -16,7 +16,6 @@ import com.openclassrooms.p7.go4lunch.repository.RestaurantDataRepository;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 
 import java.util.List;
-import java.util.Map;
 
 public class UserAndRestaurantViewModel extends ViewModel {
 
@@ -55,7 +54,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
     }
 
     public LiveData<List<Restaurant>> getAllRestaurants() {
-        return mapDataSource.getAllRestaurantList();
+        return mapDataSource.getAllRestaurants();
     }
 
     public void requestForPlaceDetails(List<String> listOfPlaceId, Context context, boolean isSearched) {

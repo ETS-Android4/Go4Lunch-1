@@ -50,6 +50,7 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
@@ -112,17 +113,23 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private void configureServiceAndViewModel() {
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserAndRestaurantViewModel.class);
         mApiService = DI.getRestaurantApiService();
-        mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), users -> {});
     }
 
     private void putMarkerOnMap() {
+        List<User> userInterestedList = new ArrayList<>();
+        mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), userInterestedList::addAll);
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
-            mMap.clear();
-            mViewModel.setNumberOfFriendInterested(mViewModel.getAllInterestedUsers().getValue());
-            for (Restaurant restaurant : restaurants) {
-                MarkerOptions markerOptions = setMarkerOnMap(restaurant);
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant)));
-                mMap.addMarker(markerOptions);
+            if (mMap != null) {
+                mMap.clear();
+                if (!userInterestedList.isEmpty()) {
+                    mViewModel.setNumberOfFriendInterested(userInterestedList);
+                }
+                for (Restaurant restaurant : restaurants) {
+                    MarkerOptions markerOptions = setMarkerOnMap(restaurant);
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant)));
+                    mMap.addMarker(markerOptions);
+                }
+                userInterestedList.clear();
             }
         });
     }
@@ -315,12 +322,12 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private int setMarkerIcon(Restaurant restaurant) {
-            if (restaurant.getNumberOfFriendInterested() > 0) {
-                return R.drawable.baseline_place_cyan;
-            }
-            if (restaurant.isSearched()) {
-                return R.drawable.baseline_place_green;
-            }
+        if (restaurant.isSearched()) {
+            return R.drawable.baseline_place_green;
+        }
+        if (restaurant.getNumberOfFriendInterested() > 0) {
+            return R.drawable.baseline_place_cyan;
+        }
             return R.drawable.baseline_place_orange;
     }
 

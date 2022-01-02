@@ -58,7 +58,7 @@ public class MapViewRepository {
         }
     }
 
-    public MutableLiveData<List<Restaurant>> getAllRestaurantList() {
+    public MutableLiveData<List<Restaurant>> getAllRestaurants() {
         return listOfRestaurant;
     }
 
@@ -75,8 +75,14 @@ public class MapViewRepository {
         List<Restaurant> restaurantList = new ArrayList<>();
         if (placeId.size() == 1) {
             restaurantList.addAll(Objects.requireNonNull(listOfRestaurant.getValue()));
-            if (restaurantList.size() > RESTAURANT_SIZE) {
-                restaurantList.remove(restaurantList.size() - 1);
+            Restaurant restaurantToRemove = null;
+            for (Restaurant restaurant : restaurantList) {
+                if (restaurant.isSearched()) {
+                    restaurantToRemove = restaurant;
+                }
+            }
+            if (restaurantToRemove != null) {
+                restaurantList.remove(restaurantToRemove);
             }
         }
         for (String id : placeId) {
