@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.openclassrooms.p7.go4lunch.injector.Go4LunchApplication;
 import com.openclassrooms.p7.go4lunch.model.User;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class UserRepository {
 
     public static UserRepository getInstance() {
         if (mUserRepository == null) {
-            FirebaseHelper firebaseHelper = new FirebaseHelper();
+            FirebaseHelper firebaseHelper = FirebaseHelper.getInstance();
             mUserRepository = new UserRepository(firebaseHelper);
         }
         return mUserRepository;
@@ -41,19 +42,19 @@ public class UserRepository {
         listOfUserInterested = new MutableLiveData<>();
     }
 
-    public MutableLiveData<User> getCurrentFirestoreUser() {
-        return currentUser;
-    }
-
     /**
      * Create user in Firestore, if user already exist just update it.
      */
     public void createFireStoreUser() {
         FirebaseUser user = mFirebaseHelper.getCurrentUser();
+        String photoUrl = "";
+        if (user != null && user.getPhotoUrl() != null) {
+            photoUrl = user.getPhotoUrl().toString();
+        }
         User userToCreate = new User(
                 Objects.requireNonNull(user).getUid(),
                 user.getDisplayName(),
-                Objects.requireNonNull(user.getPhotoUrl()).toString(),
+                photoUrl,
                 "",
                 "",
                 false
@@ -65,15 +66,19 @@ public class UserRepository {
                     getCurrentFirestoreUser().postValue(userToCreate);
                 } else {
                     DocumentSnapshot documentSnapshot = task.getResult();
-                    User u = documentSnapshot.toObject(User.class);
-                    getCurrentFirestoreUser().postValue(u);
-                    Log.d(TAG, "createUser: ");
+                    User currentUser = documentSnapshot.toObject(User.class);
+                    getCurrentFirestoreUser().postValue(currentUser);
+                    Log.d(TAG, "createUser: User exist");
                 }
 
             }
         }).addOnFailureListener(exception -> {
 
         });
+    }
+
+    public MutableLiveData<User> getCurrentFirestoreUser() {
+        return currentUser;
     }
 
     public void updateUser(User user) {
@@ -129,17 +134,17 @@ public class UserRepository {
     }
 
     public List<User> getAllInterestedUsersAtCurrentRestaurant(String restaurantId, List<User> users) {
-        List<User> listMutableLiveData = new ArrayList<>();
+        List<User> userList = new ArrayList<>();
         String userId = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
         for (User user : users) {
             if (
                     user.getRestaurantId().equals(restaurantId)
                             && !user.getUid().equals(userId)
             ) {
-                listMutableLiveData.add(user);
+                userList.add(user);
             }
         }
-        return listMutableLiveData;
+        return userList;
     }
 
     public FirebaseUser getCurrentUser() {

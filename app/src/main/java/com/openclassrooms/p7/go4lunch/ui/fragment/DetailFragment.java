@@ -34,9 +34,7 @@ import com.openclassrooms.p7.go4lunch.ui.DetailActivityAdapter;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DetailFragment extends Fragment {
 
@@ -61,7 +59,6 @@ public class DetailFragment extends Fragment {
         this.configureViewBinding();
         this.initServiceAndViewModel();
         this.searchById();
-        this.configureView();
         this.initRecyclerView();
         this.configureListeners();
         return root;
@@ -82,25 +79,23 @@ public class DetailFragment extends Fragment {
     private void searchById() {
         Intent mainActivityIntent = requireActivity().getIntent();
         String CURRENT_RESTAURANT_ID = mainActivityIntent.getStringExtra("restaurantId");
-        mCurrentRestaurant = mViewModel.getCurrentRestaurant(CURRENT_RESTAURANT_ID);
-//        mViewModel.getCurrentFirestoreUser().observe(getViewLifecycleOwner(), new Observer<User>() {
-//            @Override
-//            public void onChanged(User user) {
-//                mCurrentUser = user;
-//            }
-//        });
-        mCurrentUser = mViewModel.getCurrentFirestoreUser().getValue();
-        mCurrentRestaurantFavorite = mViewModel.getCurrentRestaurantData(CURRENT_RESTAURANT_ID);
-        this.setImageAtStart();
-    }
+        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurantList -> {
+            mCurrentRestaurant = mViewModel.getCurrentRestaurant(CURRENT_RESTAURANT_ID, restaurantList);
+            configureView();
+        });
+        mViewModel.getCurrentFirestoreUser().observe(getViewLifecycleOwner(), user -> {
+            mCurrentUser = user;
+            if (mCurrentUser.isRestaurantSelected() && mCurrentUser.getRestaurantId().equals(mCurrentRestaurant.getId())) {
+                setSelectedImage(true);
+            }
+        });
+        mViewModel.getCurrentRestaurantData(CURRENT_RESTAURANT_ID).observe(getViewLifecycleOwner(), restaurantFavorite -> {
+            mCurrentRestaurantFavorite = restaurantFavorite;
+            if (mCurrentRestaurantFavorite != null) {
+                setFavoriteImage(true);
+            }
+        });
 
-    private void setImageAtStart() {
-        if (mCurrentRestaurantFavorite != null) {
-            this.setFavoriteImage(true);
-        }
-        if (mCurrentUser.isRestaurantSelected() && mCurrentUser.getRestaurantId().equals(mCurrentRestaurant.getId())) {
-            this.setSelectedImage(true);
-        }
     }
 
     private void configureView() {
@@ -125,10 +120,12 @@ public class DetailFragment extends Fragment {
     private void initRecyclerView() {
         mBinding.activityDetailRecyclerview.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mBinding.activityDetailRecyclerview.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
+        List<Restaurant> restaurants = new ArrayList<>();
+        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants::addAll);
         mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
-                mViewModel.setNumberOfFriendInterested(users);
+                mViewModel.setNumberOfFriendInterested(users, restaurants);
                 mAdapter = new DetailActivityAdapter(mViewModel.getAllInterestedUsersAtCurrentRestaurant(mCurrentRestaurant.getId(), users));
                 mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
             }

@@ -127,15 +127,19 @@ public class DummyApiService implements ApiService {
      */
     @Override
     public float getDistance(LatLng placeLocation, LatLng currentLocation) {
-        float[] distance = new float[10];
-        Location.distanceBetween(
-                currentLocation.latitude,
-                currentLocation.longitude,
-                Objects.requireNonNull(placeLocation).latitude,
-                Objects.requireNonNull(placeLocation).longitude,
-                distance
-        );
-        return distance[0];
+        if (currentLocation != null) {
+            float[] distance = new float[10];
+            Location.distanceBetween(
+                    currentLocation.latitude,
+                    currentLocation.longitude,
+                    Objects.requireNonNull(placeLocation).latitude,
+                    Objects.requireNonNull(placeLocation).longitude,
+                    distance
+            );
+            return distance[0];
+        } else {
+            return 0;
+        }
     }
 
     /**

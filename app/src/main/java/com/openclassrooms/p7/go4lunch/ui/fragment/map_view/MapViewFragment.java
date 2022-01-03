@@ -121,8 +121,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
             if (mMap != null) {
                 mMap.clear();
+                //TODO launch the app don't color the marker in blue.
                 if (!userInterestedList.isEmpty()) {
-                    mViewModel.setNumberOfFriendInterested(userInterestedList);
+                    mViewModel.setNumberOfFriendInterested(userInterestedList, restaurants);
                 }
                 for (Restaurant restaurant : restaurants) {
                     MarkerOptions markerOptions = setMarkerOnMap(restaurant);

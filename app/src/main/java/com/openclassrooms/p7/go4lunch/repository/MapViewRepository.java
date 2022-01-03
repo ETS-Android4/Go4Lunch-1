@@ -38,11 +38,10 @@ public class MapViewRepository {
     private static volatile MapViewRepository INSTANCE;
     private final GoogleMapsHelper mGoogleMapsHelper;
     private final ApiService mApiService = DI.getRestaurantApiService();
-    private static int RESTAURANT_SIZE;
     private final MutableLiveData<List<Restaurant>> listOfRestaurant = new MutableLiveData<>();
 
-    public MapViewRepository() {
-        mGoogleMapsHelper = GoogleMapsHelper.getInstance();
+    public MapViewRepository(GoogleMapsHelper googleMapsHelper) {
+        mGoogleMapsHelper = googleMapsHelper;
     }
 
     public static MapViewRepository getInstance() {
@@ -52,7 +51,8 @@ public class MapViewRepository {
         }
         synchronized (MapViewRepository.class) {
             if (INSTANCE == null) {
-                INSTANCE = new MapViewRepository();
+                GoogleMapsHelper googleMapsHelper = GoogleMapsHelper.getInstance();
+                INSTANCE = new MapViewRepository(googleMapsHelper);
             }
             return INSTANCE;
         }
@@ -69,9 +69,6 @@ public class MapViewRepository {
      * @param isSearched usefull for the marker color.
      */
     public void requestForPlaceDetails(List<String> placeId, Context context, boolean isSearched) {
-        if (placeId.size() > 1) {
-            RESTAURANT_SIZE = placeId.size();
-        }
         List<Restaurant> restaurantList = new ArrayList<>();
         if (placeId.size() == 1) {
             restaurantList.addAll(Objects.requireNonNull(listOfRestaurant.getValue()));
@@ -108,9 +105,9 @@ public class MapViewRepository {
 
     }
 
-    public Restaurant getCurrentRestaurant(String restaurantId) {
+    public Restaurant getCurrentRestaurant(String restaurantId, List<Restaurant> restaurantList) {
         Restaurant currentRestaurant = null;
-        for (Restaurant restaurant : Objects.requireNonNull(listOfRestaurant.getValue())) {
+        for (Restaurant restaurant : Objects.requireNonNull(restaurantList)) {
             if (restaurant.getId().equals(restaurantId)) {
                 currentRestaurant = restaurant;
             }
@@ -141,9 +138,9 @@ public class MapViewRepository {
                 isSearched);
     }
 
-    public void setNumberOfFriendInterested(List<User> userInterestedList) {
+    public void setNumberOfFriendInterested(List<User> userInterestedList, List<Restaurant> restaurants) {
         List<User> userList = new ArrayList<>();
-        for (Restaurant restaurant : Objects.requireNonNull(listOfRestaurant.getValue())) {
+        for (Restaurant restaurant : restaurants) {
             for (User user : userInterestedList) {
                 if (user.getRestaurantId().equals(restaurant.getId())) {
                     userList.add(user);

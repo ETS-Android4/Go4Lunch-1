@@ -5,7 +5,7 @@ import static org.junit.Assert.fail;
 import androidx.lifecycle.LiveData;
 
 public class LiveDataTestUtils {
-    public static <T> void observeForTesting(LiveData<T> liveData, OnObservedListener<T> onObservedListener) {
+    public static <T> void observeForTesting(LiveData<T> liveData, OnObservedListener<T> onObservedListener) throws InterruptedException {
         boolean[] called = {false};
 
         liveData.observeForever(value -> called[0] = true);
@@ -18,6 +18,6 @@ public class LiveDataTestUtils {
     }
 
     public interface OnObservedListener<T> {
-        void onObserved(LiveData<T> liveData);
+        void onObserved(LiveData<T> liveData) throws InterruptedException;
     }
 }

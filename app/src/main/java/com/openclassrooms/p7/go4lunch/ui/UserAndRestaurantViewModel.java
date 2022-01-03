@@ -12,7 +12,7 @@ import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
-import com.openclassrooms.p7.go4lunch.repository.RestaurantDataRepository;
+import com.openclassrooms.p7.go4lunch.repository.RestaurantFavoriteRepository;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 
 import java.util.List;
@@ -21,12 +21,12 @@ public class UserAndRestaurantViewModel extends ViewModel {
 
 
     private final UserRepository userDataSource;
-    private final RestaurantDataRepository restaurantDataSource;
+    private final RestaurantFavoriteRepository restaurantDataSource;
     private final MapViewRepository mapDataSource;
 
-    public UserAndRestaurantViewModel(UserRepository userRepository, RestaurantDataRepository restaurantDataRepository, MapViewRepository mapViewRepository) {
+    public UserAndRestaurantViewModel(UserRepository userRepository, RestaurantFavoriteRepository restaurantFavoriteRepository, MapViewRepository mapViewRepository) {
         userDataSource = userRepository;
-        restaurantDataSource = restaurantDataRepository;
+        restaurantDataSource = restaurantFavoriteRepository;
         mapDataSource = mapViewRepository;
     }
     public void createUser(){
@@ -61,7 +61,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
         mapDataSource.requestForPlaceDetails(listOfPlaceId, context, isSearched);
     }
 
-    public Restaurant getCurrentRestaurant(String restaurantId) { return mapDataSource.getCurrentRestaurant(restaurantId); }
+    public Restaurant getCurrentRestaurant(String restaurantId, List<Restaurant> restaurantList) { return mapDataSource.getCurrentRestaurant(restaurantId, restaurantList); }
 
 
     //                   --- FOR USER FIREBASE ---
@@ -80,21 +80,19 @@ public class UserAndRestaurantViewModel extends ViewModel {
     //                  --- GOOGLE MAPS ---
 
 
-    public RestaurantFavorite getCurrentRestaurantData(String currentRestaurantId) {
-        return restaurantDataSource.getCurrentRestaurantData(currentRestaurantId);
+    public MutableLiveData<RestaurantFavorite> getCurrentRestaurantData(String currentRestaurantId) {
+        return restaurantDataSource.getCurrentRestaurantFavorite(currentRestaurantId);
     }
 
     public void createRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
-        restaurantDataSource.createRestaurantData(restaurantFavorite);
-        restaurantDataSource.getRestaurantData();
+        restaurantDataSource.createRestaurantFavorite(restaurantFavorite);
     }
 
     public void deleteRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
-        restaurantDataSource.deleteRestaurantData(restaurantFavorite);
-        restaurantDataSource.getRestaurantData();
+        restaurantDataSource.deleteRestaurantFavorite(restaurantFavorite);
     }
 
-    public void setNumberOfFriendInterested(List<User> allInterestedUsers) {
-        mapDataSource.setNumberOfFriendInterested(allInterestedUsers);
+    public void setNumberOfFriendInterested(List<User> allInterestedUsers, List<Restaurant> restaurants) {
+        mapDataSource.setNumberOfFriendInterested(allInterestedUsers, restaurants);
     }
 }

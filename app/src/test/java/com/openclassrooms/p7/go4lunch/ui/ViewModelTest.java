@@ -5,14 +5,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.openclassrooms.p7.go4lunch.LiveDataTestUtils;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
-import com.openclassrooms.p7.go4lunch.repository.RestaurantDataRepository;
+import com.openclassrooms.p7.go4lunch.repository.RestaurantFavoriteRepository;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 
 import org.junit.Before;
@@ -25,6 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ViewModelTest {
@@ -35,7 +34,7 @@ public class ViewModelTest {
     @Mock
     private UserRepository userRepository;
     @Mock
-    private RestaurantDataRepository restaurantDataRepository;
+    private RestaurantFavoriteRepository restaurantFavoriteRepository;
     @Mock
     private MapViewRepository mapViewRepository;
 
@@ -47,20 +46,16 @@ public class ViewModelTest {
         List<User> userList = getDefaultUser();
         listMutableLiveData.setValue(userList);
 
-        given(userRepository.getAllUsers()  ).willReturn(listMutableLiveData);
+        given(userRepository.getAllUsers()).willReturn(listMutableLiveData);
 
-        viewModel = new UserAndRestaurantViewModel(userRepository, restaurantDataRepository, mapViewRepository);
+        viewModel = new UserAndRestaurantViewModel(userRepository, restaurantFavoriteRepository, mapViewRepository);
     }
 
     @Test
     public void getAllUsersWithSuccess() {
         List<User> userList = new ArrayList<>();
-        LiveDataTestUtils.observeForTesting(viewModel.getAllUsers(), new LiveDataTestUtils.OnObservedListener<List<User>>() {
-            @Override
-            public void onObserved(LiveData<List<User>> liveData) {
-                userList.addAll(liveData.getValue());
-            }
-        });
+        LiveDataTestUtils.observeForTesting(viewModel.getAllUsers(), liveData ->
+                userList.addAll(Objects.requireNonNull(liveData.getValue())));
 
         assertEquals(userList.size(), 3);
     }

@@ -1,40 +1,27 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
-import static android.content.ContentValues.TAG;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.common.api.Status;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
@@ -44,13 +31,9 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.notification.PushNotificationService;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
-import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.fragment.preference.PreferenceFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -61,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView userPicture;
     private ActivityMainBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
-    private User currentUser;
+    private User mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,9 +171,9 @@ public class MainActivity extends AppCompatActivity {
     private void showRestaurantSelected() {
         ApiService apiService = DI.getRestaurantApiService();
         mViewModel.getCurrentFirestoreUser().observe(this, user -> {
-            currentUser = user;
+            mCurrentUser = user;
         });
-        String restaurantName = apiService.formatRestaurantName(currentUser.getRestaurantName());
+        String restaurantName = apiService.formatRestaurantName(mCurrentUser.getRestaurantName());
         if (restaurantName.equals("")) {
             restaurantName = getString(R.string.main_activity_no_restaurant_selected);
         }

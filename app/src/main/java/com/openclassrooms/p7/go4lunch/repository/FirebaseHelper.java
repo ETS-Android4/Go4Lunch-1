@@ -3,6 +3,7 @@ package com.openclassrooms.p7.go4lunch.repository;
 import android.content.Context;
 
 import androidx.annotation.Nullable;
+import androidx.test.runner.AndroidJUnit4;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Task;
@@ -13,13 +14,18 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.openclassrooms.p7.go4lunch.injector.Go4LunchApplication;
+import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 
+import org.junit.runners.JUnit4;
+
+import java.util.List;
 import java.util.Objects;
 
 public class FirebaseHelper {
-
-    private static final String USERS_COLLECTION_NAME = "users";
-    private static final String RESTAURANT_COLLECTION_NAME = "restaurants";
+    private static final boolean isRunningTest = Go4LunchApplication.isIsRunningTest();
+    public static String USERS_COLLECTION_NAME = isRunningTest ? "users_test" : "users";
+    private static final String RESTAURANT_COLLECTION_NAME = isRunningTest ? "restaurants_test" : "restaurants";
     public static FirebaseHelper firebaseHelper;
 
     public static FirebaseHelper getInstance() {
@@ -28,6 +34,7 @@ public class FirebaseHelper {
         }
         return firebaseHelper;
     }
+
     /**
      * Get current user from Firebase.
      * @return current User.
