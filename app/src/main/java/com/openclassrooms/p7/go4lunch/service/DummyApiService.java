@@ -5,6 +5,9 @@ import android.location.Location;
 import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.model.LocalTime;
+import com.google.android.libraries.places.api.model.OpeningHours;
+import com.google.android.libraries.places.api.model.Period;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
@@ -45,6 +48,55 @@ public class DummyApiService implements ApiService {
         }
         return currentDays;
     }
+
+    /**
+     * Format opening hour for show it.
+     * @param openingHours place opening hours.
+     * @return opening hours if available.
+     */
+    public String getOpeningHours(OpeningHours openingHours) {
+        if (openingHours != null) {
+            String currentDay = getCurrentDay(Calendar.getInstance());
+            LocalTime currentTime = LocalTime.newInstance(Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE));
+            return makeStringOpeningHours(openingHours, currentDay, currentTime);
+        }
+        return "4";
+    }
+
+    /**
+     * Get the current hour and openingHour of the currentDay and calculate the remaining time before Restaurant close.
+     *
+     * @param openingHours Restaurant openingHours.
+     * @return String with remaining time before restaurant close.
+     */
+    public String makeStringOpeningHours(OpeningHours openingHours, String currentDay, LocalTime currentTime) {
+        int currentHour = currentTime.getHours();
+        for (Period openingDay : openingHours.getPeriods()) {
+            if (Objects.requireNonNull(openingDay.getOpen()).getDay().toString().equals(currentDay)) {
+                int closeHour = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
+                int openHour = Objects.requireNonNull(openingDay.getOpen()).getTime().getHours();
+                int openMinute = Objects.requireNonNull(openingDay.getOpen()).getTime().getMinutes();
+                int code = 1;
+                if (openMinute > 0 && openHour > currentHour) {
+                    if (openHour < 12) {
+                        code = 0;
+                    }
+                    return String.format("%s%s:%s", code, openHour, openMinute);
+                }
+                if (openHour > currentHour) {
+                    if (openHour < 12) {
+                        code = 0;
+                    }
+                    return String.format("%s%s", code, openHour);
+                }
+                if (closeHour > currentHour || closeHour < 3) {
+                    return String.format("%s%s", 2, Math.abs(closeHour - currentHour));
+                }
+            }
+        }
+        return "3";
+    }
+
 
     /**
      * Used to format username with his first name and put a uppercase on the first letter.

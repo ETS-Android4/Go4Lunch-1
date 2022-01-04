@@ -1,7 +1,7 @@
 package com.openclassrooms.p7.go4lunch.repository;
 
 import static android.content.ContentValues.TAG;
-import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.currentLocation;
+import static com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment.CURRENT_LOCATION;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -90,15 +90,17 @@ public class MapViewRepository {
                         Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context, isSearched);
                         restaurantList.add(restaurant);
                         listOfRestaurant.postValue(restaurantList);
+                        Log.e(TAG, "requestForPlaceDetails: PLACE FOUND WITH PHOTO " + place.getName());
                     }).addOnFailureListener((exception) -> {
                         if (exception instanceof ApiException) {
-                            Log.e(TAG, "Place not found: " + exception.getMessage());
+                            Log.e(TAG, "requestForPlaceDetails: PLACE NOT FOUND");
                         }
                     });
                 } else {
                     Restaurant restaurant = createRestaurant(place, null, context, isSearched);
                     restaurantList.add(restaurant);
                     listOfRestaurant.postValue(restaurantList);
+                    Log.e(TAG, "requestForPlaceDetails: PLACE FOUND WITHOUT PHOTO");
                 }
             });
         }
@@ -127,10 +129,10 @@ public class MapViewRepository {
                 place.getId(),
                 place.getName(),
                 place.getAddress(),
-                getOpeningHours(place.getOpeningHours(), context),
+                mApiService.getOpeningHours(place.getOpeningHours()),
                 place.getPhoneNumber(),
                 mApiService.getWebsiteUri(place.getWebsiteUri()),
-                mApiService.getDistance(place.getLatLng(), currentLocation),
+                mApiService.getDistance(place.getLatLng(), CURRENT_LOCATION),
                 mApiService.getRating(place.getRating()),
                 place.getLatLng(),
                 placeImage,
@@ -176,48 +178,4 @@ public class MapViewRepository {
 
     }
 
-    /**
-     * Format opening hour for show it.
-     *
-     * @param openingHours place opening hours.
-     * @return opening hours if available.
-     */
-    public String getOpeningHours(OpeningHours openingHours, Context context) {
-        if (openingHours != null) {
-            String currentDay = mApiService.getCurrentDay(Calendar.getInstance());
-            LocalTime currentTime = LocalTime.newInstance(Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE));
-            return makeStringOpeningHours(openingHours, currentDay, currentTime, context);
-        }
-        return "no details";
-    }
-
-    /**
-     * Get the current hour and openingHour of the currentDay and calculate the remaining time before Restaurant close.
-     *
-     * @param openingHours Restaurant openingHours.
-     * @param context
-     * @return String with remaining time before restaurant close.
-     */
-    public String makeStringOpeningHours(OpeningHours openingHours, String currentDay, LocalTime currentTime, Context context) {
-        int currentHour = currentTime.getHours();
-        for (Period openingDay : openingHours.getPeriods()) {
-            if (Objects.requireNonNull(openingDay.getOpen()).getDay().toString().equals(currentDay)) {
-                int closeHour = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
-                int openHour = Objects.requireNonNull(openingDay.getOpen()).getTime().getHours();
-                int openMinute = Objects.requireNonNull(openingDay.getOpen()).getTime().getMinutes();
-
-
-                if (openMinute > 0 && openHour > currentHour) {
-                    return String.format("%s %s:%s%s", context.getResources().getString(R.string.map_view_repository_open_at), openHour, openMinute, context.getResources().getString(R.string.map_view_repository_hour));
-                }
-                if (openHour > currentHour) {
-                    return String.format("%s %s%s", context.getResources().getString(R.string.map_view_repository_open_at), openHour, context.getResources().getString(R.string.map_view_repository_hour));
-                }
-                if (closeHour > currentHour || closeHour < 3) {
-                    return String.format("%s %s%s", context.getResources().getString(R.string.map_view_repository_open_until), Math.abs(closeHour - currentHour), context.getResources().getString(R.string.map_view_repository_hour));
-                }
-            }
-        }
-        return context.getResources().getString(R.string.map_view_repository_still_closed);
-    }
 }

@@ -84,7 +84,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     private final LatLng defaultLocation = new LatLng(43.406656, 3.684383);
-    public static LatLng currentLocation;
+    public static LatLng CURRENT_LOCATION;
 
     public static final String KEY_LOCATION = "location";
     private static final String KEY_CAMERA_POSITION = "camera_position";
@@ -140,7 +140,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         List<Place.Field> fields = Arrays.asList(Place.Field.ID);
         Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
                 .setTypeFilter(TypeFilter.ESTABLISHMENT)
-                .setLocationBias(mApiService.getRectangularBound(MapViewFragment.currentLocation))
+                .setLocationBias(mApiService.getRectangularBound(MapViewFragment.CURRENT_LOCATION))
                 .setCountry("FR")
                 .setHint("Search restaurant")
                 .build(requireContext());
@@ -245,7 +245,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                 locationResult.addOnCompleteListener(this.requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         lastKnownLocation = task.getResult();
-                        currentLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                        CURRENT_LOCATION = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
                         if (lastKnownLocation != null) {
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(lastKnownLocation.getLatitude(),

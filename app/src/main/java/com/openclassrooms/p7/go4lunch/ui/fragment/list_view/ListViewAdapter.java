@@ -7,9 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -73,9 +70,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         }
 
         public void bind(Restaurant restaurant){
+            String openingHourText = makeOpeningHourString(restaurant.getOpeningHours());
             mBinding.listViewRowRestaurantNameTv.setText(mApiService.formatRestaurantName(restaurant.getName()));
             mBinding.listViewRowRestaurantAdressTv.setText(restaurant.getAddress());
-            mBinding.listViewRowRestaurantIsOpenTv.setText(restaurant.getOpeningHours());
+            mBinding.listViewRowRestaurantIsOpenTv.setText(openingHourText);
             mBinding.listViewRowDistanceTv.setText(String.format(Locale.ENGLISH,"%4.0fm",restaurant.getDistance()));
 
             if (restaurant.getPictureUrl() != null) {
@@ -89,6 +87,23 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
                 ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, restaurant.getRating()));
             }
             mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",restaurant.getNumberOfFriendInterested()));
+        }
+
+        private String makeOpeningHourString(String openingHours) {
+            char code = openingHours.charAt(0);
+            String time = openingHours.substring(1);
+            switch (code) {
+                case '0':
+                    return String.format("%s %s%s", itemView.getResources().getString(R.string.list_view_holder_open_at), time, itemView.getResources().getString(R.string.list_view_holder_am)) ;
+                case '1':
+                    return String.format("%s %s%s", itemView.getResources().getString(R.string.list_view_holder_open_at), time, itemView.getResources().getString(R.string.list_view_holder_pm)) ;
+                case '2':
+                    return String.format("%s %s", itemView.getResources().getString(R.string.list_view_holder_until), time);
+                case '3':
+                    return itemView.getResources().getString(R.string.list_view_holder_still_closed);
+                default:
+                    return itemView.getResources().getString(R.string.workmates_list_view_holder_no_details_here);
+            }
         }
     }
 }

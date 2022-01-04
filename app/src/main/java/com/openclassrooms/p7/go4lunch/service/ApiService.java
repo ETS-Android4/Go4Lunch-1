@@ -3,6 +3,8 @@ package com.openclassrooms.p7.go4lunch.service;
 import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.model.LocalTime;
+import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
@@ -19,7 +21,10 @@ public interface ApiService {
     String getCurrentDay(Calendar calendar);
     String formatUserFirstName(String userName);
     String formatRestaurantName(String restaurantName);
+    String makeStringOpeningHours(OpeningHours openingHours, String currentDay, LocalTime currentTime);
 
+    // --- GETTER ---
+    String getOpeningHours(OpeningHours openingHours);
     String getWebsiteUri(Uri websiteUri);
     double getRating(Double rating);
     float getDistance(LatLng latLng, LatLng currentLocation);

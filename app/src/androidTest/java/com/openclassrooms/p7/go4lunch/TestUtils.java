@@ -1,5 +1,6 @@
 package com.openclassrooms.p7.go4lunch;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,10 +22,20 @@ public abstract class TestUtils {
     public static final String USER_PASSWORD_TEST = "password";
     public static final String USER_RESTAURANT_NAME_TEST = "restaurant test";
     public static final String USER_RESTAURANT_ID = "123456";
+    public static final LatLng USER_CURRENT_LOCATION = new LatLng(25.3691245, 6.759127);
 
-    public static final String FIRST_RESTAURANT_ID = "ChIJexGknqI1sRIRWr8XRhcWfKw";
-    public static final String SECOND_RESTAURANT_ID = "ChIJKb7Sg6E1sRIREV7wSM";
-    public static final String THIRD_RESTAURANT_ID = "ChIJ34_PP541sRIR_sG_wtG5EZE";
+    public static final String FIRST_RESTAURANT_ID =  "ChIJexGknqI1sRIRWr8XRhcWfKw";
+    public static final String SECOND_RESTAURANT_ID = "ChIJ5X07y6M1sRIRNiPZimTgF-4";
+    public static final String THIRD_RESTAURANT_ID =  "ChIJ34_PP541sRIR_sG_wtG5EZE";
+
+    public static final String RESTAURANT_NAME = "fleur de sel";
+    public static final String RESTAURANT_ADDRESS = "15 Rue du 11 Novembre 1918, 34200 Sète";
+    public static final String RESTAURANT_PHONE_NUMBER = "+33448171742";
+    public static final String RESTAURANT_WEBSITE_URL = "https://app.edgar.travel/#/restaurants/cksvlhzxu3fez0709gcc71ooj";
+    public static final String RESTAURANT_OPENING_HOURS = "still closed";
+    public static final LatLng RESTAURANT_LOCATION = new LatLng(43.4146856,3.6927541);
+    public static final float[] RESTAURANT_DISTANCE = new float[]{500};
+    public static final double RESTAURANT_RATING = 4.7;
 
     public static void signInUser(String userEmail, String userPassword) throws ExecutionException, InterruptedException {
         FirebaseUser currentFirebaseUser = Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail, userPassword)).getUser();
