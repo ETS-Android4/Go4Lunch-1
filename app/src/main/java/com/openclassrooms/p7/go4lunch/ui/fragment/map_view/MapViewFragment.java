@@ -352,13 +352,13 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    private class ParserTask extends AsyncTask<String, Integer, List<HashMap<String, String>>> {
+    private class ParserTask extends AsyncTask<String, Integer, List<String>> {
 
-        // Return a list contains id, name, adress, latitude and longitude of the restaurants.
+        // Return a list contains id, name, address, latitude and longitude of the restaurants.
         @Override
-        protected List<HashMap<String, String>> doInBackground(String... strings) {
+        protected List<String> doInBackground(String... strings) {
             JsonParser jsonParser = new JsonParser();
-            List<HashMap<String, String>> mapList = null;
+            List<String> mapList = null;
             JSONObject object;
             try {
                 object = new JSONObject(strings[0]);
@@ -370,14 +370,14 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         }
         // Put a marker on each restaurant found,
         @Override
-        protected void onPostExecute(List<HashMap<String, String>> hashMaps) {
+        protected void onPostExecute(List<String> hashMaps) {
             mMap.clear();
 
             //TODO just for save some request.
             List<String> listOfPlaceId = new ArrayList<>();
 //            for (int i = 0; i < hashMaps.size(); i++) {
             for (int i = 0; i < 3; i++) {
-                String placeId = hashMaps.get(i).get("placeId");
+                String placeId = hashMaps.get(i);
                 listOfPlaceId.add(placeId);
             }
             mViewModel.requestForPlaceDetails(listOfPlaceId, requireContext(), false);

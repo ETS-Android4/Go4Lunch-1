@@ -12,7 +12,7 @@ public class Go4LunchApplication extends Application {
         super.onCreate();
         context = getApplicationContext();
         try {
-            Class.forName("androidx.test.runner.AndroidJUnit4");
+            Class.forName("com.openclassrooms.p7.go4lunch.UserRepositoryAndRestaurantFavoriteTest");
             isRunningTest = true;
         } catch (ClassNotFoundException e) {
             isRunningTest = false;

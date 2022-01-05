@@ -14,15 +14,11 @@ import java.util.List;
 public class JsonParser {
 
     // Create list for each parameters get (placeId, latitude and longitude).
-    private HashMap<String, String> parseJsonObject(JSONObject object){
-        HashMap<String,String> dataList = new HashMap<>();
+    private String parseJsonObject(JSONObject object){
+        String dataList = null;
         try {
             String placeId = object.getString("place_id");
-            String placeLat = object.getJSONObject("geometry").getJSONObject("location").getString("lat");
-            String placeLng = object.getJSONObject("geometry").getJSONObject("location").getString("lng");
-            dataList.put("placeId", placeId);
-            dataList.put("latitude", placeLat);
-            dataList.put("longitude", placeLng);
+            dataList = placeId;
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -30,11 +26,11 @@ public class JsonParser {
     }
 
     // Create a list where each elements are composed with placeId, latitude and longitude
-    private List<HashMap<String,String>> parseJsonArray(JSONArray jsonArray) {
-        List<HashMap<String, String>> dataList = new ArrayList<>();
+    private List<String> parseJsonArray(JSONArray jsonArray) {
+        List<String> dataList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++){
             try {
-                HashMap<String,String> data = parseJsonObject((JSONObject) jsonArray.get(i));
+                String data = parseJsonObject((JSONObject) jsonArray.get(i));
                 dataList.add(data);
             }catch (JSONException e) {
                 e.printStackTrace();
@@ -44,7 +40,7 @@ public class JsonParser {
     }
 
     // The list previously created can be handled.
-    public List<HashMap<String, String>> parseResult(JSONObject object) {
+    public List<String> parseResult(JSONObject object) {
         JSONArray jsonArray = null;
         try {
             jsonArray = object.getJSONArray("results");
