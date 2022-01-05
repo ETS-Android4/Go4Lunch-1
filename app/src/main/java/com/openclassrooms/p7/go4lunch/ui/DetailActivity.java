@@ -5,7 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.openclassrooms.p7.go4lunch.R;
-import com.openclassrooms.p7.go4lunch.ui.fragment.DetailFragment;
+import com.openclassrooms.p7.go4lunch.ui.fragment.detail.DetailFragment;
 
 public class DetailActivity extends AppCompatActivity {
 

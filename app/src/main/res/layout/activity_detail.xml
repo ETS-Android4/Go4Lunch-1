@@ -9,7 +9,7 @@
         android:id="@+id/activity_detail_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.openclassrooms.p7.go4lunch.ui.fragment.DetailFragment"
+        android:name="com.openclassrooms.p7.go4lunch.ui.fragment.detail.DetailFragment"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

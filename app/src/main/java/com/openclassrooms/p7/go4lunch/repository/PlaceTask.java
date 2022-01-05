@@ -4,9 +4,6 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.JsonParser;
-import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,7 +14,9 @@ import java.util.Objects;
 public class PlaceTask extends AsyncTask<String, Integer, List<String>> {
 
     private GoogleMapsHelper mGoogleMapsHelper = GoogleMapsHelper.getInstance();
+
     private final MutableLiveData<List<String>> listOfPlaceId = new MutableLiveData<>();
+
     public MutableLiveData<List<String>> getListOfPlaceId() {
         return listOfPlaceId;
     }
@@ -31,7 +30,6 @@ public class PlaceTask extends AsyncTask<String, Integer, List<String>> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         JsonParser jsonParser = new JsonParser();
         List<String> listOfId = null;
         JSONObject object;
@@ -47,6 +45,7 @@ public class PlaceTask extends AsyncTask<String, Integer, List<String>> {
         return listOfId;
 
     }
+
     // Execute the task to handle the data.
     @Override
     protected void onPostExecute(List<String> listOfId) {

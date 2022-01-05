@@ -155,30 +155,4 @@ public class MapViewRepository {
             userList.clear();
         }
     }
-
-    public String getJson(String url) throws IOException {
-        HttpURLConnection connection = mGoogleMapsHelper.getData(url);
-        connection.connect();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuilder builder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            builder.append(line);
-        }
-        reader.close();
-        return builder.toString();
-    }
-
-    public void handleJson(String url) throws IOException {
-        JSONObject jsonObject;
-        List<Map<String, String>> mapList = null;
-        try {
-            jsonObject = new JSONObject(getJson(url));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
 }

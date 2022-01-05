@@ -1,4 +1,4 @@
-package com.openclassrooms.p7.go4lunch.ui.fragment.map_view;
+package com.openclassrooms.p7.go4lunch.repository;
 
 import org.json.JSONArray;
 import org.json.JSONException;

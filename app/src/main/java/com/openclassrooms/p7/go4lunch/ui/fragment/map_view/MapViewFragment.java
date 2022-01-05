@@ -131,7 +131,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
             if (mMap != null) {
                 mMap.clear();
-                //TODO launch the app don't color the marker in blue.
+                //TODO launch the app don't color the marker in blue. and after preference setting is closed map is clear.
                 if (!userInterestedList.isEmpty()) {
                     mViewModel.setNumberOfFriendInterested(userInterestedList, restaurants);
                 }
@@ -260,7 +260,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(lastKnownLocation.getLatitude(),
                                             lastKnownLocation.getLongitude()),DEFAULT_ZOOM));
-                            nearbySearch();
+                            if (isAlreadyNearbySearched) {
+                                nearbySearch();
+                            }
                         }
                     } else {
                         Log.d(TAG, "Current location is null. Using defaults.");

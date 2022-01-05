@@ -37,6 +37,13 @@ public abstract class TestUtils {
     public static final float[] RESTAURANT_DISTANCE = new float[]{500};
     public static final double RESTAURANT_RATING = 4.7;
 
+    public static final String NEARBY_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+            + "?keyword=restaurant"
+            + "&location=" + 43.4073612 + "," + 3.6997723
+            + "&radius=1500"
+            + "&sensor=true"
+            + "&key=" + BuildConfig.GMP_KEY;
+
     public static void signInUser(String userEmail, String userPassword) throws ExecutionException, InterruptedException {
         FirebaseUser currentFirebaseUser = Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail, userPassword)).getUser();
         Assert.assertNotNull(currentFirebaseUser);

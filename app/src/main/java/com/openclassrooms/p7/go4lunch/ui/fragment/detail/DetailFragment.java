@@ -1,4 +1,4 @@
-package com.openclassrooms.p7.go4lunch.ui.fragment;
+package com.openclassrooms.p7.go4lunch.ui.fragment.detail;
 
 import android.Manifest;
 import android.content.Intent;
@@ -30,7 +30,6 @@ import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
-import com.openclassrooms.p7.go4lunch.ui.DetailActivityAdapter;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 import java.util.ArrayList;
