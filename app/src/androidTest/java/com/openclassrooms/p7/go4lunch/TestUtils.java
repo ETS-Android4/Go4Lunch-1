@@ -22,7 +22,7 @@ public abstract class TestUtils {
     public static final String USER_PASSWORD_TEST = "password";
     public static final String USER_RESTAURANT_NAME_TEST = "restaurant test";
     public static final String USER_RESTAURANT_ID = "123456";
-    public static final LatLng USER_CURRENT_LOCATION = new LatLng(25.3691245, 6.759127);
+    public static final LatLng USER_CURRENT_LOCATION = new LatLng(43.4073612, 3.6997723);
 
     public static final String FIRST_RESTAURANT_ID =  "ChIJexGknqI1sRIRWr8XRhcWfKw";
     public static final String SECOND_RESTAURANT_ID = "ChIJ5X07y6M1sRIRNiPZimTgF-4";
@@ -39,7 +39,7 @@ public abstract class TestUtils {
 
     public static final String NEARBY_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
             + "?keyword=restaurant"
-            + "&location=" + 43.4073612 + "," + 3.6997723
+            + "&location=" + USER_CURRENT_LOCATION.latitude + "," + USER_CURRENT_LOCATION.longitude
             + "&radius=1500"
             + "&sensor=true"
             + "&key=" + BuildConfig.GMP_KEY;

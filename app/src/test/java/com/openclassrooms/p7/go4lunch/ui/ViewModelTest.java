@@ -61,10 +61,10 @@ public class ViewModelTest {
     @Test
     public void getAllUsersWithSuccess() {
         List<User> userList = new ArrayList<>();
-        LiveDataTestUtils.observeForTesting(viewModel.getAllUsers(), liveData ->
-                userList.addAll(Objects.requireNonNull(liveData.getValue())));
-
-        assertEquals(userList.size(), 3);
+        LiveDataTestUtils.observeForTesting(viewModel.getAllUsers(), liveData -> {
+            userList.addAll(Objects.requireNonNull(liveData.getValue()));
+            assertEquals(userList.size(), 3);
+        });
     }
 
     @Test
@@ -74,11 +74,11 @@ public class ViewModelTest {
         given((userRepository.getAllInterestedUsers())).willReturn(listMutableLiveData);
         List<User> userList = new ArrayList<>();
         LiveDataTestUtils.observeForTesting(viewModel.getAllInterestedUsers(), liveData -> {
-            userList.addAll(liveData.getValue());
-
+            userList.addAll(Objects.requireNonNull(liveData.getValue()));
+            Mockito.verify(userRepository, times(1)).getAllInterestedUsers();
+            assertEquals(userList.size(), 2);
         });
-        Mockito.verify(userRepository, times(1)).getAllInterestedUsers();
-        assertEquals(userList.size(), 2);
+
     }
 
     private List<User> getDefaultUser() {

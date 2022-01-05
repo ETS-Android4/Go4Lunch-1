@@ -60,7 +60,8 @@ public class DummyApiService implements ApiService {
             LocalTime currentTime = LocalTime.newInstance(Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE));
             return makeStringOpeningHours(openingHours, currentDay, currentTime);
         }
-        return "4";
+        // no details code.
+        return "5";
     }
 
     /**
@@ -73,28 +74,39 @@ public class DummyApiService implements ApiService {
         int currentHour = currentTime.getHours();
         for (Period openingDay : openingHours.getPeriods()) {
             if (Objects.requireNonNull(openingDay.getOpen()).getDay().toString().equals(currentDay)) {
-                int closeHour = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
-                int openHour = Objects.requireNonNull(openingDay.getOpen()).getTime().getHours();
-                int openMinute = Objects.requireNonNull(openingDay.getOpen()).getTime().getMinutes();
-                int code = 1;
-                if (openMinute > 0 && openHour > currentHour) {
-                    if (openHour < 12) {
-                        code = 0;
-                    }
-                    return String.format("%s%s:%s", code, openHour, openMinute);
+                int hours = Objects.requireNonNull(openingDay.getOpen()).getTime().getHours();
+                int minutes = Objects.requireNonNull(openingDay.getOpen()).getTime().getMinutes();
+                int closeHours = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
+                int closeMinutes = Objects.requireNonNull(openingDay.getClose()).getTime().getMinutes();
+
+                // open hours code.
+                int firstCode = 0;
+                if (closeHours > currentHour && hours < currentHour) {
+                    // close hour code.
+                    firstCode = 1;
+                    hours = closeHours;
+                    minutes = closeMinutes;
                 }
-                if (openHour > currentHour) {
-                    if (openHour < 12) {
-                        code = 0;
-                    }
-                    return String.format("%s%s", code, openHour);
+
+                // morning code.
+                int lastCode = 0;
+
+                if (currentHour > 12) {
+                    // afternoon code.
+                    lastCode = 1;
                 }
-                if (closeHour > currentHour || closeHour < 3) {
-                    return String.format("%s%s", 2, Math.abs(closeHour - currentHour));
+                // show minutes.
+                if (minutes > 0 && hours > currentHour) {
+                    return String.format("%s%s:%s%s", firstCode, hours, minutes, lastCode);
+                }
+                // don't show minutes.
+                if (hours > currentHour) {
+                    return String.format("%s%s%s", firstCode, hours, lastCode);
                 }
             }
         }
-        return "3";
+        // still closed code.
+        return "4";
     }
 
 

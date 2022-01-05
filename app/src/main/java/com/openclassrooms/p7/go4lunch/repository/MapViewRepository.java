@@ -90,7 +90,7 @@ public class MapViewRepository {
                 Place place = response.getPlace();
                 if (mGoogleMapsHelper.getPhotoData(place, context) != null) {
                     mGoogleMapsHelper.getPhotoData(place, context).addOnSuccessListener((fetchPhotoResponse) -> {
-                        Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), context, isSearched);
+                        Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), isSearched);
                         restaurantList.add(restaurant);
                         listOfRestaurant.postValue(restaurantList);
                         Log.e(TAG, "requestForPlaceDetails: PLACE FOUND WITH PHOTO " + place.getName());
@@ -100,7 +100,7 @@ public class MapViewRepository {
                         }
                     });
                 } else {
-                    Restaurant restaurant = createRestaurant(place, null, context, isSearched);
+                    Restaurant restaurant = createRestaurant(place, null, isSearched);
                     restaurantList.add(restaurant);
                     listOfRestaurant.postValue(restaurantList);
                     Log.e(TAG, "requestForPlaceDetails: PLACE FOUND WITHOUT PHOTO");
@@ -123,11 +123,10 @@ public class MapViewRepository {
     /**
      * Call to get a request for photo.
      * @param place id of the place.
-     * @param context context of the fragment.
      * @param isSearched
      * @return fetch place task.
      */
-    private Restaurant createRestaurant(Place place, Bitmap placeImage, Context context, boolean isSearched) {
+    private Restaurant createRestaurant(Place place, Bitmap placeImage, boolean isSearched) {
         return new Restaurant(
                 place.getId(),
                 place.getName(),

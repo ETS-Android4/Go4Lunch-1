@@ -127,11 +127,12 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             }
         });
         List<User> userInterestedList = new ArrayList<>();
+        List<Restaurant> restaurantList = new ArrayList<>();
         mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), userInterestedList::addAll);
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
             if (mMap != null) {
                 mMap.clear();
-                //TODO launch the app don't color the marker in blue. and after preference setting is closed map is clear.
+                //TODO after preference setting is closed map is clear.
                 if (!userInterestedList.isEmpty()) {
                     mViewModel.setNumberOfFriendInterested(userInterestedList, restaurants);
                 }
@@ -140,7 +141,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                     markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant)));
                     mMap.addMarker(markerOptions);
                 }
-                userInterestedList.clear();
             }
         });
     }
@@ -307,7 +307,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                 + "&sensor=true"
                 + "&key=" + BuildConfig.GMP_KEY;
         mViewModel.setPlaceTaskExecutor(url);
-//        mMap.clear();
     }
 
     // Read the url and do a request to find nearby restaurants

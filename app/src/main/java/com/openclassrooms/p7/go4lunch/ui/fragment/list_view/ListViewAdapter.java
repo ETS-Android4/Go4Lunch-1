@@ -90,17 +90,22 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         }
 
         private String makeOpeningHourString(String openingHours) {
-            char code = openingHours.charAt(0);
-            String time = openingHours.substring(1);
-            switch (code) {
+            char firstCode = openingHours.charAt(0);
+            char lastCode = openingHours.charAt(openingHours.length() -1);
+            int length = openingHours.length() - 1;
+            String time = openingHours.substring(1, length);
+            String lastString = itemView.getResources().getString(R.string.list_view_holder_am);
+
+            if (lastCode == '1') {
+                lastString = itemView.getResources().getString(R.string.list_view_holder_pm);
+            }
+
+            switch (firstCode) {
                 case '0':
-                    return String.format("%s %s%s", itemView.getResources().getString(R.string.list_view_holder_open_at), time, itemView.getResources().getString(R.string.list_view_holder_am)) ;
+                    return String.format("%s %s%s", itemView.getResources().getString(R.string.list_view_holder_open_at), time, lastString);
                 case '1':
-                    return String.format("%s %s%s", itemView.getResources().getString(R.string.list_view_holder_open_at), time, itemView.getResources().getString(R.string.list_view_holder_pm)) ;
-                case '2':
-                    //TODO put am/pm and open
-                    return String.format("%s %s", itemView.getResources().getString(R.string.list_view_holder_until), time);
-                case '3':
+                    return String.format("%s %s%s", itemView.getResources().getString(R.string.list_view_holder_until), time, lastString);
+                case '4':
                     return itemView.getResources().getString(R.string.list_view_holder_still_closed);
                 default:
                     return itemView.getResources().getString(R.string.workmates_list_view_holder_no_details_here);

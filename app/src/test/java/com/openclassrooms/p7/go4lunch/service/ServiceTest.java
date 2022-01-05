@@ -18,6 +18,7 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
+import com.openclassrooms.p7.go4lunch.model.User;
 
 import org.junit.After;
 import org.junit.Before;
@@ -55,37 +56,14 @@ public class ServiceTest {
         RestaurantFavorite restaurantFavoriteTest5 = new RestaurantFavorite( "CCCC", true);
         RestaurantFavorite restaurantFavoriteTest6 = new RestaurantFavorite( "BBBB", false);
 
-
-
-        Map<String, RestaurantFavorite> userAndRestaurantMapTest0 = new HashMap<>();
-        userAndRestaurantMapTest0.put(restaurantFavoriteTest0.getRestaurantId(), restaurantFavoriteTest0);
-        userAndRestaurantMapTest0.put(restaurantFavoriteTest4.getRestaurantId(), restaurantFavoriteTest4);
-
-        Map<String, RestaurantFavorite> userAndRestaurantMapTest1 = new HashMap<>();
-        userAndRestaurantMapTest1.put(restaurantFavoriteTest2.getRestaurantId(), restaurantFavoriteTest2);
-        userAndRestaurantMapTest1.put(restaurantFavoriteTest6.getRestaurantId(), restaurantFavoriteTest6);
-
-        Map<String, RestaurantFavorite> userAndRestaurantMapTest2 = new HashMap<>();
-        userAndRestaurantMapTest2.put(restaurantFavoriteTest1.getRestaurantId(), restaurantFavoriteTest1);
-        userAndRestaurantMapTest2.put(restaurantFavoriteTest3.getRestaurantId(), restaurantFavoriteTest3);
-        userAndRestaurantMapTest2.put(restaurantFavoriteTest5.getRestaurantId(), restaurantFavoriteTest5);
-
-
-//        User userTest0 = new User("1111", "one test", "https://i.pravatar.cc/150?u=a042581f4e29026704d", userAndRestaurantMapTest0);
-//        User userTest1 = new User("2222", "two test", "https://i.pravatar.cc/150?u=a042581f4e29026704e", userAndRestaurantMapTest1);
-//        User userTest2 = new User("3333", "three test", "https://i.pravatar.cc/150?u=a042581f4e29026704f", userAndRestaurantMapTest2);
-
-//        service.getUsers().add(userTest0);
-//        service.getUsers().add(userTest1);
-//        service.getUsers().add(userTest2);
+        User userTest1 = new User("1111", "test1", "photo", "restaurant1", "AAAA", true);
+        User userTest2 = new User("2222", "test2", "photo", "restaurant2", "BBBB", false);
+        User userTest3 = new User("3333", "test3", "photo", "restaurant3", "CCCC", true);
 
         LatLng latLngTest = new LatLng(4.5236, 6.7854);
         Restaurant restaurantTest0 = new Restaurant("AAAA", "Restaurant le jasmin", "3 rue St Félicien", "18h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,latLngTest, null, 3, false);
         Restaurant restaurantTest1 = new Restaurant("BBBB", "RESTAURANT le goéland", "5 boulevard du battaillon", "15h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,latLngTest, null, 9, false);
         Restaurant restaurantTest2 = new Restaurant("CCCC", "restaurant le Kébab", "270 avenue camille blanc", "11h30", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,latLngTest, null, 15, false);
-
-
-
         Restaurant restaurantTest3 = new Restaurant("DDDD", "le Syrien", "270 rue du voisin", "08h00", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,latLngTest, null, 3, true);
 
 
@@ -107,6 +85,42 @@ public class ServiceTest {
         String dayTest = service.getCurrentDay(calendar);
         // ASSERT
         assertEquals(dayExpected, dayTest);
+    }
+
+    @Test
+    public void makeStringOpeningHours_shouldReturn_1141() {
+        String codeExpected = "1141";
+        String dayToTest = "WEDNESDAY";
+        LocalTime timeToTest = LocalTime.newInstance(13, 25);
+        String codeToTest = service.makeStringOpeningHours(createOpeningHoursForTest(), dayToTest, timeToTest);
+        assertEquals(codeExpected, codeToTest);
+    }
+
+    @Test
+    public void makeStringOpeningHours_shouldReturn_08300() {
+        String codeExpected = "08:300";
+        String dayToTest = "WEDNESDAY";
+        LocalTime timeToTest = LocalTime.newInstance(7, 0);
+        String codeToTest = service.makeStringOpeningHours(createOpeningHoursForTest(), dayToTest, timeToTest);
+        assertEquals(codeExpected, codeToTest);
+    }
+
+    @Test
+    public void makeStringOpeningHours_shouldReturn_1140() {
+        String codeExpected = "1140";
+        String dayToTest = "WEDNESDAY";
+        LocalTime timeToTest = LocalTime.newInstance(11, 45);
+        String codeToTest = service.makeStringOpeningHours(createOpeningHoursForTest(), dayToTest, timeToTest);
+        assertEquals(codeExpected, codeToTest);
+    }
+
+    @Test
+    public void makeStringOpeningHours_shouldReturn_4() {
+        String codeExpected = "4";
+        String dayToTest = "WEDNESDAY";
+        LocalTime timeToTest = LocalTime.newInstance(16, 30);
+        String codeToTest = service.makeStringOpeningHours(createOpeningHoursForTest(), dayToTest, timeToTest);
+        assertEquals(codeExpected, codeToTest);
     }
 
     @Test
@@ -263,6 +277,10 @@ public class ServiceTest {
     private Period createOpenTestPeriod(DayOfWeek dayOfWeek) {
         TimeOfWeek openHours = TimeOfWeek.newInstance(dayOfWeek, LocalTime.newInstance(8,30));
         TimeOfWeek closeHours = TimeOfWeek.newInstance(dayOfWeek, LocalTime.newInstance(14,0));
+        if (dayOfWeek.equals(DayOfWeek.THURSDAY)) {
+            openHours = TimeOfWeek.newInstance(dayOfWeek, LocalTime.newInstance(19,0));
+            closeHours = TimeOfWeek.newInstance(dayOfWeek, LocalTime.newInstance(1,30));
+        }
         return Period.builder()
                 .setOpen(openHours)
                 .setClose(closeHours)

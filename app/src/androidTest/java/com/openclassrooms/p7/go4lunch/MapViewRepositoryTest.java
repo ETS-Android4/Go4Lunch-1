@@ -15,6 +15,9 @@ import static com.openclassrooms.p7.go4lunch.TestUtils.USER_CURRENT_LOCATION;
 import static com.openclassrooms.p7.go4lunch.TestUtils.USER_RESTAURANT_ID;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
@@ -29,6 +32,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.p7.go4lunch.injector.Go4LunchApplication;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
 import com.openclassrooms.p7.go4lunch.service.DummyApiService;
 
@@ -51,12 +55,6 @@ public class MapViewRepositoryTest {
 
     private final MapViewRepository mapViewRepository = MapViewRepository.getInstance();
     private final Context context = Go4LunchApplication.getContext();
-    @Mock
-    private Place place;
-    @Mock
-    private MapViewRepository mapViewRepositoryMocked;
-    @Mock
-    private DummyApiService dummyApiService;
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -68,6 +66,9 @@ public class MapViewRepositoryTest {
 
     @Test
     public void testa_requestForPlaceDetails_withSuccess_andGetRestaurantList_shouldReturn3() throws InterruptedException {
+        LiveDataTestUtils.observeForTesting(mapViewRepository.getIsAlreadyNearbySearched(), liveData -> {
+            assertTrue(liveData.getValue());
+        });
         List<String> placeId = new ArrayList<>();
         placeId.add(FIRST_RESTAURANT_ID);
         placeId.add(SECOND_RESTAURANT_ID);
@@ -77,6 +78,9 @@ public class MapViewRepositoryTest {
             Thread.sleep(1000);
             List<Restaurant> restaurantList = new ArrayList<>(Objects.requireNonNull(liveData.getValue()));
             assertEquals(restaurantList.size(), 3);
+        });
+        LiveDataTestUtils.observeForTesting(mapViewRepository.getIsAlreadyNearbySearched(), liveData -> {
+            assertFalse(liveData.getValue());
         });
     }
 
@@ -89,5 +93,38 @@ public class MapViewRepositoryTest {
             Restaurant restaurant = mapViewRepository.getCurrentRestaurant(FIRST_RESTAURANT_ID, restaurantList);
             assert restaurant.getId().equals(FIRST_RESTAURANT_ID);
         });
+    }
+
+    @Test
+    public void testc_setNumberOfFriendInterested_withSuccess() throws InterruptedException {
+        LiveDataTestUtils.observeForTesting(mapViewRepository.getAllRestaurants(), liveData -> {
+            mapViewRepository.setNumberOfFriendInterested(getDefaultUser(), Objects.requireNonNull(liveData.getValue()));
+
+            Restaurant firstRestaurant = mapViewRepository.getCurrentRestaurant(FIRST_RESTAURANT_ID, liveData.getValue());
+            Restaurant secondRestaurant = mapViewRepository.getCurrentRestaurant(SECOND_RESTAURANT_ID, liveData.getValue());
+            Restaurant thirdRestaurant = mapViewRepository.getCurrentRestaurant(THIRD_RESTAURANT_ID, liveData.getValue());
+
+            Integer twoFriendInterested = 2, oneFriendInterested = 1, noFriendInterested = 0;
+
+            assertEquals(twoFriendInterested, firstRestaurant.getNumberOfFriendInterested());
+            assertEquals(oneFriendInterested, secondRestaurant.getNumberOfFriendInterested());
+            assertEquals(noFriendInterested, thirdRestaurant.getNumberOfFriendInterested());
+        });
+
+    }
+
+    private List<User> getDefaultUser() {
+        List<User> userList = new ArrayList<>();
+        User userTest1 = new User("1111", "test1", "photo", "restaurant1", "ChIJexGknqI1sRIRWr8XRhcWfKw", true);
+        User userTest2 = new User("2222", "test2", "photo", "", "", false);
+        User userTest3 = new User("3333", "test3", "photo", "restaurant1", "ChIJexGknqI1sRIRWr8XRhcWfKw", true);
+        User userTest4 = new User("4444", "test4", "photo", "restaurant2", "ChIJ5X07y6M1sRIRNiPZimTgF-4", true);
+
+        userList.add(userTest1);
+        userList.add(userTest2);
+        userList.add(userTest3);
+        userList.add(userTest4);
+
+        return userList;
     }
 }
