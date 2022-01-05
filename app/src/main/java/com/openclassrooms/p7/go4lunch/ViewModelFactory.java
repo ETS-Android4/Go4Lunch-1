@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
 import com.openclassrooms.p7.go4lunch.repository.GoogleMapsHelper;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
+import com.openclassrooms.p7.go4lunch.repository.PlaceTask;
 import com.openclassrooms.p7.go4lunch.repository.RestaurantFavoriteRepository;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
@@ -31,12 +32,18 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final UserRepository userRepository = new UserRepository(firebaseHelper);
     private final RestaurantFavoriteRepository restaurantFavoriteRepository = new RestaurantFavoriteRepository();
     private final MapViewRepository mapViewRepository = new MapViewRepository(googleMapsHelper);
+    private final PlaceTask placeTask = new PlaceTask();
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(UserAndRestaurantViewModel.class)) {
-            return (T) new UserAndRestaurantViewModel(userRepository, restaurantFavoriteRepository, mapViewRepository);
+            return (T) new UserAndRestaurantViewModel(
+                    userRepository,
+                    restaurantFavoriteRepository,
+                    mapViewRepository,
+                    placeTask
+            );
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

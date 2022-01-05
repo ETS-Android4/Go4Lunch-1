@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.openclassrooms.p7.go4lunch.LiveDataTestUtils;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
+import com.openclassrooms.p7.go4lunch.repository.PlaceTask;
 import com.openclassrooms.p7.go4lunch.repository.RestaurantFavoriteRepository;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 
@@ -37,7 +38,8 @@ public class ViewModelTest {
     private RestaurantFavoriteRepository restaurantFavoriteRepository;
     @Mock
     private MapViewRepository mapViewRepository;
-
+    @Mock
+    private PlaceTask placeTask;
     private UserAndRestaurantViewModel viewModel;
 
     @Before
@@ -48,7 +50,12 @@ public class ViewModelTest {
 
         given(userRepository.getAllUsers()).willReturn(listMutableLiveData);
 
-        viewModel = new UserAndRestaurantViewModel(userRepository, restaurantFavoriteRepository, mapViewRepository);
+        viewModel = new UserAndRestaurantViewModel(
+                userRepository,
+                restaurantFavoriteRepository,
+                mapViewRepository,
+                placeTask
+        );
     }
 
     @Test

@@ -12,6 +12,7 @@ import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
+import com.openclassrooms.p7.go4lunch.repository.PlaceTask;
 import com.openclassrooms.p7.go4lunch.repository.RestaurantFavoriteRepository;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 
@@ -23,11 +24,18 @@ public class UserAndRestaurantViewModel extends ViewModel {
     private final UserRepository userDataSource;
     private final RestaurantFavoriteRepository restaurantDataSource;
     private final MapViewRepository mapDataSource;
+    private final PlaceTask placeTaskExecutor;
 
-    public UserAndRestaurantViewModel(UserRepository userRepository, RestaurantFavoriteRepository restaurantFavoriteRepository, MapViewRepository mapViewRepository) {
+    public UserAndRestaurantViewModel(
+            UserRepository userRepository,
+            RestaurantFavoriteRepository restaurantFavoriteRepository,
+            MapViewRepository mapViewRepository,
+            PlaceTask placeTask
+    ) {
         userDataSource = userRepository;
         restaurantDataSource = restaurantFavoriteRepository;
         mapDataSource = mapViewRepository;
+        placeTaskExecutor = placeTask;
     }
     public void createUser(){
         userDataSource.createFireStoreUser();
@@ -78,7 +86,9 @@ public class UserAndRestaurantViewModel extends ViewModel {
     //                   --- FOR USER FIRESTORE---
 
     //                  --- GOOGLE MAPS ---
-
+    public MutableLiveData<Boolean> getIsAlreadyNearbySearched() {
+        return mapDataSource.getIsAlreadyNearbySearched();
+    }
 
     public MutableLiveData<RestaurantFavorite> getCurrentRestaurantData(String currentRestaurantId) {
         return restaurantDataSource.getCurrentRestaurantFavorite(currentRestaurantId);
@@ -94,5 +104,12 @@ public class UserAndRestaurantViewModel extends ViewModel {
 
     public void setNumberOfFriendInterested(List<User> allInterestedUsers, List<Restaurant> restaurants) {
         mapDataSource.setNumberOfFriendInterested(allInterestedUsers, restaurants);
+    }
+    public void setPlaceTaskExecutor(String url) {
+        placeTaskExecutor.execute(url);
+    }
+
+    public MutableLiveData<List<String>> getListOfPlaceId() {
+        return placeTaskExecutor.getListOfPlaceId();
     }
 }

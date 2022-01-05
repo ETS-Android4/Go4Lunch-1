@@ -51,6 +51,7 @@ import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
+import com.openclassrooms.p7.go4lunch.repository.PlaceTask;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
@@ -94,6 +95,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private boolean locationPermissionGranted;
     private UserAndRestaurantViewModel mViewModel;
     private ApiService mApiService;
+    private boolean isAlreadyNearbySearched;
 
     @Nullable
     @Override
@@ -116,6 +118,14 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void putMarkerOnMap() {
+        mViewModel.getIsAlreadyNearbySearched().observe(getViewLifecycleOwner(), aBoolean -> {
+            isAlreadyNearbySearched = aBoolean;
+        });
+        mViewModel.getListOfPlaceId().observe(getViewLifecycleOwner(), strings -> {
+            if (isAlreadyNearbySearched) {
+                mViewModel.requestForPlaceDetails(strings, requireContext(), false);
+            }
+        });
         List<User> userInterestedList = new ArrayList<>();
         mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), userInterestedList::addAll);
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
@@ -294,7 +304,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                 + "&radius=1500"
                 + "&sensor=true"
                 + "&key=" + BuildConfig.GMP_KEY;
-        new PlaceTask().execute(url);
+        mViewModel.setPlaceTaskExecutor(url);
+//        mMap.clear();
     }
 
     // Read the url and do a request to find nearby restaurants
@@ -330,57 +341,5 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             return R.drawable.baseline_place_cyan;
         }
             return R.drawable.baseline_place_orange;
-    }
-
-    private class PlaceTask extends AsyncTask<String, Integer, String> {
-
-        // Get the data from the url
-        @Override
-        protected String doInBackground(String... strings) {
-            String data = null;
-            try {
-                data = downloadUrl(strings[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return data;
-        }
-        // Execute the task to handle the data.
-        @Override
-        protected void onPostExecute(String s) {
-            new ParserTask().execute(s);
-        }
-    }
-
-    private class ParserTask extends AsyncTask<String, Integer, List<String>> {
-
-        // Return a list contains id, name, address, latitude and longitude of the restaurants.
-        @Override
-        protected List<String> doInBackground(String... strings) {
-            JsonParser jsonParser = new JsonParser();
-            List<String> mapList = null;
-            JSONObject object;
-            try {
-                object = new JSONObject(strings[0]);
-                mapList = jsonParser.parseResult(object);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return mapList;
-        }
-        // Put a marker on each restaurant found,
-        @Override
-        protected void onPostExecute(List<String> hashMaps) {
-            mMap.clear();
-
-            //TODO just for save some request.
-            List<String> listOfPlaceId = new ArrayList<>();
-//            for (int i = 0; i < hashMaps.size(); i++) {
-            for (int i = 0; i < 3; i++) {
-                String placeId = hashMaps.get(i);
-                listOfPlaceId.add(placeId);
-            }
-            mViewModel.requestForPlaceDetails(listOfPlaceId, requireContext(), false);
-        }
     }
 }

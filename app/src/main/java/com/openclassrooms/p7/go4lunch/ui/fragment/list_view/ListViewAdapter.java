@@ -98,6 +98,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
                 case '1':
                     return String.format("%s %s%s", itemView.getResources().getString(R.string.list_view_holder_open_at), time, itemView.getResources().getString(R.string.list_view_holder_pm)) ;
                 case '2':
+                    //TODO put am/pm and open
                     return String.format("%s %s", itemView.getResources().getString(R.string.list_view_holder_until), time);
                 case '3':
                     return itemView.getResources().getString(R.string.list_view_holder_still_closed);

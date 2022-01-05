@@ -39,6 +39,7 @@ public class MapViewRepository {
     private final GoogleMapsHelper mGoogleMapsHelper;
     private final ApiService mApiService = DI.getRestaurantApiService();
     private final MutableLiveData<List<Restaurant>> listOfRestaurant = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isAlreadyNearbySearched = new MutableLiveData<>(true);
 
     public MapViewRepository(GoogleMapsHelper googleMapsHelper) {
         mGoogleMapsHelper = googleMapsHelper;
@@ -57,7 +58,9 @@ public class MapViewRepository {
             return INSTANCE;
         }
     }
-
+    public MutableLiveData<Boolean> getIsAlreadyNearbySearched() {
+        return isAlreadyNearbySearched;
+    }
     public MutableLiveData<List<Restaurant>> getAllRestaurants() {
         return listOfRestaurant;
     }
@@ -104,7 +107,7 @@ public class MapViewRepository {
                 }
             });
         }
-
+        isAlreadyNearbySearched.setValue(false);
     }
 
     public Restaurant getCurrentRestaurant(String restaurantId, List<Restaurant> restaurantList) {

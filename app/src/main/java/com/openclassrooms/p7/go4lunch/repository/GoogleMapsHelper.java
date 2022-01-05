@@ -12,7 +12,10 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -72,5 +75,21 @@ public class GoogleMapsHelper {
     public HttpURLConnection getData(String url) throws IOException {
         URL urlToConnect = new URL(url);
         return (HttpURLConnection) urlToConnect.openConnection();
+    }
+
+    public String downloadUrl (String string) throws IOException {
+        URL url = new URL(string);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.connect();
+        InputStream stream = connection.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        StringBuilder builder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            builder.append(line);
+        }
+        String data = builder.toString();
+        reader.close();
+        return data;
     }
 }
