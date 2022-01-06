@@ -80,11 +80,6 @@ public class FirebaseHelper {
     }
 
     public CollectionReference getRestaurantDataReferenceForCurrentUser() {
-        //TODO rename
         return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME).document(Objects.requireNonNull(getCurrentUser()).getUid()).collection(RESTAURANT_COLLECTION_NAME);
-    }
-
-    public Task<QuerySnapshot> getRestaurantsDataCollection() {
-        return this.getRestaurantDataReferenceForCurrentUser().get();
     }
 }

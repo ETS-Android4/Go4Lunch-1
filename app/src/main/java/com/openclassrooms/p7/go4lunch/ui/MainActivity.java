@@ -124,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         this.setTabLayoutName();
     }
 
-    //TODO refactor this
     private void configureListeners() {
         mBinding.activityMainNavigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {

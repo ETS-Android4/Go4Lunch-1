@@ -59,7 +59,6 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
                     .circleCrop()
                     .into(mBinding.workmatesListRowProfileImg);
             if (user.isRestaurantSelected()) {
-                //TODO get the restaurant name
                 mBinding.workmatesListRowEatingTypeTv.setText(String.format("%s %s %s", mApiService.formatUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_is_eating_at), mApiService.formatRestaurantName(user.getRestaurantName())));
             } else {
                 mBinding.workmatesListRowEatingTypeTv.setHint(String.format("%s %s", mApiService.formatUserFirstName(user.getUserName()), itemView.getResources().getString(R.string.workmates_list_view_holder_not_decided)));

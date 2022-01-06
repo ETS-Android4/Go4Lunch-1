@@ -127,12 +127,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             }
         });
         List<User> userInterestedList = new ArrayList<>();
-        List<Restaurant> restaurantList = new ArrayList<>();
         mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), userInterestedList::addAll);
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
             if (mMap != null) {
                 mMap.clear();
-                //TODO after preference setting is closed map is clear.
                 if (!userInterestedList.isEmpty()) {
                     mViewModel.setNumberOfFriendInterested(userInterestedList, restaurants);
                 }
@@ -171,7 +169,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                 Status status = Autocomplete.getStatusFromIntent(data);
                 Log.i(TAG, status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
-
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
             }
         }
     }
@@ -194,6 +193,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         updateLocationUI();
         getDeviceLocation();
         googleMap.setOnMarkerClickListener(this);
+        this.putMarkerOnMap();
     }
 
 
@@ -307,23 +307,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                 + "&sensor=true"
                 + "&key=" + BuildConfig.GMP_KEY;
         mViewModel.setPlaceTaskExecutor(url);
-    }
-
-    // Read the url and do a request to find nearby restaurants
-    private String downloadUrl (String string) throws IOException {
-        URL url = new URL(string);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.connect();
-        InputStream stream = connection.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        StringBuilder builder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            builder.append(line);
-        }
-        String data = builder.toString();
-        reader.close();
-        return data;
     }
 
     private MarkerOptions setMarkerOnMap(Restaurant restaurant) {
