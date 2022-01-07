@@ -1,9 +1,7 @@
 package com.openclassrooms.p7.go4lunch.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+
 import android.os.Parcel;
 
 import androidx.annotation.NonNull;
@@ -13,60 +11,35 @@ import com.google.android.libraries.places.api.model.DayOfWeek;
 import com.google.android.libraries.places.api.model.LocalTime;
 import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Period;
+import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.model.TimeOfWeek;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
-import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(JUnit4.class)
 public class ServiceTest {
-    ApiService service;
-    @Mock
-    OpeningHours openingHours;
+    private ApiService service;
 
     @Before
     public void setup() {
         service = DI.getRestaurantApiService();
-
-        RestaurantFavorite restaurantFavoriteTest0 = new RestaurantFavorite( "AAAA",  true);
-        RestaurantFavorite restaurantFavoriteTest4 = new RestaurantFavorite( "BBBB" , false);
-        RestaurantFavorite restaurantFavoriteTest1 = new RestaurantFavorite( "BBBB", false);
-        RestaurantFavorite restaurantFavoriteTest2 = new RestaurantFavorite( "CCCC", true);
-        RestaurantFavorite restaurantFavoriteTest3 = new RestaurantFavorite( "AAAA", true);
-        RestaurantFavorite restaurantFavoriteTest5 = new RestaurantFavorite( "CCCC", true);
-        RestaurantFavorite restaurantFavoriteTest6 = new RestaurantFavorite( "BBBB", false);
-
-        User userTest1 = new User("1111", "test1", "photo", "restaurant1", "AAAA", true);
-        User userTest2 = new User("2222", "test2", "photo", "restaurant2", "BBBB", false);
-        User userTest3 = new User("3333", "test3", "photo", "restaurant3", "CCCC", true);
-
-        LatLng latLngTest = new LatLng(4.5236, 6.7854);
-        Restaurant restaurantTest0 = new Restaurant("AAAA", "Restaurant le jasmin", "3 rue St Félicien", "18h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,latLngTest, null, 3, false);
-        Restaurant restaurantTest1 = new Restaurant("BBBB", "RESTAURANT le goéland", "5 boulevard du battaillon", "15h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,latLngTest, null, 9, false);
-        Restaurant restaurantTest2 = new Restaurant("CCCC", "restaurant le Kébab", "270 avenue camille blanc", "11h30", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,latLngTest, null, 15, false);
-        Restaurant restaurantTest3 = new Restaurant("DDDD", "le Syrien", "270 rue du voisin", "08h00", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,latLngTest, null, 3, true);
-
-
     }
 
     @After
@@ -76,15 +49,69 @@ public class ServiceTest {
     }
 
     @Test
-    public void getCurrentDayWithSuccess() {
+    public void getCurrentDay_shouldReturn_dayExpected() {
         // ARRANGE
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_WEEK, 4);
-        String dayExpected = "WEDNESDAY";
+        calendar.set(Calendar.DAY_OF_WEEK, 1);
+        String dayExpected = "SUNDAY";
         // ACT
-        String dayTest = service.getCurrentDay(calendar);
+        String dayToTest = service.getCurrentDay(calendar);
         // ASSERT
-        assertEquals(dayExpected, dayTest);
+        assertEquals(dayExpected, dayToTest);
+
+        // ARRANGE
+        calendar.set(Calendar.DAY_OF_WEEK, 2);
+        dayExpected = "MONDAY";
+        // ACT
+        dayToTest = service.getCurrentDay(calendar);
+        // ASSERT
+        assertEquals(dayExpected,dayToTest);
+
+        // ARRANGE
+        calendar.set(Calendar.DAY_OF_WEEK, 3);
+        dayExpected = "TUESDAY";
+        // ACT
+        dayToTest = service.getCurrentDay(calendar);
+        // ASSERT
+        assertEquals(dayExpected,dayToTest);
+
+        // ARRANGE
+        calendar.set(Calendar.DAY_OF_WEEK, 4);
+        dayExpected = "WEDNESDAY";
+        // ACT
+        dayToTest = service.getCurrentDay(calendar);
+        // ASSERT
+        assertEquals(dayExpected,dayToTest);
+
+        // ARRANGE
+        calendar.set(Calendar.DAY_OF_WEEK, 5);
+        dayExpected = "THURSDAY";
+        // ACT
+        dayToTest = service.getCurrentDay(calendar);
+        // ASSERT
+        assertEquals(dayExpected,dayToTest);
+
+        // ARRANGE
+        calendar.set(Calendar.DAY_OF_WEEK, 6);
+        dayExpected = "FRIDAY";
+        // ACT
+        dayToTest = service.getCurrentDay(calendar);
+        // ASSERT
+        assertEquals(dayExpected,dayToTest);
+
+        // ARRANGE
+        calendar.set(Calendar.DAY_OF_WEEK, 7);
+        dayExpected = "SATURDAY";
+        // ACT
+        dayToTest = service.getCurrentDay(calendar);
+        // ASSERT
+        assertEquals(dayExpected,dayToTest);
+    }
+
+    @Test
+    public void getOpeningHours_shouldReturn_5() {
+        String shouldBe5 = service.getOpeningHours(null);
+        assertEquals(shouldBe5, "5");
     }
 
     @Test
@@ -124,39 +151,61 @@ public class ServiceTest {
     }
 
     @Test
-    public void makeUserFirstNameShouldReturnTest() {
+    public void formatUserFirstName_ShouldReturn_Test() {
         // ARRANGE
         String userNameToTest = "test one";
-
         // ACT
         String firstName = service.formatUserFirstName(userNameToTest);
-
         // ASSERT
         assertEquals("Test", firstName);
-    }
 
-    @Test
-    public void makeInterestedFriendsStringWithSuccess() {
         // ARRANGE
-        String friendInterestedExpected = "One\nTwo\nThree";
+        userNameToTest = "test";
         // ACT
-//        String frienInterestedToTest = service.formatUserString(service.getUsers());
+        firstName = service.formatUserFirstName(userNameToTest);
         // ASSERT
-        assertEquals(friendInterestedExpected, friendInterestedExpected);
+        assertEquals("test", firstName);
     }
 
     @Test
-    public void removeUselessWordsShouldRemoveRestaurantString() {
+    public void formatRestaurantName_ShouldRemove_Restaurant() {
         // ARRANGE
         String restaurantNameExpected = "Le jasmin";
+        String restaurantNameEmptyExpected = "";
         // ACT
-//        String restaurantNameToTest = service.formatRestaurantName(service.getRestaurant().get(0).getName());
+        String restaurantNameToTest1 = service.formatRestaurantName("Restaurant le jasmin");
+        String restaurantNameToTest2 = service.formatRestaurantName("RESTAURANT le jasmin");
+        String restaurantNameToTest3 = service.formatRestaurantName("restaurant le jasmin");
+        String restaurantNameToTest4 = service.formatRestaurantName("");
         // ASSERT
-//        assertEquals(restaurantNameExpected, restaurantNameToTest);
+        assertEquals(restaurantNameExpected, restaurantNameToTest1);
+        assertEquals(restaurantNameExpected, restaurantNameToTest2);
+        assertEquals(restaurantNameExpected, restaurantNameToTest3);
+        assertEquals(restaurantNameEmptyExpected, restaurantNameToTest4);
     }
 
     @Test
-    public void getRatingShouldNotReturn0() {
+    public void formatInterestedFriends_shouldReturn_stringInList() {
+        // ARRANGE
+        String friendInterestedExpected = "Three\nTwo\nOne\n";
+        // ACT
+        String friendInterestedToTest = service.formatInterestedFriends(getDefaultUserList());
+        // ASSERT
+        assertEquals(friendInterestedExpected, friendInterestedToTest);
+    }
+
+    @Test
+    public void getInterestedFriends_shouldReturn_2Users() {
+        // ARRANGE
+        List<User> userInterestedToTest = service.getInterestedFriend(getDefaultUserList(), "AAAA");
+        // ACT
+
+        // ASSERT
+        assertEquals(2, userInterestedToTest.size());
+    }
+
+    @Test
+    public void getRating_shouldNotReturn_0() {
         // ARRANGE
         Double ratingExpected = 4.5;
         // ACT
@@ -166,7 +215,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void getRatingShouldNotReturnNull() {
+    public void getRating_shouldReturn_0() {
         // ARRANGE
         Double ratingExpected = 0.0;
         // ACT
@@ -176,7 +225,24 @@ public class ServiceTest {
     }
 
     @Test
-    public void setRatingStarsShoudReturnStarBorder() {
+    public void getRectangularBound_shouldReturn_rectangularBound() {
+        // ARRANGE
+        double latitude = 43.4073612;
+        double longitude = 3.6997723;
+        LatLng currentLocation = new LatLng(latitude, longitude);
+        LatLng southWest = new LatLng(latitude - 0.050000, longitude + 0.050000);
+        LatLng northEast = new LatLng(latitude + 0.050000, longitude + 0.050000);
+        RectangularBounds rectangularBoundsExpected = RectangularBounds.newInstance(
+                new LatLng(southWest.latitude, southWest.longitude),
+                new LatLng(northEast.latitude, northEast.longitude));
+        // ACT
+        RectangularBounds rectangularBoundsToTest = service.getRectangularBound(currentLocation);
+        // ASSERT
+        assertEquals(rectangularBoundsExpected, rectangularBoundsToTest);
+    }
+
+    @Test
+    public void setRatingStars_shouldReturn_starBorder() {
         int drawableExpected = R.drawable.baseline_star_border_black_24;
         int indexToTest = 0;
         double ratingToTest = 0.0;
@@ -195,7 +261,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void setRatingStarsShoudReturnStarHalf() {
+    public void setRatingStars_shouldReturn_starHalf() {
         int drawableExpected = R.drawable.baseline_star_half_black_24;
         int indexToTest = 1;
         double ratingToTest = 2;
@@ -209,34 +275,98 @@ public class ServiceTest {
     }
 
     @Test
-    public void setRatingStarsShoudReturnStarRate() {
+    public void setRatingStars_shouldReturn_starRate() {
+        // ARRANGE
         int drawableExpected = R.drawable.baseline_star_rate_black_24;
         int indexToTest = 2;
         double ratingToTest = 5;
+        // ACT
         int drawableToTest = service.setRatingStars(indexToTest, ratingToTest);
+        // ASSERT
         assertEquals(drawableExpected, drawableToTest);
 
+        // ARRANGE
         indexToTest = 1;
         ratingToTest = 3;
+        // ACT
         drawableToTest = service.setRatingStars(indexToTest, ratingToTest);
+        // ASSERT
         assertEquals(drawableExpected, drawableToTest);
 
+        // ARRANGE
         indexToTest = 0;
         ratingToTest = 1;
+        // ACT
         drawableToTest = service.setRatingStars(indexToTest, ratingToTest);
+        // ASSERT
         assertEquals(drawableExpected, drawableToTest);
     }
 
     @Test
-    public void listViewComparator() {
+    public void setFavoriteImage_shouldReturn_ic_star() {
+        // ARRANGE
+        int drawableExpected = R.drawable.ic_star;
+        // ACT
+        int drawableToTest = service.setFavoriteImage(true);
+        // ASSERT
+        assertEquals(drawableExpected, drawableToTest);
+    }
+
+    @Test
+    public void setFavoriteImage_shouldReturn_ic_star_outline() {
+        // ARRANGE
+        int drawableExpected = R.drawable.ic_star_outline;
+        // ACT
+        int drawableToTest = service.setFavoriteImage(false);
+        // ASSERT
+        assertEquals(drawableExpected, drawableToTest);
+    }
+
+    @Test
+    public void setSelectedImage_shouldReturn_baseline_check_circle_24() {
+        // ARRANGE
+        int drawableExpected = R.drawable.baseline_check_circle_24;
+        // ACT
+        int drawableToTest = service.setSelectedImage(true);
+        // ASSERT
+        assertEquals(drawableExpected, drawableToTest);
+    }
+
+    @Test
+    public void setSelectedImage_shouldReturn_baseline_check_circle_outline_black_24() {
+        // ARRANGE
+        int drawableExpected = R.drawable.baseline_check_circle_outline_black_24;
+        // ACT
+        int drawableToTest = service.setSelectedImage(false);
+        // ASSERT
+        assertEquals(drawableExpected, drawableToTest);
+    }
+
+    @Test
+    public void listViewComparator_shouldReturn_cbda() {
         //ARRANGE
+        List<Restaurant> restaurantListToTest = new ArrayList<>();
+        restaurantListToTest = getDefaultRestaurantList();
         //ACT
-        List<Restaurant> restaurantList = new ArrayList<>();
-        service.listViewComparator(restaurantList);
+        service.listViewComparator(restaurantListToTest);
         //ASSERT
-//        assertEquals("CCCC", service.getRestaurant().get(0).getId());
-//        assertEquals("BBBB", service.getRestaurant().get(1).getId());
-//        assertEquals("AAAA", service.getRestaurant().get(2).getId());
+        assertEquals("CCCC", restaurantListToTest.get(0).getId());
+        assertEquals("BBBB", restaurantListToTest.get(1).getId());
+        assertEquals("DDDD", restaurantListToTest.get(2).getId());
+        assertEquals("AAAA", restaurantListToTest.get(3).getId());
+    }
+
+    @Test
+    public void workmatesViewComparator_shouldReturn() {
+        // ARRANGE
+        List<User> userListToTest = new ArrayList<>();
+        userListToTest = getDefaultUserList();
+        // ACT
+        service.workmatesViewComparator(userListToTest);
+        // ASSERT
+        assertEquals("restaurant3", userListToTest.get(0).getRestaurantName());
+        assertEquals("restaurant2", userListToTest.get(1).getRestaurantName());
+        assertEquals("restaurant1", userListToTest.get(2).getRestaurantName());
     }
 
     public OpeningHours createOpeningHoursForTest() {
@@ -245,11 +375,11 @@ public class ServiceTest {
             @Override
             public List<Period> getPeriods() {
                 List<Period> periodTest = new ArrayList<>();
-                periodTest.add(createOpenTestPeriod(DayOfWeek.MONDAY));
-                periodTest.add(createOpenTestPeriod(DayOfWeek.TUESDAY));
-                periodTest.add(createOpenTestPeriod(DayOfWeek.WEDNESDAY));
-                periodTest.add(createOpenTestPeriod(DayOfWeek.THURSDAY));
-                periodTest.add(createOpenTestPeriod(DayOfWeek.FRIDAY));
+                periodTest.add(createMorningOpenTestPeriod(DayOfWeek.MONDAY));
+                periodTest.add(createMorningOpenTestPeriod(DayOfWeek.TUESDAY));
+                periodTest.add(createMorningOpenTestPeriod(DayOfWeek.WEDNESDAY));
+                periodTest.add(createMorningOpenTestPeriod(DayOfWeek.THURSDAY));
+                periodTest.add(createMorningOpenTestPeriod(DayOfWeek.FRIDAY));
                 return periodTest;
             }
 
@@ -257,8 +387,8 @@ public class ServiceTest {
             @Override
             public List<String> getWeekdayText() {
                 List<String> weekDayTest = new ArrayList<>();
-                weekDayTest.add("Saturday: fermé");
-                weekDayTest.add("Sunday: fermé");
+                weekDayTest.add("Saturday: closed");
+                weekDayTest.add("Sunday: closed");
                 return weekDayTest;
             }
 
@@ -274,16 +404,39 @@ public class ServiceTest {
         };
     }
 
-    private Period createOpenTestPeriod(DayOfWeek dayOfWeek) {
+    private Period createMorningOpenTestPeriod(DayOfWeek dayOfWeek) {
         TimeOfWeek openHours = TimeOfWeek.newInstance(dayOfWeek, LocalTime.newInstance(8,30));
         TimeOfWeek closeHours = TimeOfWeek.newInstance(dayOfWeek, LocalTime.newInstance(14,0));
-        if (dayOfWeek.equals(DayOfWeek.THURSDAY)) {
-            openHours = TimeOfWeek.newInstance(dayOfWeek, LocalTime.newInstance(19,0));
-            closeHours = TimeOfWeek.newInstance(dayOfWeek, LocalTime.newInstance(1,30));
-        }
         return Period.builder()
                 .setOpen(openHours)
                 .setClose(closeHours)
                 .build();
+    }
+
+    private List<User> getDefaultUserList() {
+        List<User> defaultList = new ArrayList<>();
+        User userTest1 = new User("1111", "one test", "photo", "restaurant3", "AAAA", true);
+        User userTest2 = new User("2222", "two test", "photo", "restaurant1", "", false);
+        User userTest3 = new User("3333", "three test", "photo", "restaurant2", "AAAA", true);
+
+        defaultList.add(userTest1);
+        defaultList.add(userTest2);
+        defaultList.add(userTest3);
+        return defaultList;
+    }
+
+    private List<Restaurant> getDefaultRestaurantList() {
+        List<Restaurant> defaultRestaurantList = new ArrayList<>();
+        Restaurant restaurantTest0 = new Restaurant("AAAA", "Restaurant le jasmin", "3 rue St Félicien", "18h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 3, false);
+        Restaurant restaurantTest1 = new Restaurant("BBBB", "RESTAURANT le goéland", "5 boulevard du battaillon", "15h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 9, false);
+        Restaurant restaurantTest2 = new Restaurant("CCCC", "restaurant le Kébab", "270 avenue camille blanc", "11h30", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 15, false);
+        Restaurant restaurantTest3 = new Restaurant("DDDD", "le Syrien", "270 rue du voisin", "08h00", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 4, true);
+
+        defaultRestaurantList.add(restaurantTest0);
+        defaultRestaurantList.add(restaurantTest1);
+        defaultRestaurantList.add(restaurantTest2);
+        defaultRestaurantList.add(restaurantTest3);
+
+        return defaultRestaurantList;
     }
 }

@@ -39,5 +39,6 @@ public interface ApiService {
     void listViewComparator(List<Restaurant> restaurantList);
     void workmatesViewComparator(List<User> userList);
 
-    String makeInterestedFriendsString(List<User> userList);
+    List<User> getInterestedFriend(List<User> userList, String restaurantId);
+    String formatInterestedFriends(List<User> userList);
 }

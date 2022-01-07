@@ -94,5 +94,7 @@
     <string name="list_view_holder_still_closed">still closed</string>
     <string name="list_view_holder_am">am</string>
     <string name="list_view_holder_pm">pm</string>
+    <string name="push_notification_service_nobody_come">you are alone.</string>
+    <string name="map_view_fragment_search_canceled">Search canceled</string>
 
 </resources>

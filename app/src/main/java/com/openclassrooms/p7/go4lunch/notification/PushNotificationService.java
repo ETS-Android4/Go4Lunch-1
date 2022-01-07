@@ -1,7 +1,5 @@
 package com.openclassrooms.p7.go4lunch.notification;
 
-import static com.openclassrooms.p7.go4lunch.notification.Notification.CHANNEL_ID;
-
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -86,12 +84,15 @@ public class PushNotificationService extends Worker {
 
     private void createNotification(List<User> userList) {
         String currentUserId = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
+        String whoEatWithUser = mContext.getString(R.string.push_notification_service_list_of_friend_are_come);
         User currentUser = null;
         for (User user : userList) {
-            if (user.getUid().equals(currentUserId));
-            currentUser = user;
+            if (user.getUid().equals(currentUserId)) {
+                currentUser = user;
+            }
         }
-        if (Objects.requireNonNull(currentUser).isRestaurantSelected()) {
+        if (currentUser == null) {
+            //TODO problem here
             mWorkManager.cancelUniqueWork("lunch time");
         }
         userList.remove(currentUser);
@@ -99,13 +100,24 @@ public class PushNotificationService extends Worker {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-        Log.d(TAG, "createNotification: friends are coming: " + mApiService.makeInterestedFriendsString(userList));
-        Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+        List<User> interestedFriends = mApiService.getInterestedFriend(userList, currentUser.getRestaurantId());
+        if (interestedFriends.isEmpty()) {
+            whoEatWithUser = mContext.getString(R.string.push_notification_service_nobody_come);
+        }
+        Log.d(TAG, "createNotification: friends are coming: " + mApiService.formatInterestedFriends(interestedFriends));
+        Log.d(TAG, "createNotification: restaurant choice: " + currentUser.getRestaurantName());
+        Notification notification = new NotificationCompat.Builder(getApplicationContext(), "channel")
                 .setSmallIcon(R.drawable.meal_v2_half_size)
                 .setContentTitle(String.format("%s %s", mContext.getString(R.string.push_notification_service_alert), userName))
-                .setContentText(String.format("%s %s", mContext.getString(R.string.push_notification_service_restaurant_choice), currentUser.getRestaurantName()))
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(String.format("%s %s", mContext.getString(R.string.push_notification_service_list_of_friend_are_come), mApiService.makeInterestedFriendsString(userList)))
+                        //TODO send a different message if user is solo or not.
+                        .bigText(String.format(
+                                "%s %s.\n%s %s",
+                                mContext.getString(R.string.push_notification_service_restaurant_choice),
+                                currentUser.getRestaurantName(),
+                                whoEatWithUser,
+                                mApiService.formatInterestedFriends(interestedFriends)
+                        ))
                         .setBigContentTitle(mContext.getString(R.string.push_notification_service_alert)))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)

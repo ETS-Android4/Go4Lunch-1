@@ -13,6 +13,7 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -74,6 +75,8 @@ public class DummyApiService implements ApiService {
         int currentHour = currentTime.getHours();
         for (Period openingDay : openingHours.getPeriods()) {
             if (Objects.requireNonNull(openingDay.getOpen()).getDay().toString().equals(currentDay)) {
+
+                //TODO don't show the good time when a day have morning and afternoon opening.
                 int hours = Objects.requireNonNull(openingDay.getOpen()).getTime().getHours();
                 int minutes = Objects.requireNonNull(openingDay.getOpen()).getTime().getMinutes();
                 int closeHours = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
@@ -145,12 +148,23 @@ public class DummyApiService implements ApiService {
     }
 
     @Override
-    public String makeInterestedFriendsString(List<User> interestedFriendList) {
+    public String formatInterestedFriends(List<User> interestedFriendList) {
         String friendsInterested = "";
         for (User user : interestedFriendList) {
-            friendsInterested = friendsInterested + "\n" + formatUserFirstName(user.getUserName());
+            friendsInterested = String.format("%s\n%s",formatUserFirstName(user.getUserName()), friendsInterested);
         }
         return friendsInterested;
+    }
+
+    @Override
+    public List<User> getInterestedFriend(List<User> userList, String restaurantId) {
+        List<User> interestedFriends = new ArrayList<>();
+        for (User user : userList) {
+            if (user.getRestaurantId().equals(restaurantId)) {
+                interestedFriends.add(user);
+            }
+        }
+        return interestedFriends;
     }
 
     /**

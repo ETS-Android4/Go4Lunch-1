@@ -77,9 +77,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             mBinding.listViewRowDistanceTv.setText(String.format(Locale.ENGLISH,"%4.0fm",restaurant.getDistance()));
 
             if (restaurant.getPictureUrl() != null) {
+
                 Glide.with(itemView)
                         .load(restaurant.getPictureUrl())
-                        .centerCrop()
+                        .optionalCenterCrop()
                         .into(mBinding.listViewRowRestaurantPictureImg);
             }
 
@@ -87,14 +88,22 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
                 ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, restaurant.getRating()));
             }
             mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",restaurant.getNumberOfFriendInterested()));
+            if (restaurant.isSearched()) {
+                mBinding.listViewRowContainer.setBackground(itemView.getResources().getDrawable(R.drawable.rounded_border));
+            }
         }
 
         private String makeOpeningHourString(String openingHours) {
             char firstCode = openingHours.charAt(0);
-            char lastCode = openingHours.charAt(openingHours.length() -1);
-            int length = openingHours.length() - 1;
-            String time = openingHours.substring(1, length);
-            String lastString = itemView.getResources().getString(R.string.list_view_holder_am);
+            char lastCode = ' ';
+            String time = null;
+            String lastString = null;
+            if (openingHours.length() > 1) {
+                lastCode = openingHours.charAt(openingHours.length() - 1);
+                int length = openingHours.length() - 1;
+                time = openingHours.substring(1, length);
+                lastString = itemView.getResources().getString(R.string.list_view_holder_am);
+            }
 
             if (lastCode == '1') {
                 lastString = itemView.getResources().getString(R.string.list_view_holder_pm);

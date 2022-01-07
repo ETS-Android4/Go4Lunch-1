@@ -18,6 +18,6 @@ public class LiveDataTestUtils {
     }
 
     public interface OnObservedListener<T> {
-        void onObserved(LiveData<T> liveData);
+        void onObserved(LiveData<T> liveData) throws InterruptedException;
     }
 }
