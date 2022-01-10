@@ -4,6 +4,7 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -11,6 +12,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
 
@@ -90,16 +92,25 @@ public class UserRepository {
         );
     }
 
-    public void deleteUserFromFirestore() {
-        mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DocumentSnapshot documentSnapshot : task.getResult()) {
-                    RestaurantFavorite restaurantFavorite = documentSnapshot.toObject(RestaurantFavorite.class);
-                    mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser()
-                            .document(Objects.requireNonNull(restaurantFavorite).getRestaurantId())
-                            .delete();
+    public void deleteUserFromFirestore(Context context) {
+        String currentUserId = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
+        mFirebaseHelper.getUsersCollection().document(currentUserId).delete();
+        mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().get().continueWith(task -> {
+            List<DocumentSnapshot> documentSnapshotList = task.getResult().getDocuments();
+            List<Task<Void>> taskList = new ArrayList<>();
+            if (!documentSnapshotList.isEmpty()) {
+                for (DocumentSnapshot documentSnapshot : documentSnapshotList) {
+                    mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().document(documentSnapshot.getId()).delete();
                 }
-                mFirebaseHelper.getUsersCollection().document(Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid()).delete();
+            }
+            return Tasks.whenAllComplete(taskList);
+        }).continueWith(task -> {
+            if (task.isComplete()) {
+                return Tasks.await(deleteUser(context).addOnCompleteListener(task1 -> {
+                    Toast.makeText(context, context.getResources().getString(R.string.preference_popup_account_deleted), Toast.LENGTH_SHORT).show();
+                }));
+            } else {
+                return false;
             }
         });
     }
@@ -166,5 +177,9 @@ public class UserRepository {
 
     public Task<Void> signOut(Context context) {
         return mFirebaseHelper.signOut(context);
+    }
+
+    public Boolean isCurrentUserLogged() {
+        return getCurrentUser() != null;
     }
 }

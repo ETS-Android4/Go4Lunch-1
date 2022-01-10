@@ -68,7 +68,7 @@
     <string name="preference_setting_title">Réglages</string>
     <string name="preference_setting_enable_notification">Activer les notifications</string>
     <string name="preference_setting_delete_account">Supprimer le compte</string>
-    <string name="preference_popup_title">Supprimer ton compte ?</string>
+    <string name="preference_popup_title_delete_account">Supprimer ton compte ?</string>
 
     <!-- PushNotificationService strings -->
     <string name="push_notification_service_alert">Il est midi</string>

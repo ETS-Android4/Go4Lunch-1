@@ -47,7 +47,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
        return userDataSource.deleteUser(context);
     }
     public Boolean isCurrentUserLogged() {
-        return (this.getCurrentUser() != null);
+        return userDataSource.isCurrentUserLogged();
     }
     public Task<Void> signOut(Context context) {
         return userDataSource.signOut(context);
@@ -60,8 +60,8 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public void updateUser(User user) {
         userDataSource.updateUser(user);
     }
-    public void deleteUserFromFirestore() {
-        userDataSource.deleteUserFromFirestore();
+    public void deleteUserFromFirestore(Context context) {
+        userDataSource.deleteUserFromFirestore(context);
     }
     public LiveData<List<User>> getAllUsers() {
         return userDataSource.getAllUsers();

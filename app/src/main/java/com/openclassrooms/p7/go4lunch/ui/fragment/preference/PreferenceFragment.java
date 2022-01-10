@@ -1,35 +1,25 @@
 package com.openclassrooms.p7.go4lunch.ui.fragment.preference;
 
+import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.databinding.FragmentPreferenceSettingsBinding;
-import com.openclassrooms.p7.go4lunch.ui.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
-import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
-import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 public class PreferenceFragment extends Fragment {
 
@@ -84,20 +74,20 @@ public class PreferenceFragment extends Fragment {
     private void deleteAccountAlertPopup() {
         AlertDialog.Builder signOutPopup = new AlertDialog.Builder(requireContext());
         signOutPopup
-                .setTitle(R.string.preference_popup_title)
+                .setTitle(R.string.preference_popup_title_delete_account)
                 .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> {
-                    mViewModel.deleteUserFromFirestore();
-                    mViewModel.deleteFirebaseUser(requireContext()).addOnCompleteListener(task -> {
-                       if (task.isComplete()) {
-                           FragmentManager fragmentManager = FragmentManager.findFragment(this.requireView()).getParentFragmentManager();
-                           fragmentManager
-                                   .beginTransaction()
-                                   .replace(R.id.linear_layout, new MapViewFragment())
-                                   .commit();
-                           Toast.makeText(requireContext(), requireContext().getResources().getString(R.string.preference_popup_account_deleted), Toast.LENGTH_SHORT).show();
-                       }
-                    });
-                    Log.e(TAG, "deleteAccountAlertPopup: TASK COMPLETE" );
+                    mViewModel.deleteUserFromFirestore(requireContext());
+                    quitApplicationAlertPopup();
+                }).setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, null)
+                .show();
+    }
+
+    private void quitApplicationAlertPopup() {
+        AlertDialog.Builder signOutPopup = new AlertDialog.Builder(requireContext());
+        signOutPopup
+                .setTitle(R.string.preference_popup_title_quit_app)
+                .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> {
+                    requireActivity().finishAffinity();
                 }).setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, null)
                 .show();
     }

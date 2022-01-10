@@ -144,7 +144,7 @@ public class UserRepositoryAndRestaurantFavoriteTest {
 
     @Test
     public void testh_deleteUserFromFirestore_withSuccess() throws ExecutionException, InterruptedException {
-        userRepository.deleteUserFromFirestore();
+        userRepository.deleteUserFromFirestore(context);
         DocumentSnapshot documentSnapshotExpected = Tasks.await(getCurrentFirestoreUser(currentUser.getUid()));
         User userExpected = documentSnapshotExpected.toObject(User.class);
         assertNull(userExpected);

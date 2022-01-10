@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
-        this.initNotification();
     }
 
     @Override
@@ -68,10 +67,27 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mBinding.activityMainDrawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (mBinding.activityMainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mBinding.activityMainDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        }
+        if (
+                !mBinding.activityMainDrawerLayout.isDrawerOpen(GravityCompat.START) &&
+                Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).isSelected()
+        ) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.main_activity_alert_dialog_title)
+                    .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> {
+                        this.finishAffinity();
+                    }).setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, null)
+                    .show();
+        }
+        if (Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(1)).isSelected()) {
+            mBinding.activityMainViewpager.setCurrentItem(0);
+            Objects.requireNonNull(Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).getIcon()).setColorFilter(getResources().getColor(R.color.light_icon_color), PorterDuff.Mode.SRC_IN);
+        }
+        if (Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(2)).isSelected()) {
+            mBinding.activityMainViewpager.setCurrentItem(0);
+            Objects.requireNonNull(Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(0)).getIcon()).setColorFilter(getResources().getColor(R.color.light_icon_color), PorterDuff.Mode.SRC_IN);
         }
     }
 
@@ -203,10 +219,6 @@ public class MainActivity extends AppCompatActivity {
             }
             this.setTextUserData(user);
         }
-    }
-
-    private void initNotification() {
-
     }
 
     private void setTabLayoutName() {

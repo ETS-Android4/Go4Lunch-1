@@ -24,8 +24,8 @@ import java.util.Objects;
 
 public class FirebaseHelper {
     private static final boolean isRunningTest = Go4LunchApplication.isIsRunningTest();
-    public static String USERS_COLLECTION_NAME = isRunningTest ? "users_test" : "users";
-    private static final String RESTAURANT_COLLECTION_NAME = isRunningTest ? "restaurants_test" : "restaurants";
+    public static final String USERS_COLLECTION_NAME = isRunningTest ? "users_test" : "users";
+    public static final String RESTAURANT_COLLECTION_NAME = isRunningTest ? "restaurants_test" : "restaurants";
     public static FirebaseHelper firebaseHelper;
 
     public static FirebaseHelper getInstance() {
