@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("deprecation")
 public class PlaceTask extends AsyncTask<String, Integer, List<String>> {
 
     private GoogleMapsHelper mGoogleMapsHelper = GoogleMapsHelper.getInstance();

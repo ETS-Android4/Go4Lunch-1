@@ -17,12 +17,13 @@ import com.openclassrooms.p7.go4lunch.repository.RestaurantFavoriteRepository;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class UserAndRestaurantViewModel extends ViewModel {
 
 
     private final UserRepository userDataSource;
-    private final RestaurantFavoriteRepository restaurantDataSource;
+    private final RestaurantFavoriteRepository restaurantFavoriteDataSource;
     private final MapViewRepository mapDataSource;
     private final PlaceTask placeTaskExecutor;
 
@@ -33,7 +34,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
             PlaceTask placeTask
     ) {
         userDataSource = userRepository;
-        restaurantDataSource = restaurantFavoriteRepository;
+        restaurantFavoriteDataSource = restaurantFavoriteRepository;
         mapDataSource = mapViewRepository;
         placeTaskExecutor = placeTask;
     }
@@ -42,7 +43,9 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public FirebaseUser getCurrentUser() {
         return userDataSource.getCurrentUser();
     }
-    public Task<Void> deleteFirebaseUser(Context context) { return userDataSource.deleteUser(context); }
+    public Task<Void> deleteFirebaseUser(Context context) {
+       return userDataSource.deleteUser(context);
+    }
     public Boolean isCurrentUserLogged() {
         return (this.getCurrentUser() != null);
     }
@@ -90,13 +93,16 @@ public class UserAndRestaurantViewModel extends ViewModel {
 
     //                  --- RESTAURANT FAVORITE ---
     public MutableLiveData<RestaurantFavorite> getCurrentRestaurantFavorite(String currentRestaurantId) {
-        return restaurantDataSource.getCurrentRestaurantFavorite(currentRestaurantId);
+        return restaurantFavoriteDataSource.getCurrentRestaurantFavorite(currentRestaurantId);
     }
     public void createRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
-        restaurantDataSource.createRestaurantFavorite(restaurantFavorite);
+        restaurantFavoriteDataSource.createRestaurantFavorite(restaurantFavorite);
     }
     public void deleteRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
-        restaurantDataSource.deleteRestaurantFavorite(restaurantFavorite);
+        restaurantFavoriteDataSource.deleteRestaurantFavorite(restaurantFavorite);
+    }
+    public void deleteAllRestaurantFavorite() {
+        restaurantFavoriteDataSource.deleteAllRestaurantFavorite();
     }
 
     //                  --- PLACE TASK ---

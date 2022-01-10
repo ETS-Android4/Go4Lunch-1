@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initNotification() {
-        PushNotificationService.periodicTimeRequest(getApplicationContext());
+
     }
 
     private void setTabLayoutName() {

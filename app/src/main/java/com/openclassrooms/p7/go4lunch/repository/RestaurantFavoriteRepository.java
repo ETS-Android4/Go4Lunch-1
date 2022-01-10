@@ -3,11 +3,16 @@ package com.openclassrooms.p7.go4lunch.repository;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class RestaurantFavoriteRepository {
     private static RestaurantFavoriteRepository mRestaurantFavoriteRepository;
-    private final FirebaseHelper mFirebaseHelper;
+    private final FirebaseHelper mFirebaseHelper = FirebaseHelper.getInstance();
     private final MutableLiveData<RestaurantFavorite> currentRestaurantFavorite = new MutableLiveData<>();
 
     public static RestaurantFavoriteRepository getInstance() {
@@ -17,16 +22,12 @@ public class RestaurantFavoriteRepository {
         return mRestaurantFavoriteRepository;
     }
 
-    public RestaurantFavoriteRepository() {
-        this.mFirebaseHelper = FirebaseHelper.getInstance();
-    }
-
     public void createRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
-        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser().document(restaurantFavorite.getRestaurantId()).set(restaurantFavorite);
+        mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().document(restaurantFavorite.getRestaurantId()).set(restaurantFavorite);
     }
 
     public MutableLiveData<RestaurantFavorite> getCurrentRestaurantFavorite(String currentRestaurantId) {
-        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser().document(currentRestaurantId).get().addOnCompleteListener(task -> {
+        mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().document(currentRestaurantId).get().addOnCompleteListener(task -> {
             DocumentSnapshot documentSnapshot = task.getResult();
             currentRestaurantFavorite.postValue(documentSnapshot.toObject(RestaurantFavorite.class));
         });
@@ -34,8 +35,21 @@ public class RestaurantFavoriteRepository {
     }
 
     public void deleteRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
-        mFirebaseHelper.getRestaurantDataReferenceForCurrentUser()
+        mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser()
                 .document(restaurantFavorite.getRestaurantId())
                 .delete();
+    }
+
+    public void deleteAllRestaurantFavorite() {
+//        mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().get().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                for (DocumentSnapshot documentSnapshot : task.getResult()) {
+//                    RestaurantFavorite restaurantFavorite = documentSnapshot.toObject(RestaurantFavorite.class);
+//                    mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser()
+//                            .document(Objects.requireNonNull(restaurantFavorite).getRestaurantId())
+//                            .delete();
+//                }
+//            }
+//        });
     }
 }

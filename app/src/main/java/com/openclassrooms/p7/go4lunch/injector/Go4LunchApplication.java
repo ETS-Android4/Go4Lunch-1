@@ -3,6 +3,8 @@ package com.openclassrooms.p7.go4lunch.injector;
 import android.app.Application;
 import android.content.Context;
 
+import com.openclassrooms.p7.go4lunch.notification.PushNotificationService;
+
 public class Go4LunchApplication extends Application {
     private static boolean isRunningTest;
     private static Context context;
@@ -17,6 +19,7 @@ public class Go4LunchApplication extends Application {
         } catch (ClassNotFoundException e) {
             isRunningTest = false;
         }
+        PushNotificationService.periodicTimeRequest(getApplicationContext());
     }
 
     public static boolean isIsRunningTest() {

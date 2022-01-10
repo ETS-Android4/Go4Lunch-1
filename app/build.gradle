@@ -4,12 +4,11 @@ plugins {
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
-
-
 
     defaultConfig {
         applicationId "com.openclassrooms.p7.go4lunch"
@@ -28,6 +27,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -37,9 +39,17 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     packagingOptions {
         exclude 'META-INF/LICENSE.md'
         exclude 'META-INF/LICENSE-notice.md'
+    }
+
+    testOptions {
+        animationsDisabled true
+        unitTests {
+            includeAndroidResources = true
+        }
     }
 }
 
@@ -52,7 +62,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'androidx.preference:preference:1.1.1'
@@ -61,7 +71,7 @@ dependencies {
     // Optional -- Robolectric environment
     testImplementation 'androidx.test:core:1.4.0'
     // Optional -- Mockito framework
-    testImplementation 'org.mockito:mockito-core:2.19.0'
+    testImplementation 'org.mockito:mockito-core:3.11.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
@@ -74,11 +84,11 @@ dependencies {
 
     // Firebase Dependencies
     implementation platform('com.google.firebase:firebase-bom:29.0.0')
-    implementation 'com.firebaseui:firebase-ui-auth:6.4.0'
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
     implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.google.android.gms:play-services-auth:19.2.0'
+    implementation 'com.google.android.gms:play-services-auth:20.0.0'
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-firestore:24.0.0'
 
@@ -86,8 +96,65 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:12.0.1'
 
     // GoogleMap Dependencies
-    implementation 'com.google.android.gms:play-services-maps:18.0.0'
+    implementation 'com.google.android.gms:play-services-maps:18.0.1'
     implementation 'com.google.android.libraries.places:places:2.5.0'
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.android.gms:play-services-location:19.0.0'
     implementation 'com.google.maps.android:android-maps-utils:2.2.3'
+}
+
+// JaCoCo stuff
+android.applicationVariants.all { variant ->
+    def variantName = variant.name.capitalize()
+    def filesToAnalyze = [
+            '**/*ViewModel.class',
+            '**/*Repository.class',
+            '**/*Service.class'
+    ]
+
+    task("jacoco${variantName}Report", type: JacocoReport, dependsOn: "test${variantName}UnitTest") {
+        group 'Reporting'
+        description "Generate ${variantName} Jacoco coverage reports."
+
+        def htmlOutDir = layout.buildDirectory.dir("reports/jacoco/$name/html").get().asFile
+
+        doLast {
+            openReport htmlOutDir
+        }
+
+        reports {
+            xml.enabled = true
+            html {
+                destination htmlOutDir
+            }
+        }
+
+        getSourceDirectories().setFrom(files(android.sourceSets.main.java.srcDirs))
+        getExecutionData().setFrom(files("${buildDir}/jacoco/test${variantName}UnitTest.exec"))
+        getClassDirectories().setFrom(fileTree(dir: variant.name, includes: filesToAnalyze))
+
+    }
+}
+
+// Open JaCoCo report after generation
+def openReport(htmlOutDir) {
+    final reportPath = "$htmlOutDir\\index.html"
+
+    println "HTML Report: $reportPath"
+
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    if (os.isWindows()) {
+        exec { commandLine 'cmd', '/c', "start $reportPath" }
+    } else if (os.isMacOsX()) {
+        exec { commandLine 'open', "$reportPath" }
+    } else if (os.isLinux()) {
+        try {
+            exec { commandLine 'xdg-open', "$reportPath" }
+        } catch (Exception ignored) {
+            if (localProperties.containsKey("linux-html-cmd")) {
+                exec { commandLine properties.get("linux-html-cmd"), "$reportPath" }
+            } else {
+                println "'linux-html-cmd' property could not be found in 'local.properties'"
+            }
+        }
+    }
 }

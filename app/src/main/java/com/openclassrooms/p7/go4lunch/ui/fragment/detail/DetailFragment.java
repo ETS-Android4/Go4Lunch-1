@@ -89,7 +89,11 @@ public class DetailFragment extends Fragment {
             }
         });
         mViewModel.getCurrentRestaurantFavorite(CURRENT_RESTAURANT_ID).observe(getViewLifecycleOwner(), restaurantFavorite -> {
-            mCurrentRestaurantFavorite = restaurantFavorite;
+            if (restaurantFavorite != null) {
+                if (restaurantFavorite.getRestaurantId().equals(CURRENT_RESTAURANT_ID)) {
+                    mCurrentRestaurantFavorite = restaurantFavorite;
+                }
+            }
             if (mCurrentRestaurantFavorite != null) {
                 setFavoriteImage(true);
             }

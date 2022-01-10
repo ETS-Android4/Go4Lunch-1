@@ -11,13 +11,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.openclassrooms.p7.go4lunch.injector.Go4LunchApplication;
+import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class UserRepository {
 
@@ -91,9 +91,17 @@ public class UserRepository {
     }
 
     public void deleteUserFromFirestore() {
-        String uid = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
-        mFirebaseHelper.getUsersCollection().document(uid).collection("restaurants").document().delete();
-        mFirebaseHelper.getUsersCollection().document(uid).delete();
+        mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DocumentSnapshot documentSnapshot : task.getResult()) {
+                    RestaurantFavorite restaurantFavorite = documentSnapshot.toObject(RestaurantFavorite.class);
+                    mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser()
+                            .document(Objects.requireNonNull(restaurantFavorite).getRestaurantId())
+                            .delete();
+                }
+                mFirebaseHelper.getUsersCollection().document(Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid()).delete();
+            }
+        });
     }
     /**
      * Get userList from Firestore and store it in DUMMY_USER.

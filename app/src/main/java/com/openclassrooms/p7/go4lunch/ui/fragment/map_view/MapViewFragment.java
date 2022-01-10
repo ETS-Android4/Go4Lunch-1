@@ -56,6 +56,7 @@ import com.openclassrooms.p7.go4lunch.repository.PlaceTask;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
+import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,6 +110,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity().getApplicationContext());
         Places.initialize(requireActivity().getApplicationContext(), BuildConfig.GMP_KEY);
         this.configureServiceAndViewModel();
+        if (!mViewModel.isCurrentUserLogged()) {
+            startActivity(new Intent(requireActivity(), LoginActivity.class));
+        }
         setHasOptionsMenu(true);
         return result;
     }
@@ -193,7 +197,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         updateLocationUI();
         getDeviceLocation();
         googleMap.setOnMarkerClickListener(this);
-        this.putMarkerOnMap();
+        if (mViewModel.isCurrentUserLogged()) {
+            this.putMarkerOnMap();
+        }
     }
 
 

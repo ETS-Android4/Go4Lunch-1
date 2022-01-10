@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
+import androidx.test.runner.AndroidJUnit4;
 
 import com.openclassrooms.p7.go4lunch.LiveDataTestUtils;
 import com.openclassrooms.p7.go4lunch.model.User;
@@ -20,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
@@ -44,22 +46,23 @@ public class ViewModelTest {
 
     @Before
     public void setup() {
-        MutableLiveData<List<User>> listMutableLiveData = new MutableLiveData<>();
-        List<User> userList = getDefaultUser();
-        listMutableLiveData.setValue(userList);
-
-        given(userRepository.getAllUsers()).willReturn(listMutableLiveData);
-
+        MockitoAnnotations.initMocks(this);
         viewModel = new UserAndRestaurantViewModel(
                 userRepository,
                 restaurantFavoriteRepository,
                 mapViewRepository,
                 placeTask
         );
+
+        MutableLiveData<List<User>> listMutableLiveData = new MutableLiveData<>();
+        List<User> userList = getDefaultUser();
+        listMutableLiveData.setValue(userList);
+
+        given(userRepository.getAllUsers()).willReturn(listMutableLiveData);
     }
 
     @Test
-    public void getAllUsersWithSuccess() {
+    public void getAllUsersWithSuccess() throws InterruptedException {
         List<User> userList = new ArrayList<>();
         LiveDataTestUtils.observeForTesting(viewModel.getAllUsers(), liveData -> {
             userList.addAll(Objects.requireNonNull(liveData.getValue()));
@@ -68,7 +71,7 @@ public class ViewModelTest {
     }
 
     @Test
-    public void getAllInterestedUserWithSuccess() {
+    public void getAllInterestedUserWithSuccess() throws InterruptedException {
         MutableLiveData<List<User>> listMutableLiveData = new MutableLiveData<>();
         listMutableLiveData.setValue(getDefaultUser());
         given((userRepository.getAllInterestedUsers())).willReturn(listMutableLiveData);

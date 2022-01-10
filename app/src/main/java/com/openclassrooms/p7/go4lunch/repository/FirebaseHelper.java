@@ -79,7 +79,7 @@ public class FirebaseHelper {
         return AuthUI.getInstance().delete(context);
     }
 
-    public CollectionReference getRestaurantDataReferenceForCurrentUser() {
+    public CollectionReference getRestaurantFavoriteReferenceForCurrentUser() {
         return FirebaseFirestore.getInstance().collection(USERS_COLLECTION_NAME).document(Objects.requireNonNull(getCurrentUser()).getUid()).collection(RESTAURANT_COLLECTION_NAME);
     }
 }

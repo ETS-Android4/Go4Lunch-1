@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
@@ -59,10 +62,12 @@ public class PushNotificationService extends Worker {
     public Result doWork() {
         if (!getCurrentNotification(mContext).equals("notification_enabled")) {
             mWorkManager.cancelUniqueWork("lunch time");
+            Log.e(TAG, "doWork: PERIODIC WORK CANCELED");
             return Result.success();
         }
         Task<QuerySnapshot> task = FirebaseFirestore.getInstance().collection("users").get();
         List<DocumentSnapshot> documentSnapshotList = null;
+        Log.e(TAG, "doWork: TRY TO DO WORK");
         try {
             documentSnapshotList = Tasks.await(task).getDocuments();
             List<User> userList = new ArrayList<>();
@@ -70,11 +75,11 @@ public class PushNotificationService extends Worker {
                 User user = document.toObject(User.class);
                 assert user != null;
                 if (user.isRestaurantSelected()) {
-                    Log.d(TAG, "doWork: User name:" + Objects.requireNonNull(user).getUserName());
+                    Log.e(TAG, "doWork: USER NAME:" + Objects.requireNonNull(user).getUserName());
                     userList.add(user);
                 }
             }
-            createNotification(userList);
+            configureNotification(userList);
             return Result.success();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
@@ -82,7 +87,7 @@ public class PushNotificationService extends Worker {
         }
     }
 
-    private void createNotification(List<User> userList) {
+    private void configureNotification(List<User> userList) {
         String currentUserId = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
         String whoEatWithUser = mContext.getString(R.string.push_notification_service_list_of_friend_are_come);
         User currentUser = null;
@@ -96,19 +101,24 @@ public class PushNotificationService extends Worker {
             mWorkManager.cancelUniqueWork("lunch time");
         }
         userList.remove(currentUser);
-        String userName = mApiService.formatUserFirstName(Objects.requireNonNull(currentUser).getUserName());
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-        List<User> interestedFriends = mApiService.getInterestedFriend(userList, currentUser.getRestaurantId());
+        List<User> interestedFriends = mApiService.getInterestedFriend(userList, Objects.requireNonNull(currentUser).getRestaurantId());
         if (interestedFriends.isEmpty()) {
             whoEatWithUser = mContext.getString(R.string.push_notification_service_nobody_come);
         }
-        Log.d(TAG, "createNotification: friends are coming: " + mApiService.formatInterestedFriends(interestedFriends));
-        Log.d(TAG, "createNotification: restaurant choice: " + currentUser.getRestaurantName());
-        Notification notification = new NotificationCompat.Builder(getApplicationContext(), "channel")
+        Log.e(TAG, "createNotification: friends are coming: " + mApiService.formatInterestedFriends(interestedFriends));
+        Log.e(TAG, "createNotification: restaurant choice: " + currentUser.getRestaurantName());
+
+        Notification notification = this.createNotification(currentUser, whoEatWithUser, interestedFriends, pendingIntent);
+        notificationManagerCompat.notify(1, notification);
+    }
+
+    private Notification createNotification(User currentUser, String whoEatWithUser, List<User> interestedFriends, PendingIntent pendingIntent) {
+        return new NotificationCompat.Builder(getApplicationContext(), "channel")
                 .setSmallIcon(R.drawable.meal_v2_half_size)
-                .setContentTitle(String.format("%s %s", mContext.getString(R.string.push_notification_service_alert), userName))
+                .setContentTitle(String.format("%s %s", mContext.getString(R.string.push_notification_service_alert), mApiService.formatUserFirstName(currentUser.getUserName())))
                 .setStyle(new NotificationCompat.BigTextStyle()
                         //TODO send a different message if user is solo or not.
                         .bigText(String.format(
@@ -120,28 +130,28 @@ public class PushNotificationService extends Worker {
                         ))
                         .setBigContentTitle(mContext.getString(R.string.push_notification_service_alert)))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_EVENT)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(pendingIntent)
                 .build();
-
-        notificationManagerCompat.notify(1, notification);
     }
 
     public static void periodicTimeRequest(Context context) {
         long timeDiff = setTimeUntilBeginWork();
-        PeriodicWorkRequest timeToLunch = new PeriodicWorkRequest.Builder(PushNotificationService.class, 24, TimeUnit.HOURS)
-                .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
+        PeriodicWorkRequest timeToLunch = new PeriodicWorkRequest.Builder(PushNotificationService.class, 15, TimeUnit.MINUTES)
+//                .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
                 .addTag(ONE_TIME_WORK_TAG)
                 .build();
         WorkManager.getInstance(context).enqueueUniquePeriodicWork("lunch time", ExistingPeriodicWorkPolicy.REPLACE, timeToLunch);
+        Log.e(TAG, "periodicTimeRequest: PERIODIC TIME SET");
     }
 
     public static long setTimeUntilBeginWork() {
         Calendar calendar = Calendar.getInstance();
         Calendar currentDate = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 18);
+        calendar.set(Calendar.MINUTE, 25);
         calendar.set(Calendar.SECOND, 0);
+        Log.e(TAG, "setTimeUntilBeginWork: TIME SET");
         if (calendar.before(currentDate)) {
             calendar.add(Calendar.HOUR_OF_DAY, 24);
         }
