@@ -6,12 +6,12 @@
     android:background="@drawable/login_background">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="@dimen/login_icon_width"
-        android:layout_height="@dimen/login_icon_height"
+        android:layout_width="@dimen/activity_login_icon_width"
+        android:layout_height="@dimen/activity_login_icon_height"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="@dimen/margin_login_icon"
+        android:layout_margin="@dimen/activity_login_margin_icon"
         android:src="@drawable/login_meal_icon"/>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
-        android:layout_marginBottom="@dimen/login_buttons_layout_margin_bottom"
+        android:layout_marginBottom="@dimen/activity_login_buttons_layout_margin_bottom"
         android:layout_marginHorizontal="@dimen/margin_normal_size">
 
         <androidx.appcompat.widget.AppCompatButton
@@ -30,7 +30,7 @@
             android:padding="@dimen/padding_normal_size"
             android:text="@string/login_activity_facebook_sign_in"
             style="@style/Base.CardView"
-            android:textSize="16sp"
+            android:textSize="@dimen/activity_login_btn_text_size"
             android:drawableLeft="@drawable/ic_facebook_logo"
             android:background="@drawable/rounded_border"
             android:backgroundTint="@color/facebook"
@@ -45,7 +45,7 @@
             android:padding="@dimen/padding_normal_size"
             android:text="@string/login_activity_google_sign_in"
             style="@style/Base.CardView"
-            android:textSize="16sp"
+            android:textSize="@dimen/activity_login_btn_text_size"
             android:drawableLeft="@drawable/ic_google_logo"
             android:background="@drawable/rounded_border"
             android:backgroundTint="@color/google"

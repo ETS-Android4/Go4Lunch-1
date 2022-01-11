@@ -4,7 +4,7 @@
     android:id="@+id/list_view_row_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp">
+    android:layout_margin="@dimen/list_view_row_margin">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_margin="4dp"
+            android:layout_margin="@dimen/list_view_row_margin"
             android:layout_weight="65">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Le Zinc"
-                android:textSize="18sp"
+                android:textSize="@dimen/list_view_restaurant_name"
                 android:textStyle="bold"
                 android:textColor="?attr/text_color"/>
 
@@ -35,17 +35,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="9 Boulevard chevalier de clerville"
-                android:textSize="14sp"
+                android:textSize="@dimen/list_view_restaurant_address"
                 android:textColor="?attr/text_color"
                 android:maxLines="1"
-                android:layout_marginVertical="4dp"/>
+                android:layout_marginVertical="@dimen/list_view_row_margin"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/list_view_row_restaurant_is_open_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="est ouvert"
-                android:textSize="14sp"
+                android:textSize="@dimen/list_view_restaurant_address"
                 android:textStyle="italic"
                 android:textColor="?attr/text_color"/>
 
@@ -55,8 +55,7 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
-            android:layout_marginVertical="4dp"
+            android:layout_margin="@dimen/list_view_row_margin"
             android:orientation="vertical"
             android:layout_weight="15">
 
@@ -65,16 +64,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="250m"
-                android:textSize="16sp"
+                android:maxLines="1"
+                android:textSize="@dimen/list_view_distance_between"
                 android:textColor="?attr/text_color"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/list_view_row_interested_friend_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="8dp"
+                android:layout_marginVertical="@dimen/list_view_number_of_friend_margin"
                 android:text="(3)"
-                android:textSize="16sp"
+                android:textSize="@dimen/list_view_distance_between"
                 android:drawableLeft="@drawable/baseline_person_outline_24"
                 android:drawableTint="?attr/text_color"
                 android:textColor="?attr/text_color"/>
@@ -113,13 +113,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="20"
-            android:layout_margin="4dp">
+            android:layout_margin="@dimen/list_view_row_margin">
         <!-- Picture of restaurant -->
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/list_view_row_restaurant_picture_img"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="4dp"
+                android:layout_margin="@dimen/list_view_row_margin"
                 app:srcCompat="@drawable/no_image"
                 />
         </androidx.appcompat.widget.LinearLayoutCompat>

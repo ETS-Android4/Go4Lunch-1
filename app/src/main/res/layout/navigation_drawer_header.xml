@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/nav_header_height"
+    android:layout_height="@dimen/nav_drawer_header_height"
     android:id="@+id/navigation_drawer_header"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/header_background">
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="Gérard BOUCHARD"
-                android:textSize="20sp"
+                android:textSize="@dimen/nav_drawer_name_size"
                 android:textColor="@color/white"/>
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="gérard@hotmail.com"
-                android:textSize="16sp"
+                android:textSize="@dimen/nav_drawer_email_size"
                 android:textColor="@color/white"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>

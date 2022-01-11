@@ -16,7 +16,7 @@
         android:text="@string/preference_setting_title"
         android:textSize="@dimen/preference_setting_title"
         android:textColor="?attr/text_color"
-        android:layout_margin="12dp"/>
+        android:layout_margin="@dimen/preference_setting_title_margin"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/preference_setting_notification_tv"
@@ -27,8 +27,8 @@
         android:text="@string/preference_setting_enable_notification"
         android:textSize="@dimen/preference_setting_normal_text_size"
         android:textColor="?attr/text_color"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginHorizontal="@dimen/preference_setting_title_margin"
+        android:layout_marginTop="@dimen/preference_setting_margin_top"/>
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/preference_setting_notification_switch"
@@ -36,8 +36,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/preference_setting_title_tv"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="26dp"/>
+        android:layout_marginHorizontal="@dimen/preference_setting_title_margin"
+        android:layout_marginTop="@dimen/preference_setting_margin_top"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/preference_setting_delete_account_tv"
@@ -48,8 +48,8 @@
         android:text="@string/preference_setting_delete_account"
         android:textSize="@dimen/preference_setting_normal_text_size"
         android:textColor="?attr/text_color"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginHorizontal="@dimen/preference_setting_title_margin"
+        android:layout_marginTop="@dimen/preference_setting_margin_top"/>
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/preference_setting_delete_account_btn"
@@ -57,9 +57,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/preference_setting_notification_tv"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="26dp"
+        android:layout_marginHorizontal="@dimen/preference_setting_title_margin"
+        android:layout_marginTop="@dimen/preference_setting_margin_top"
         android:background="@drawable/ic_delete"
-        android:padding="20dp"/>
+        android:padding="@dimen/preference_setting_img_btn_padding"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

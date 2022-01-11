@@ -10,21 +10,21 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/activity_detail_image_header"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="@dimen/fragment_detail_header_image_height"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/activity_detail_fab"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="@dimen/fragment_detail_fab_width"
+        android:layout_height="@dimen/fragment_detail_fab_height"
         app:layout_constraintTop_toBottomOf="@id/activity_detail_image_header"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="-30dp"
-        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="@dimen/fragment_detail_fab_margin_top"
+        android:layout_marginHorizontal="@dimen/fragment_detail_fab_margin_horizontal"
         android:src="@drawable/ic_baseline_check_circle_outline_24"
-        app:fabCustomSize="56dp"
-        app:maxImageSize="36dp"
+        app:fabCustomSize="@dimen/fragment_detail_fab_custom_size"
+        app:maxImageSize="@dimen/fragment_detail_fab_img_size"
         android:backgroundTint="@color/white"
         android:contentDescription="@string/detail_activity_fab_content_description" />
 
@@ -34,13 +34,13 @@
         android:layout_height="match_parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_detail_image_header"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="@dimen/fragment_detail_layout_margin_top"
         android:orientation="vertical">
 
         <!-- Restaurant details -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/fragment_detail_layout_height"
             android:orientation="vertical"
             android:background="?attr/decoration_color">
 
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="@dimen/fragment_detail_layout_margin_horizontal"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -59,16 +59,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/decoration_text_color"
-                    android:textSize="26sp"
-                    android:layout_marginTop="10dp" />
+                    android:textSize="@dimen/fragment_detail_restaurant_name"
+                    android:text="Fleur de sel"
+                    android:layout_marginTop="@dimen/fragment_detail_layout_margin_horizontal" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/activity_detail_first_rating_img"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/baseline_star_rate_black_24"
-                    android:layout_marginVertical="16dp"
-                    android:layout_marginStart="10dp"/>
+                    android:layout_marginVertical="@dimen/fragment_detail_fab_margin_horizontal"
+                    android:layout_marginStart="@dimen/fragment_detail_layout_margin_horizontal"/>
 
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -76,14 +77,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/baseline_star_rate_black_24"
-                    android:layout_marginVertical="16dp"/>
+                    android:layout_marginVertical="@dimen/fragment_detail_fab_margin_horizontal"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/activity_detail_third_rating_img"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/baseline_star_rate_black_24"
-                    android:layout_marginVertical="16dp"/>
+                    android:layout_marginVertical="@dimen/fragment_detail_fab_margin_horizontal"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -95,9 +96,10 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:textColor="?attr/decoration_text_color"
-                android:textSize="16sp"
-                android:layout_marginHorizontal="10dp"
-                android:layout_marginBottom="44dp"
+                android:textSize="@dimen/fragment_detail_restaurant_address"
+                android:layout_marginHorizontal="@dimen/fragment_detail_layout_margin_horizontal"
+                android:layout_marginBottom="@dimen/fragment_detail_text_view_margin_bottom"
+                android:text="12 rue de quelque chose 45 689 tombouctou"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -106,7 +108,7 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/activity_detail_button_container"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/fragment_detail_layout_height"
             android:orientation="horizontal"
             android:background="?attr/background_color">
 
@@ -133,7 +135,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/fragment_detail_layout_margin_horizontal"
                     android:src="@drawable/ic_call"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -143,7 +145,7 @@
                     app:layout_constraintTop_toBottomOf="@id/activity_detail_call_img"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="@dimen/fragment_detail_layout_margin_horizontal"
                     android:text="@string/detail_activityl_call_text"
                     android:textAlignment="center"
                     android:textStyle="bold"
@@ -175,7 +177,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/fragment_detail_layout_margin_horizontal"
                     android:src="@drawable/ic_star_outline" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -185,7 +187,7 @@
                     app:layout_constraintTop_toBottomOf="@id/activity_detail_like_img"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="@dimen/fragment_detail_layout_margin_horizontal"
                     android:text="@string/detail_activityl_like_text"
                     android:textAlignment="center"
                     android:textStyle="bold"
@@ -218,7 +220,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/fragment_detail_layout_margin_horizontal"
                     android:src="@drawable/ic_public"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -228,7 +230,7 @@
                     app:layout_constraintTop_toBottomOf="@id/activity_detail_website_img"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="@dimen/fragment_detail_layout_margin_horizontal"
                     android:text="@string/detail_activityl_website_text"
                     android:textAlignment="center"
                     android:textStyle="bold"
