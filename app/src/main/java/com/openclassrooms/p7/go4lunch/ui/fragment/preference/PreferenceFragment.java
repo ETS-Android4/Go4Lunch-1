@@ -1,6 +1,5 @@
 package com.openclassrooms.p7.go4lunch.ui.fragment.preference;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,8 +17,6 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.databinding.FragmentPreferenceSettingsBinding;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
-
-import java.util.Objects;
 
 public class PreferenceFragment extends Fragment {
 
@@ -76,7 +73,7 @@ public class PreferenceFragment extends Fragment {
         signOutPopup
                 .setTitle(R.string.preference_popup_title_delete_account)
                 .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> {
-                    mViewModel.deleteUserFromFirestore(requireContext());
+                    mViewModel.deleteUser(requireContext());
                     quitApplicationAlertPopup();
                 }).setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, null)
                 .show();

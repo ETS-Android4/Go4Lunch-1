@@ -1,5 +1,7 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
+import static com.openclassrooms.p7.go4lunch.notification.PushNotificationService.periodicTimeRequest;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
+        this.initNotification();
     }
 
     @Override
@@ -213,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateHeader() {
         if (mViewModel.isCurrentUserLogged()) {
-            FirebaseUser user = mViewModel.getCurrentUser();
+            FirebaseUser user = mViewModel.getCurrentFirebaseUser();
             if (user.getPhotoUrl() != null) {
                 setUserPicture(user.getPhotoUrl());
             }
@@ -255,6 +258,10 @@ public class MainActivity extends AppCompatActivity {
                 mBinding.activityMainTabs.selectTab(mBinding.activityMainTabs.getTabAt(position));
             }
         });
+    }
+
+    private void initNotification() {
+        periodicTimeRequest(this);
     }
 
     private void setUserPicture(Uri photoUrl) {

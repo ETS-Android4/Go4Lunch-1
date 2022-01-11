@@ -30,11 +30,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.injector.Go4LunchApplication;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
+import com.openclassrooms.p7.go4lunch.repository.PlaceTask;
+import com.openclassrooms.p7.go4lunch.repository.RestaurantFavoriteRepository;
+import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 import com.openclassrooms.p7.go4lunch.service.DummyApiService;
+import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -53,7 +58,11 @@ import java.util.Objects;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MapViewRepositoryTest {
 
+    private final RestaurantFavoriteRepository restaurantFavoriteRepository = RestaurantFavoriteRepository.getInstance();
     private final MapViewRepository mapViewRepository = MapViewRepository.getInstance();
+    private final PlaceTask placeTask = new PlaceTask();
+    private UserAndRestaurantViewModel viewModel;
+    private final UserRepository userRepository = UserRepository.getInstance();
     private final Context context = Go4LunchApplication.getContext();
 
     @Rule
@@ -61,48 +70,69 @@ public class MapViewRepositoryTest {
 
     @Before
     public void setup() {
+        viewModel = new UserAndRestaurantViewModel(
+                userRepository,
+                restaurantFavoriteRepository,
+                mapViewRepository,
+                placeTask
+        );
         Places.initialize(context, BuildConfig.GMP_KEY);
     }
 
     @Test
     public void testa_requestForPlaceDetails_withSuccess_andGetRestaurantList_shouldReturn3() throws InterruptedException {
-        LiveDataTestUtils.observeForTesting(mapViewRepository.getIsAlreadyNearbySearched(), liveData -> {
+        LiveDataTestUtils.observeForTesting(viewModel.getIsAlreadyNearbySearched(), liveData -> {
             assertTrue(liveData.getValue());
         });
         List<String> placeId = new ArrayList<>();
         placeId.add(FIRST_RESTAURANT_ID);
         placeId.add(SECOND_RESTAURANT_ID);
         placeId.add(THIRD_RESTAURANT_ID);
-        mapViewRepository.requestForPlaceDetails(placeId, context, false);
-        LiveDataTestUtils.observeForTesting(mapViewRepository.getAllRestaurants(), liveData -> {
+        viewModel.requestForPlaceDetails(placeId, context, false);
+        LiveDataTestUtils.observeForTesting(viewModel.getAllRestaurants(), liveData -> {
             Thread.sleep(1000);
             List<Restaurant> restaurantList = new ArrayList<>(Objects.requireNonNull(liveData.getValue()));
             assertEquals(restaurantList.size(), 3);
         });
-        LiveDataTestUtils.observeForTesting(mapViewRepository.getIsAlreadyNearbySearched(), liveData -> {
+        LiveDataTestUtils.observeForTesting(viewModel.getIsAlreadyNearbySearched(), liveData -> {
             assertFalse(liveData.getValue());
         });
     }
 
     @Test
-    public void testb_getCurrentRestaurant_shouldReturnRestaurant() throws InterruptedException {
-        LiveDataTestUtils.observeForTesting(mapViewRepository.getAllRestaurants(), liveData -> {
+    public void testb_requestForPlaceDetails_withSuccess_andGetRestaurantList_shouldReturn1() throws InterruptedException {
+        LiveDataTestUtils.observeForTesting(viewModel.getIsAlreadyNearbySearched(), liveData -> {
+            assertFalse(liveData.getValue());
+        });
+        List<String> placeId = new ArrayList<>();
+        placeId.add(FIRST_RESTAURANT_ID);
+        viewModel.requestForPlaceDetails(placeId, context, true);
+        LiveDataTestUtils.observeForTesting(viewModel.getAllRestaurants(), liveData -> {
+            Thread.sleep(1000);
+            List<Restaurant> restaurantList = new ArrayList<>(Objects.requireNonNull(liveData.getValue()));
+            assertEquals(restaurantList.size(), 4);
+        });
+    }
+
+    @Test
+    public void testc_getCurrentRestaurant_shouldReturnRestaurant() throws InterruptedException {
+        LiveDataTestUtils.observeForTesting(viewModel.getAllRestaurants(), liveData -> {
             Thread.sleep(500);
             List<Restaurant> restaurantList = new ArrayList<>(Objects.requireNonNull(liveData.getValue()));
-            assertEquals(restaurantList.size(), 3);
-            Restaurant restaurant = mapViewRepository.getCurrentRestaurant(FIRST_RESTAURANT_ID, restaurantList);
+            assertEquals(restaurantList.size(), 4);
+            Restaurant restaurant = viewModel.getCurrentRestaurant(FIRST_RESTAURANT_ID, restaurantList);
             assert restaurant.getId().equals(FIRST_RESTAURANT_ID);
         });
     }
 
     @Test
-    public void testc_setNumberOfFriendInterested_withSuccess() throws InterruptedException {
-        LiveDataTestUtils.observeForTesting(mapViewRepository.getAllRestaurants(), liveData -> {
-            mapViewRepository.setNumberOfFriendInterested(getDefaultUser(), Objects.requireNonNull(liveData.getValue()));
+    public void testd_setNumberOfFriendInterested_withSuccess() throws InterruptedException {
+        LiveDataTestUtils.observeForTesting(viewModel.getAllRestaurants(), liveData -> {
+            viewModel.setNumberOfFriendInterested(getDefaultUser(), Objects.requireNonNull(liveData.getValue()));
 
-            Restaurant firstRestaurant = mapViewRepository.getCurrentRestaurant(FIRST_RESTAURANT_ID, liveData.getValue());
-            Restaurant secondRestaurant = mapViewRepository.getCurrentRestaurant(SECOND_RESTAURANT_ID, liveData.getValue());
-            Restaurant thirdRestaurant = mapViewRepository.getCurrentRestaurant(THIRD_RESTAURANT_ID, liveData.getValue());
+            Restaurant firstRestaurant = viewModel.getCurrentRestaurant(FIRST_RESTAURANT_ID, liveData.getValue());
+            Restaurant secondRestaurant = viewModel.getCurrentRestaurant(SECOND_RESTAURANT_ID, liveData.getValue());
+            Restaurant thirdRestaurant = viewModel.getCurrentRestaurant(THIRD_RESTAURANT_ID, liveData.getValue());
 
             Integer twoFriendInterested = 2, oneFriendInterested = 1, noFriendInterested = 0;
 

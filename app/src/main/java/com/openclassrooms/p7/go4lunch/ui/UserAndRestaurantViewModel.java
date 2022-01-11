@@ -40,7 +40,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
     }
 
     //                   --- FOR USER FIREBASE ---
-    public FirebaseUser getCurrentUser() {
+    public FirebaseUser getCurrentFirebaseUser() {
         return userDataSource.getCurrentUser();
     }
     public Task<Void> deleteFirebaseUser(Context context) {
@@ -60,7 +60,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public void updateUser(User user) {
         userDataSource.updateUser(user);
     }
-    public void deleteUserFromFirestore(Context context) {
+    public void deleteUser(Context context) {
         userDataSource.deleteUserFromFirestore(context);
     }
     public LiveData<List<User>> getAllUsers() {
@@ -101,12 +101,9 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public void deleteRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
         restaurantFavoriteDataSource.deleteRestaurantFavorite(restaurantFavorite);
     }
-    public void deleteAllRestaurantFavorite() {
-        restaurantFavoriteDataSource.deleteAllRestaurantFavorite();
-    }
 
     //                  --- PLACE TASK ---
-    public void setPlaceTaskExecutor(String url) {
+    public void placeTaskExecutor(String url) {
         placeTaskExecutor.execute(url);
     }
     public MutableLiveData<List<String>> getListOfPlaceId() {

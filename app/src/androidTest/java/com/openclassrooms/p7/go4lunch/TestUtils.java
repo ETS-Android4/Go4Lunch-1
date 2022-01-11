@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 
 import org.junit.Assert;
@@ -59,8 +60,12 @@ public abstract class TestUtils {
         Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail, userPassword));
     }
 
-    public static RestaurantFavorite getDefaultRestaurantFavorite() {
-        return new RestaurantFavorite("1111", true);
+    public static RestaurantFavorite getDefaultRestaurantFavorite(int index) {
+        List<RestaurantFavorite> restaurantFavoriteList = new ArrayList<>();
+        restaurantFavoriteList.add(new RestaurantFavorite("1111", true));
+        restaurantFavoriteList.add(new RestaurantFavorite("2222", true));
+        restaurantFavoriteList.add(new RestaurantFavorite("3333", true));
+        return restaurantFavoriteList.get(index);
     }
 
     public static Task<DocumentSnapshot> getFirestoreRestaurantFavorite(String userId, String restaurantId) {

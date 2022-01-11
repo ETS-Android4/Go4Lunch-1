@@ -90,4 +90,13 @@
     <!-- UserrSettings -->
     <string name="UserSettings_notification_enabled">notification_enabled</string>
 
+    <string name="list_view_holder_still_closed">still closed</string>
+    <string name="list_view_holder_am">am</string>
+    <string name="list_view_holder_pm">pm</string>
+    <string name="push_notification_service_nobody_come">you are alone.</string>
+    <string name="map_view_fragment_search_canceled">Search canceled</string>
+    <string name="preference_popup_account_deleted">Account deleted</string>
+    <string name="preference_popup_title_quit_app">Quit Go4Lunch?</string>
+    <string name="main_activity_alert_dialog_title">Do you want to quit?</string>
+
 </resources>

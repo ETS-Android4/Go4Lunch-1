@@ -58,11 +58,6 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_application_id" />
 
-        <service
-            android:name=".service.CustomService"
-            android:exported="true"/>
-
-
     </application>
 
 </manifest>

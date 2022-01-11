@@ -24,7 +24,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
-import com.openclassrooms.p7.go4lunch.injector.Go4LunchApplication;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
@@ -40,12 +39,13 @@ import java.util.concurrent.TimeUnit;
 
 public class PushNotificationService extends Worker {
 
-    private static final String ONE_TIME_WORK_TAG = "lunch_alert";
+    private static final String PERIODIC_TIME_WORK_TAG = "lunch_alert";
     private static final String TAG = PushNotificationService.class.getName();
     private final WorkManager mWorkManager;
     private final Context mContext;
     private final FirebaseHelper mFirebaseHelper = FirebaseHelper.getInstance();
     private final ApiService mApiService;
+    public static final String CHANNEL_ID_STRING = "go4lunch_channel";
 
 
     public PushNotificationService(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -81,6 +81,7 @@ public class PushNotificationService extends Worker {
             return Result.success();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+            Log.e(TAG, "doWork: RESULT FAILED");
             return Result.failure();
         }
     }
@@ -99,7 +100,7 @@ public class PushNotificationService extends Worker {
         }
         userList.remove(currentUser);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 123, intent, 0);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
         List<User> interestedFriends = mApiService.getInterestedFriend(userList, Objects.requireNonNull(currentUser).getRestaurantId());
         if (interestedFriends.isEmpty()) {
@@ -114,7 +115,7 @@ public class PushNotificationService extends Worker {
     }
 
     private Notification createNotification(User currentUser, String whoEatWithUser, List<User> interestedFriends, PendingIntent pendingIntent) {
-        return new NotificationCompat.Builder(getApplicationContext(), Go4LunchApplication.CHANNEL_ID_STRING)
+        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_STRING)
                 .setSmallIcon(R.drawable.meal_v2_half_size)
                 .setContentTitle(String.format("%s %s", mContext.getString(R.string.push_notification_service_alert), mApiService.formatUserFirstName(currentUser.getUserName())))
                 .setStyle(new NotificationCompat.BigTextStyle()
@@ -136,9 +137,10 @@ public class PushNotificationService extends Worker {
         long timeDiff = setTimeUntilBeginWork();
         PeriodicWorkRequest timeToLunch = new PeriodicWorkRequest.Builder(PushNotificationService.class, 24, TimeUnit.HOURS)
                 .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
-                .addTag(ONE_TIME_WORK_TAG)
+                .addTag(PERIODIC_TIME_WORK_TAG)
                 .build();
         WorkManager.getInstance(context).enqueueUniquePeriodicWork("lunch time", ExistingPeriodicWorkPolicy.REPLACE, timeToLunch);
+        Log.e(TAG, "periodicTimeRequest: PERIODIC WORK ENQUEUED");
     }
 
     public static long setTimeUntilBeginWork() {
@@ -150,6 +152,7 @@ public class PushNotificationService extends Worker {
         if (calendar.before(currentDate)) {
             calendar.add(Calendar.HOUR_OF_DAY, 24);
         }
+        Log.e(TAG, "setTimeUntilBeginWork: WORK BEGIN IN: " + (calendar.getTimeInMillis() - currentDate.getTimeInMillis()) + "MS");
         return calendar.getTimeInMillis() - currentDate.getTimeInMillis();
     }
 

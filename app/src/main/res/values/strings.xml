@@ -90,6 +90,7 @@
     <string name="channel_description">show to user where to lunch</string>
     <string name="language_select">Language Select:</string>
     <string name="delete_account">Delete your account:</string>
+
     <string name="UserSettings_notification_enabled">notification_enabled</string>
     <string name="list_view_holder_still_closed">still closed</string>
     <string name="list_view_holder_am">am</string>

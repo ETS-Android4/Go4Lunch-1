@@ -39,17 +39,4 @@ public class RestaurantFavoriteRepository {
                 .document(restaurantFavorite.getRestaurantId())
                 .delete();
     }
-
-    public void deleteAllRestaurantFavorite() {
-//        mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().get().addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                for (DocumentSnapshot documentSnapshot : task.getResult()) {
-//                    RestaurantFavorite restaurantFavorite = documentSnapshot.toObject(RestaurantFavorite.class);
-//                    mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser()
-//                            .document(Objects.requireNonNull(restaurantFavorite).getRestaurantId())
-//                            .delete();
-//                }
-//            }
-//        });
-    }
 }
