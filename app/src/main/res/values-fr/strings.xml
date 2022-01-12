@@ -36,7 +36,7 @@
     <string name="toolbar_title_hungry">J\'AI FAIM!</string>
 
     <!-- Toolbar menu strings -->
-    <string name="tooblar_menu_search_button">Chercher</string>
+    <string name="toolbar_menu_search_button">Chercher</string>
 
     <!-- LoginActivity strings -->
     <string name="login_activity_error_authentication_canceled">Authentification annulée</string>
@@ -80,7 +80,7 @@
 
     <!-- PushNotificationService strings -->
     <string name="push_notification_service_alert">Il est midi</string>
-    <string name="push_notification_service_restaurant_choice">Tu as choisi ded manger à</string>
+    <string name="push_notification_service_restaurant_choice">Tu as choisi de manger à</string>
     <string name="push_notification_service_list_of_friend_are_come">Collègues qui viennent avec toi:</string>
     <string name="push_notification_service_nobody_come">tu es seul.</string>
 

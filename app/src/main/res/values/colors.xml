@@ -12,7 +12,6 @@
     <color name="colorPrimaryDark">@color/black</color>
     <color name="colorAccent">@color/drawerlayout_color</color>
 
-
     <color name="facebook">#3A5898</color>
     <color name="google">#F53E28</color>
     <color name="map_marker">#FF5722</color>
@@ -20,6 +19,7 @@
     <color name="map_marker_favorite">#69F0AE</color>
     <color name="map_marker_searched">#3DDE58</color>
     <color name="system_bar_color">#C41B00</color>
+    <color name="rate_star_color">#C6C155</color>
 
     <!-- Light colors -->
     <color name="light_background_color">@color/white</color>

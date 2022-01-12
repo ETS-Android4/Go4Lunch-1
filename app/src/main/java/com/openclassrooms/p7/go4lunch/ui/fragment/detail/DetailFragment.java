@@ -3,6 +3,7 @@ package com.openclassrooms.p7.go4lunch.ui.fragment.detail;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -213,7 +214,11 @@ public class DetailFragment extends Fragment {
     }
 
     private void setFavoriteImage(boolean favorite) {
-        mBinding.activityDetailLikeImg.setImageResource(mApiService.setFavoriteImage(favorite));
+//        mBinding.activityDetailLikeImg.setImageResource(mApiService.setFavoriteImage(favorite));
+        
+        mBinding.activityDetailLikeBtn.setCompoundDrawablesWithIntrinsicBounds(0, mApiService.setFavoriteImage(favorite), 0, 0);
+
+
     }
 
     private void setSelectedImage(boolean selected) {

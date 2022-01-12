@@ -238,7 +238,7 @@ public class ServiceTest {
 
     @Test
     public void setRatingStars_shouldReturn_starBorder() {
-        int drawableExpected = R.drawable.baseline_star_border_black_24;
+        int drawableExpected = R.drawable.baseline_star_border_24;
         int indexToTest = 0;
         double ratingToTest = 0.0;
         int drawableToTest = service.setRatingStars(indexToTest, ratingToTest);
@@ -257,7 +257,7 @@ public class ServiceTest {
 
     @Test
     public void setRatingStars_shouldReturn_starHalf() {
-        int drawableExpected = R.drawable.baseline_star_half_black_24;
+        int drawableExpected = R.drawable.baseline_star_half_24;
         int indexToTest = 1;
         double ratingToTest = 2;
         int drawableToTest = service.setRatingStars(indexToTest, ratingToTest);
@@ -272,7 +272,7 @@ public class ServiceTest {
     @Test
     public void setRatingStars_shouldReturn_starRate() {
         // ARRANGE
-        int drawableExpected = R.drawable.baseline_star_rate_black_24;
+        int drawableExpected = R.drawable.baseline_star_rate_24;
         int indexToTest = 2;
         double ratingToTest = 5;
         // ACT
@@ -328,9 +328,9 @@ public class ServiceTest {
     }
 
     @Test
-    public void setSelectedImage_shouldReturn_baseline_check_circle_outline_black_24() {
+    public void setSelectedImage_shouldReturn_baseline_check_circle_outline_24() {
         // ARRANGE
-        int drawableExpected = R.drawable.baseline_check_circle_outline_black_24;
+        int drawableExpected = R.drawable.baseline_check_circle_outline_24;
         // ACT
         int drawableToTest = service.setSelectedImage(false);
         // ASSERT

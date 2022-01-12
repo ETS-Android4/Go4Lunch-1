@@ -39,7 +39,7 @@
     <string name="toolbar_title_hungry">I\'m Hungry!</string>
 
     <!-- Toolbar menu strings -->
-    <string name="tooblar_menu_search_button">Chercher</string>
+    <string name="toolbar_menu_search_button">Chercher</string>
 
     <!-- LoginActivity strings -->
     <string name="login_activity_error_authentication_canceled">Authentication canceled</string>

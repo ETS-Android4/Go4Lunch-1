@@ -77,6 +77,7 @@ public class DummyApiService implements ApiService {
             if (Objects.requireNonNull(openingDay.getOpen()).getDay().toString().equals(currentDay)) {
 
                 //TODO don't show the good time when a day have morning and afternoon opening.
+                //TODO if close hour is same as current hour, restaurant marked as open even if it close.
                 int hours = Objects.requireNonNull(openingDay.getOpen()).getTime().getHours();
                 int minutes = Objects.requireNonNull(openingDay.getOpen()).getTime().getMinutes();
                 int closeHours = Objects.requireNonNull(openingDay.getClose()).getTime().getHours();
@@ -244,12 +245,12 @@ public class DummyApiService implements ApiService {
     public int setRatingStars(int index, double rating) {
         int convertedRating = (int) rating;
         if (convertedRating == 2 && index == 1 || convertedRating == 4 && index == 2) {
-            return R.drawable.baseline_star_half_black_24;
+            return R.drawable.baseline_star_half_24;
         }
         if (convertedRating < 4 && index == 2 || convertedRating < 2 && index == 1 || convertedRating == 0) {
-            return R.drawable.baseline_star_border_black_24;
+            return R.drawable.baseline_star_border_24;
         }
-        return R.drawable.baseline_star_rate_black_24;
+        return R.drawable.baseline_star_rate_24;
     }
 
     /**
@@ -277,7 +278,7 @@ public class DummyApiService implements ApiService {
         if (selected) {
             return R.drawable.baseline_check_circle_24;
         }
-        return R.drawable.baseline_check_circle_outline_black_24;
+        return R.drawable.baseline_check_circle_outline_24;
     }
 
     /**

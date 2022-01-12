@@ -106,6 +106,7 @@ public class UserRepository {
             return Tasks.whenAllComplete(taskList);
         }).continueWith(task -> {
             if (task.isComplete()) {
+                Thread.sleep(500);
                 return Tasks.await(deleteUser(context).addOnCompleteListener(task1 -> {
                     Toast.makeText(context, context.getResources().getString(R.string.preference_popup_account_deleted), Toast.LENGTH_SHORT).show();
                 }));
@@ -129,7 +130,7 @@ public class UserRepository {
                 Log.d("Error", "Error getting documents: ", task.getException());
             }
         }).addOnFailureListener(exception -> {
-
+            Log.d(TAG, "getAllUsers: ERROR GETTING DOCUMENT");
         });
         return listOfUser;
     }
