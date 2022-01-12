@@ -44,63 +44,71 @@
             android:orientation="vertical"
             android:background="?attr/decoration_color">
 
-            <!-- Name, Rating, Type & Address container -->
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/activity_detail_restaurant_info_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginHorizontal="@dimen/fragment_detail_layout_margin_horizontal"
-                android:orientation="horizontal">
+                android:orientation="vertical">
+
+                <!-- Name, Rating, Type & Address container -->
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/activity_detail_restaurant_info_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginHorizontal="@dimen/fragment_detail_layout_margin_horizontal"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/activity_detail_restaurant_name_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/decoration_text_color"
+                        android:textSize="@dimen/fragment_detail_restaurant_name"
+                        android:text="Fleur de sel"
+                        android:layout_marginTop="@dimen/fragment_detail_layout_margin_horizontal" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/activity_detail_first_rating_img"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/baseline_star_rate_black_24"
+                        android:layout_marginTop    ="@dimen/fragment_detail_restaurant_rating_star_vertical_margin"
+                        android:layout_marginStart="@dimen/fragment_detail_layout_margin_horizontal"/>
+
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/activity_detail_second_rating_img"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/baseline_star_rate_black_24"
+                        android:layout_marginTop="@dimen/fragment_detail_restaurant_rating_star_vertical_margin"/>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/activity_detail_third_rating_img"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/baseline_star_rate_black_24"
+                        android:layout_marginTop="@dimen/fragment_detail_restaurant_rating_star_vertical_margin"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/activity_detail_restaurant_name_tv"
+                    android:id="@+id/activity_detail_restaurant_type_and_adress_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/activity_detail_restaurant_info_container"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     android:textColor="?attr/decoration_text_color"
-                    android:textSize="@dimen/fragment_detail_restaurant_name"
-                    android:text="Fleur de sel"
-                    android:layout_marginTop="@dimen/fragment_detail_layout_margin_horizontal" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/activity_detail_first_rating_img"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/baseline_star_rate_black_24"
-                    android:layout_marginVertical="@dimen/fragment_detail_fab_margin_horizontal"
-                    android:layout_marginStart="@dimen/fragment_detail_layout_margin_horizontal"/>
-
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/activity_detail_second_rating_img"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/baseline_star_rate_black_24"
-                    android:layout_marginVertical="@dimen/fragment_detail_fab_margin_horizontal"/>
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/activity_detail_third_rating_img"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/baseline_star_rate_black_24"
-                    android:layout_marginVertical="@dimen/fragment_detail_fab_margin_horizontal"/>
+                    android:textSize="@dimen/fragment_detail_restaurant_address"
+                    android:layout_marginHorizontal="@dimen/fragment_detail_layout_margin_horizontal"
+                    android:layout_marginBottom="@dimen/fragment_detail_text_view_margin_bottom"
+                    android:text="12 rue de quelque chose 45 689 tombouctou" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/activity_detail_restaurant_type_and_adress_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/activity_detail_restaurant_info_container"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:textColor="?attr/decoration_text_color"
-                android:textSize="@dimen/fragment_detail_restaurant_address"
-                android:layout_marginHorizontal="@dimen/fragment_detail_layout_margin_horizontal"
-                android:layout_marginBottom="@dimen/fragment_detail_text_view_margin_bottom"
-                android:text="12 rue de quelque chose 45 689 tombouctou"
-                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
