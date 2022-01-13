@@ -63,6 +63,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public void deleteUser(Context context) {
         userDataSource.deleteUserFromFirestore(context);
     }
+    public void deleteUserAccount(Context context) { userDataSource.deleteUserAccount(context); }
     public LiveData<List<User>> getAllUsers() {
         return userDataSource.getAllUsers();
     }

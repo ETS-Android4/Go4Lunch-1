@@ -73,8 +73,9 @@ public class PreferenceFragment extends Fragment {
         signOutPopup
                 .setTitle(R.string.preference_popup_title_delete_account)
                 .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> {
-                    mViewModel.deleteUser(requireContext());
-                    quitApplicationAlertPopup();
+//                    mViewModel.deleteUser(requireContext());
+                    mViewModel.deleteUserAccount(requireContext());
+//                    quitApplicationAlertPopup();
                 }).setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, null)
                 .show();
     }

@@ -1,5 +1,6 @@
 package com.openclassrooms.p7.go4lunch.ui.fragment.list_view;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,6 +70,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
 
         }
 
+        @SuppressLint("UseCompatLoadingForDrawables")
         public void bind(Restaurant restaurant){
             String openingHourText = makeOpeningHourString(restaurant.getOpeningHours());
             mBinding.listViewRowRestaurantNameTv.setText(mApiService.formatRestaurantName(restaurant.getName()));

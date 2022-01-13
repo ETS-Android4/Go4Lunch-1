@@ -3,18 +3,29 @@ package com.openclassrooms.p7.go4lunch.repository;
 import static android.content.ContentValues.TAG;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.MutableLiveData;
 
+import com.facebook.AccessToken;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
+import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,8 +104,8 @@ public class UserRepository {
     }
 
     public void deleteUserFromFirestore(Context context) {
-        String currentUserId = Objects.requireNonNull(mFirebaseHelper.getCurrentUser()).getUid();
-        mFirebaseHelper.getUsersCollection().document(currentUserId).delete();
+        FirebaseUser currentUser = Objects.requireNonNull(mFirebaseHelper.getCurrentUser());
+        mFirebaseHelper.getUsersCollection().document(currentUser.getUid()).delete();
         mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().get().continueWith(task -> {
             List<DocumentSnapshot> documentSnapshotList = task.getResult().getDocuments();
             List<Task<Void>> taskList = new ArrayList<>();
@@ -106,15 +117,42 @@ public class UserRepository {
             return Tasks.whenAllComplete(taskList);
         }).continueWith(task -> {
             if (task.isComplete()) {
-                Thread.sleep(500);
                 return Tasks.await(deleteUser(context).addOnCompleteListener(task1 -> {
                     Toast.makeText(context, context.getResources().getString(R.string.preference_popup_account_deleted), Toast.LENGTH_SHORT).show();
+                    context.startActivity(new Intent(context, LoginActivity.class));
                 }));
             } else {
                 return false;
             }
         });
     }
+
+    public void deleteUserAccount(Context context) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+        AccessToken facebookToken = AccessToken.getCurrentAccessToken();
+        AuthCredential credential = null;
+        if (facebookToken != null) {
+            credential = FacebookAuthProvider.getCredential(Objects.requireNonNull(AccessToken.getCurrentAccessToken()).getToken());
+        }
+        if (account != null) {
+            credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        }
+        Objects.requireNonNull(user).reauthenticate(Objects.requireNonNull(credential)).addOnCompleteListener(task1 -> {
+            if (task1.isSuccessful()) {
+                deleteUserFromFirestore(context);
+            } else {
+                new AlertDialog.Builder(context)
+                        .setMessage(context.getResources().getString(R.string.preference_need_to_logout))
+                        .setPositiveButton(context.getResources().getString(R.string.preference_logout), (dialog, which) -> {
+                            signOut(context).addOnCompleteListener(task2 -> context.startActivity(new Intent(context, LoginActivity.class)));
+                        })
+                        .setNegativeButton(context.getResources().getString(R.string.main_activity_signout_confirmation_negative_btn), null)
+                        .show();
+            }
+        });
+    }
+
     /**
      * Get userList from Firestore and store it in DUMMY_USER.
      */

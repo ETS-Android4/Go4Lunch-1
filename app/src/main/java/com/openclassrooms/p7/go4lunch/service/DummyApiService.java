@@ -230,8 +230,8 @@ public class DummyApiService implements ApiService {
     @Override
     public RectangularBounds getRectangularBound(LatLng currentLocation) {
         return RectangularBounds.newInstance(
-                new LatLng(currentLocation.latitude - 0.050000, currentLocation.longitude + 0.050000),
-                new LatLng(currentLocation.latitude + 0.050000, currentLocation.longitude + 0.050000));
+                new LatLng(currentLocation.latitude - 0.060000, currentLocation.longitude + 0.060000),
+                new LatLng(currentLocation.latitude + 0.060000, currentLocation.longitude + 0.060000));
     }
 
     /**

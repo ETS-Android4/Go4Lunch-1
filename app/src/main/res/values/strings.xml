@@ -94,5 +94,7 @@
     <string name="map_view_repository_open_at">open at</string>
     <string name="map_view_repository_hour">pm</string>
     <string name="map_view_fragment_search_canceled">Search canceled</string>
+    <string name="preference_need_to_logout">You need to reconnect and press delete account again.</string>
+    <string name="preference_logout">logout</string>
 
 </resources>

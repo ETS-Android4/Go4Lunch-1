@@ -1,5 +1,6 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
+import static android.content.ContentValues.TAG;
 import static com.openclassrooms.p7.go4lunch.notification.PushNotificationService.periodicTimeRequest;
 
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -25,6 +27,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
@@ -60,6 +63,17 @@ public class MainActivity extends AppCompatActivity {
         this.configureListeners();
         this.updateHeader();
         this.initNotification();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Log.e(TAG, "onStart: NOT CONNECTED");
+        } else {
+            Log.e(TAG, "onStart: CONNECTED");
+        }
     }
 
     @Override

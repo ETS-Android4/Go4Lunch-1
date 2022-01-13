@@ -8,12 +8,15 @@ import androidx.test.runner.AndroidJUnit4;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.Token;
 import com.openclassrooms.p7.go4lunch.injector.Go4LunchApplication;
 import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 
@@ -68,6 +71,11 @@ public class FirebaseHelper {
      */
     public Task<Void> signOut(Context context) {
         return AuthUI.getInstance().signOut(context);
+    }
+
+    public Task<GetTokenResult> tokenRevoked() {
+        return FirebaseAuth.getInstance().getAccessToken(true);
+
     }
 
     /**

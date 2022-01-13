@@ -19,7 +19,6 @@
         android:textSize="@dimen/workmates_list_row_text_size"
         android:textStyle="bold"
         android:textColor="?attr/text_color"
-        android:layout_marginHorizontal="@dimen/workmates_list_row_text_view_margin"
-        android:text="Freddy mange a Fleur de sel"/>
+        android:layout_marginHorizontal="@dimen/workmates_list_row_text_view_margin" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>
