@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <dimen name="fragment_detail_no_friend_img_margin">@dimen/preference_setting_margin_top</dimen>
+</resources>

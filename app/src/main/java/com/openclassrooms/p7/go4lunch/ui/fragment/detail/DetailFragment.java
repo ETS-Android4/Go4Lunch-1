@@ -3,7 +3,6 @@ package com.openclassrooms.p7.go4lunch.ui.fragment.detail;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -90,14 +88,13 @@ public class DetailFragment extends Fragment {
             }
         });
         mViewModel.getCurrentRestaurantFavorite(CURRENT_RESTAURANT_ID).observe(getViewLifecycleOwner(), restaurantFavorite -> {
+            mCurrentRestaurantFavorite = null;
             if (restaurantFavorite != null) {
                 if (restaurantFavorite.getRestaurantId().equals(CURRENT_RESTAURANT_ID)) {
                     mCurrentRestaurantFavorite = restaurantFavorite;
                 }
             }
-            if (mCurrentRestaurantFavorite != null) {
-                setFavoriteImage(true);
-            }
+            setFavoriteImage(mCurrentRestaurantFavorite != null);
         });
 
     }
@@ -126,11 +123,24 @@ public class DetailFragment extends Fragment {
         mBinding.activityDetailRecyclerview.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         List<Restaurant> restaurants = new ArrayList<>();
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants::addAll);
-        mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
-            @Override
-            public void onChanged(List<User> users) {
+        mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), users -> {
+            List<User> userInterestedList = mViewModel.getAllInterestedUsersAtCurrentRestaurant(mCurrentRestaurant.getId(), users);
+            if (userInterestedList.isEmpty()) {
+                mBinding.activityDetailNoFriendImg.setVisibility(View.VISIBLE);
+                mBinding.activityDetailNoFriendTv.setVisibility(View.VISIBLE);
+                mBinding.activityDetailRecyclerview.setVisibility(View.GONE);
+                mBinding.activityDetailNoFriendTv.setText(requireContext().getResources().getString(R.string.fragment_detail_no_friend_tv));
+                if (mCurrentUser.isRestaurantSelected()) {
+                    if (mCurrentUser.getRestaurantId().equals(mCurrentRestaurant.getId())) {
+                        mBinding.activityDetailNoFriendTv.setText(requireContext().getResources().getString(R.string.push_notification_service_nobody_come));
+                    }
+                }
+            } else {
+                mBinding.activityDetailNoFriendImg.setVisibility(View.GONE);
+                mBinding.activityDetailNoFriendTv.setVisibility(View.GONE);
+                mBinding.activityDetailRecyclerview.setVisibility(View.VISIBLE);
                 mViewModel.setNumberOfFriendInterested(users, restaurants);
-                mAdapter = new DetailActivityAdapter(mViewModel.getAllInterestedUsersAtCurrentRestaurant(mCurrentRestaurant.getId(), users));
+                mAdapter = new DetailActivityAdapter(userInterestedList);
                 mBinding.activityDetailRecyclerview.setAdapter(mAdapter);
             }
         });
@@ -195,7 +205,6 @@ public class DetailFragment extends Fragment {
     private void updateRestaurantFavorite() {
         if (mCurrentRestaurantFavorite != null) {
             mViewModel.deleteRestaurantFavorite(mCurrentRestaurantFavorite);
-            mCurrentRestaurantFavorite.setFavorite(false);
             mCurrentRestaurantFavorite = null;
             setFavoriteImage(false);
         } else {
@@ -206,19 +215,14 @@ public class DetailFragment extends Fragment {
     private RestaurantFavorite createRestaurantFavorite() {
         setFavoriteImage(true);
         RestaurantFavorite restaurantFavorite = new RestaurantFavorite(
-                mCurrentRestaurant.getId(),
-                true
+                mCurrentRestaurant.getId()
         );
         mCurrentRestaurantFavorite = restaurantFavorite;
         return restaurantFavorite;
     }
 
     private void setFavoriteImage(boolean favorite) {
-//        mBinding.activityDetailLikeImg.setImageResource(mApiService.setFavoriteImage(favorite));
-        
         mBinding.activityDetailLikeBtn.setCompoundDrawablesWithIntrinsicBounds(0, mApiService.setFavoriteImage(favorite), 0, 0);
-
-
     }
 
     private void setSelectedImage(boolean selected) {

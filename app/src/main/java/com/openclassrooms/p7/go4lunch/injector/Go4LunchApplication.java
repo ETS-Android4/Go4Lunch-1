@@ -15,7 +15,6 @@ import androidx.core.app.NotificationManagerCompat;
 public class Go4LunchApplication extends Application {
     private static boolean isRunningTest;
     private static Context context;
-    public static final int CHANNEL_ID_INT = 456;
     public static final String CHANNEL_ID_STRING = "go4lunch_channel";
 
     @Override
@@ -28,7 +27,7 @@ public class Go4LunchApplication extends Application {
         } catch (ClassNotFoundException e) {
             isRunningTest = false;
         }
-        createNotificationChannel();
+//        createNotificationChannel();
 //        periodicTimeRequest(this);
     }
 
@@ -40,19 +39,7 @@ public class Go4LunchApplication extends Application {
         return context;
     }
 
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID_STRING,
-                    "lunch alert channel",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            channel.setDescription("channel notification");
-            Log.e(TAG, "createNotificationChannel: ");
-            NotificationManagerCompat manager = NotificationManagerCompat.from(this);
-            manager.createNotificationChannel(channel);
-        }
-    }
+
 //    public static void periodicTimeRequest(Context context) {
 //        long timeDiff = setTimeUntilBeginWork();
 //        PeriodicWorkRequest timeToLunch = new PeriodicWorkRequest.Builder(PushNotificationService.class, 24, TimeUnit.HOURS)

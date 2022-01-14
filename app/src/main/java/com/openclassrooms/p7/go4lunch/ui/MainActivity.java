@@ -66,17 +66,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            Log.e(TAG, "onStart: NOT CONNECTED");
-        } else {
-            Log.e(TAG, "onStart: CONNECTED");
-        }
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         this.updateHeader();
@@ -211,9 +200,15 @@ public class MainActivity extends AppCompatActivity {
         }
         AlertDialog.Builder restaurantSelectedPopup = new AlertDialog.Builder(this);
         restaurantSelectedPopup
-                .setTitle(getString(R.string.main_activity_selected_restaurant_dialog))
-                .setMessage(restaurantName)
+                .setView(R.layout.dialog_box)
+                //TODO
+//                .setTitle(getString(R.string.main_activity_selected_restaurant_dialog))
+//                .setMessage(restaurantName)
                 .show();
+        TextView title = findViewById(R.id.dialog_box_title);
+        TextView message = findViewById(R.id.dialog_box_message);
+        title.setText(restaurantName);
+        message.setText(getString(R.string.main_activity_selected_restaurant_dialog));
     }
 
     private void signOutAlertPopup() {

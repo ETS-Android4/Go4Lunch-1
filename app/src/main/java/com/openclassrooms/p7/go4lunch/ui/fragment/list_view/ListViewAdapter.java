@@ -15,6 +15,8 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ListViewRowBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
+import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 
@@ -25,9 +27,11 @@ import java.util.Locale;
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListViewHolder> {
 
     private final List<Restaurant> mRestaurantList;
+    private final List<RestaurantFavorite> restaurantFavoriteList;
 
-    public ListViewAdapter(List<Restaurant> mRestaurantList) {
+    public ListViewAdapter(List<Restaurant> mRestaurantList, List<RestaurantFavorite> restaurantFavoriteList) {
         this.mRestaurantList = mRestaurantList;
+        this.restaurantFavoriteList = restaurantFavoriteList;
     }
 
     @NonNull
@@ -39,7 +43,13 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
 
     @Override
     public void onBindViewHolder(@NonNull ListViewAdapter.ListViewHolder holder, int position) {
-        holder.bind(mRestaurantList.get(position));
+        RestaurantFavorite restaurantFavorite = null;
+        for (RestaurantFavorite restaurant : restaurantFavoriteList) {
+            if (restaurant.getRestaurantId().equals(mRestaurantList.get(position).getId())) {
+                restaurantFavorite = restaurant;
+            }
+        }
+        holder.bind(mRestaurantList.get(position), restaurantFavorite);
         //TODO commit detail fragment
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
@@ -71,7 +81,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         }
 
         @SuppressLint("UseCompatLoadingForDrawables")
-        public void bind(Restaurant restaurant){
+        public void bind(Restaurant restaurant, RestaurantFavorite restaurantFavorite){
             String openingHourText = makeOpeningHourString(restaurant.getOpeningHours());
             mBinding.listViewRowRestaurantNameTv.setText(mApiService.formatRestaurantName(restaurant.getName()));
             mBinding.listViewRowRestaurantAdressTv.setText(restaurant.getAddress());
@@ -92,6 +102,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",restaurant.getNumberOfFriendInterested()));
             if (restaurant.isSearched()) {
                 mBinding.listViewRowContainer.setBackground(itemView.getResources().getDrawable(R.drawable.rounded_border));
+            }
+
+            if (restaurantFavorite != null) {
+                mBinding.listViewRowFavoriteImg.setVisibility(View.VISIBLE);
             }
         }
 

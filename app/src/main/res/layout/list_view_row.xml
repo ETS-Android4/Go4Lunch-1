@@ -112,13 +112,29 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <!-- Picture of restaurant -->
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/list_view_row_restaurant_picture_img"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="20"
-            android:layout_margin="@dimen/list_view_row_margin"
-            app:srcCompat="@drawable/no_image" />
+            android:layout_weight="20">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/list_view_row_favorite_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_star"
+                android:elevation="5dp"
+                android:visibility="gone"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/list_view_row_restaurant_picture_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/list_view_row_margin"
+                app:srcCompat="@drawable/no_image" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

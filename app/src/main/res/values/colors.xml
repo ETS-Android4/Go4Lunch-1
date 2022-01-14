@@ -20,6 +20,7 @@
     <color name="map_marker_searched">#3DDE58</color>
     <color name="system_bar_color">#C41B00</color>
     <color name="rate_star_color">#C6C155</color>
+    <color name="detail_fragment_no_friend_text">#5D5D5D</color>
 
     <!-- Light colors -->
     <color name="light_background_color">@color/white</color>

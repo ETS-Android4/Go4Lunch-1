@@ -1,10 +1,15 @@
 package com.openclassrooms.p7.go4lunch.notification;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -63,6 +68,7 @@ public class PushNotificationService extends Worker {
             Log.e(TAG, "doWork: PERIODIC WORK CANCELED");
             return Result.success();
         }
+        createNotificationChannel();
         Task<QuerySnapshot> task = FirebaseFirestore.getInstance().collection("users").get();
         List<DocumentSnapshot> documentSnapshotList = null;
         Log.e(TAG, "doWork: TRY TO DO WORK");
@@ -146,8 +152,8 @@ public class PushNotificationService extends Worker {
     public static long setTimeUntilBeginWork() {
         Calendar calendar = Calendar.getInstance();
         Calendar currentDate = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+        calendar.set(Calendar.MINUTE, 18);
         calendar.set(Calendar.SECOND, 0);
         if (calendar.before(currentDate)) {
             calendar.add(Calendar.HOUR_OF_DAY, 24);
@@ -156,12 +162,18 @@ public class PushNotificationService extends Worker {
         return calendar.getTimeInMillis() - currentDate.getTimeInMillis();
     }
 
-
-    public static Constraints setConstrains() {
-        Constraints constraints = new Constraints.Builder()
-                .setRequiresBatteryNotLow(true)
-                .build();
-        return constraints;
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID_STRING,
+                    "lunch alert channel",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("channel notification");
+            Log.e(TAG, "createNotificationChannel: ");
+            NotificationManagerCompat manager = NotificationManagerCompat.from(mContext);
+            manager.createNotificationChannel(channel);
+        }
     }
 
     private String getCurrentNotification(Context context) {

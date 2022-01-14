@@ -62,9 +62,9 @@ public abstract class TestUtils {
 
     public static RestaurantFavorite getDefaultRestaurantFavorite(int index) {
         List<RestaurantFavorite> restaurantFavoriteList = new ArrayList<>();
-        restaurantFavoriteList.add(new RestaurantFavorite("1111", true));
-        restaurantFavoriteList.add(new RestaurantFavorite("2222", true));
-        restaurantFavoriteList.add(new RestaurantFavorite("3333", true));
+        restaurantFavoriteList.add(new RestaurantFavorite("1111"));
+        restaurantFavoriteList.add(new RestaurantFavorite("2222"));
+        restaurantFavoriteList.add(new RestaurantFavorite("3333"));
         return restaurantFavoriteList.get(index);
     }
 

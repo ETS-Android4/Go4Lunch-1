@@ -96,6 +96,11 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public MutableLiveData<RestaurantFavorite> getCurrentRestaurantFavorite(String currentRestaurantId) {
         return restaurantFavoriteDataSource.getCurrentRestaurantFavorite(currentRestaurantId);
     }
+
+    public MutableLiveData<List<RestaurantFavorite>> getAllRestaurantFavorite() {
+        return restaurantFavoriteDataSource.getAllRestaurantFavorite();
+    }
+
     public void createRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
         restaurantFavoriteDataSource.createRestaurantFavorite(restaurantFavorite);
     }

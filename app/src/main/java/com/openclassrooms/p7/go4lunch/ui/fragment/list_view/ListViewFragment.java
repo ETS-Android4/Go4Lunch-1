@@ -31,6 +31,7 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
@@ -51,8 +52,6 @@ public class ListViewFragment extends Fragment {
     private ListViewAdapter listViewAdapter;
     private UserAndRestaurantViewModel mViewModel;
     private ApiService mApiService;
-
-    public ListViewFragment() { }
 
     @Nullable
     @Override
@@ -83,19 +82,37 @@ public class ListViewFragment extends Fragment {
     public void onResume() {
         super.onResume();
         List<User> userInterestedList = new ArrayList<>();
+        List<RestaurantFavorite> restaurantFavoriteList = new ArrayList<>();
+        List<Restaurant> restaurantList = new ArrayList<>();
+
         mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), users -> {
             if (!userInterestedList.isEmpty()) {
                 userInterestedList.clear();
             }
             userInterestedList.addAll(users);
                 });
-        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurantList -> {
-            if (!userInterestedList.isEmpty()) {
-                mViewModel.setNumberOfFriendInterested(userInterestedList, restaurantList);
+
+        mViewModel.getAllRestaurantFavorite().observe(getViewLifecycleOwner(), users -> {
+            if (!restaurantFavoriteList.isEmpty()) {
+                restaurantFavoriteList.clear();
             }
-            listViewAdapter = new ListViewAdapter(restaurantList);
+            restaurantFavoriteList.addAll(users);
+            listViewAdapter = new ListViewAdapter(restaurantList, restaurantFavoriteList);
             mRecyclerView.setAdapter(listViewAdapter);
             mApiService.listViewComparator(restaurantList);
+        });
+
+        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
+            if (!userInterestedList.isEmpty()) {
+                mViewModel.setNumberOfFriendInterested(userInterestedList, restaurants);
+            }
+            if (!restaurantList.isEmpty()) {
+                restaurantList.clear();
+            }
+            restaurantList.addAll(restaurants);
+            listViewAdapter = new ListViewAdapter(restaurants, restaurantFavoriteList);
+            mRecyclerView.setAdapter(listViewAdapter);
+            mApiService.listViewComparator(restaurants);
         });
     }
 
