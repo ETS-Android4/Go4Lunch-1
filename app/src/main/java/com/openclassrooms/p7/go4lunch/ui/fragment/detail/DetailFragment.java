@@ -129,7 +129,7 @@ public class DetailFragment extends Fragment {
                 mBinding.activityDetailNoFriendImg.setVisibility(View.VISIBLE);
                 mBinding.activityDetailNoFriendTv.setVisibility(View.VISIBLE);
                 mBinding.activityDetailRecyclerview.setVisibility(View.GONE);
-                mBinding.activityDetailNoFriendTv.setText(requireContext().getResources().getString(R.string.fragment_detail_no_friend_tv));
+                mBinding.activityDetailNoFriendTv.setText(requireContext().getResources().getString(R.string.detail_activity_no_friend_tv));
                 if (mCurrentUser.isRestaurantSelected()) {
                     if (mCurrentUser.getRestaurantId().equals(mCurrentRestaurant.getId())) {
                         mBinding.activityDetailNoFriendTv.setText(requireContext().getResources().getString(R.string.push_notification_service_nobody_come));

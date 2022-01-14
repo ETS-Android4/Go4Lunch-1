@@ -4,6 +4,8 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.R;
+import com.openclassrooms.p7.go4lunch.dialog.CustomChoiceDialogPopup;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
@@ -142,13 +145,16 @@ public class UserRepository {
             if (task1.isSuccessful()) {
                 deleteUserFromFirestore(context);
             } else {
-                new AlertDialog.Builder(context)
-                        .setMessage(context.getResources().getString(R.string.preference_need_to_logout))
-                        .setPositiveButton(context.getResources().getString(R.string.preference_logout), (dialog, which) -> {
-                            signOut(context).addOnCompleteListener(task2 -> context.startActivity(new Intent(context, LoginActivity.class)));
-                        })
-                        .setNegativeButton(context.getResources().getString(R.string.main_activity_signout_confirmation_negative_btn), null)
-                        .show();
+                CustomChoiceDialogPopup customChoiceDialogPopup = new CustomChoiceDialogPopup(context);
+                customChoiceDialogPopup.setTitle(context.getResources().getString(R.string.preference_need_to_logout));
+                customChoiceDialogPopup.setPositiveBtnText(context.getResources().getString(R.string.preference_logout));
+                customChoiceDialogPopup.setNegativeBtnText(context.getResources().getString(R.string.main_activity_signout_confirmation_negative_btn));
+                customChoiceDialogPopup.getPositiveBtn().setOnClickListener(view -> {
+                    signOut(context).addOnCompleteListener(task2 -> context.startActivity(new Intent(context, LoginActivity.class)));
+                });
+                customChoiceDialogPopup.getNegativeBtn().setOnClickListener(view -> customChoiceDialogPopup.close());
+                customChoiceDialogPopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                customChoiceDialogPopup.build();
             }
         });
     }

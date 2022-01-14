@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/outline">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/custom_choice_dialog_box_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="@dimen/restaurant_choice_dialog_box_title_size"
+        android:textStyle="bold"
+        android:textColor="@color/light_text_color"
+        android:layout_margin="@dimen/restaurant_choice_dialog_box_title_margin_size"
+        android:paddingHorizontal="@dimen/restaurant_choice_dialog_box_title_padding_size"/>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/custom_choice_dialog_box_positive_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/custom_choice_dialog_box_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/custom_choice_dialog_box_negative_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="6dp"
+        android:background="@drawable/outline"
+        android:layout_marginHorizontal="@dimen/restaurant_choice_dialog_box_message_margin_horizontal_size"
+        android:layout_marginBottom="@dimen/restaurant_choice_dialog_box_message_margin_bottom_size"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/custom_choice_dialog_box_negative_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/custom_choice_dialog_box_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/custom_choice_dialog_box_positive_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="6dp"
+        android:background="@drawable/outline"
+        android:layout_marginHorizontal="@dimen/restaurant_choice_dialog_box_message_margin_horizontal_size"
+        android:layout_marginBottom="@dimen/restaurant_choice_dialog_box_message_margin_bottom_size" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

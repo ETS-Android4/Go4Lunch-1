@@ -193,7 +193,7 @@
         app:layout_constraintTop_toBottomOf="@+id/activity_detail_no_friend_img"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/fragment_detail_no_friend_tv"
+        android:text="@string/detail_activity_no_friend_tv"
         android:textStyle="bold"
         android:textSize="@dimen/fragment_detail_restaurant_name"
         android:textColor="@color/detail_fragment_no_friend_text"/>

@@ -49,9 +49,10 @@
     <string name="detail_activityl_call_text">APPELER</string>
     <string name="detail_activityl_like_text">LIKER</string>
     <string name="detail_activityl_website_text">SITE WEB</string>
+    <string name="detail_activity_no_friend_tv">personne ne viens</string>
 
     <!-- DetailViewHolder strings -->
-    <string name="detail_viewHolder_is_joining">y va</string>
+    <string name="detail_viewHolder_is_joining">y va!</string>
 
     <!-- WorkmatesViewHolder strings -->
     <string name="workmates_list_view_holder_no_details_here">Pas de détails</string>
@@ -76,7 +77,9 @@
     <string name="preference_notification_enabled">notification_enabled</string>
     <string name="preference_popup_account_deleted">Compte effacé</string>
     <string name="preference_popup_title_quit_app">Quitter Go4Lunch?</string>
-    <string name="preference_delete_account">Delete your account:</string>
+    <string name="preference_delete_account">Effacer ton compte:</string>
+    <string name="preference_need_to_logout">Tu as besoin de te reconnecter et d\'appuyer sur le boutton supprimer une nouvelle fois.</string>
+    <string name="preference_logout">se déconnecter</string>
 
     <!-- PushNotificationService strings -->
     <string name="push_notification_service_alert">Il est midi</string>

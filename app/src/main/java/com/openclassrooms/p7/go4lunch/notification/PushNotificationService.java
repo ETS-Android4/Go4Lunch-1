@@ -135,6 +135,7 @@ public class PushNotificationService extends Worker {
                         .setBigContentTitle(mContext.getString(R.string.push_notification_service_alert)))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
+                .setTimeoutAfter(600000)
                 .setContentIntent(pendingIntent)
                 .build();
     }
@@ -152,8 +153,8 @@ public class PushNotificationService extends Worker {
     public static long setTimeUntilBeginWork() {
         Calendar calendar = Calendar.getInstance();
         Calendar currentDate = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 8);
-        calendar.set(Calendar.MINUTE, 18);
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         if (calendar.before(currentDate)) {
             calendar.add(Calendar.HOUR_OF_DAY, 24);

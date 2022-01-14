@@ -40,9 +40,6 @@ public class PlaceTask extends AsyncTask<String, Integer, List<String>> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        while (Objects.requireNonNull(listOfId).size() > 3) {
-            listOfId.remove(listOfId.size() - 1);
-        }
         return listOfId;
 
     }

@@ -24,12 +24,13 @@ public class Restaurant {
     private final LatLng position;
     private final Bitmap pictureUrl;
     private Integer numberOfFriendInterested;
+    private boolean isFavorite;
     private boolean isSearched;
 
     // --- CONSTRUCTOR ---
 
 
-    public Restaurant(String id, String name, String address, String openingHours, String phoneNumber, String uriWebsite, float distance, double rating, LatLng position, Bitmap pictureUrl, Integer numberOfFriendInterested, boolean isSearched) {
+    public Restaurant(String id, String name, String address, String openingHours, String phoneNumber, String uriWebsite, float distance, double rating, LatLng position, Bitmap pictureUrl, Integer numberOfFriendInterested, boolean isFavorite, boolean isSearched) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -41,6 +42,7 @@ public class Restaurant {
         this.position = position;
         this.pictureUrl = pictureUrl;
         this.numberOfFriendInterested = numberOfFriendInterested;
+        this.isFavorite = isFavorite;
         this.isSearched = isSearched;
     }
 
@@ -60,6 +62,9 @@ public class Restaurant {
     public Integer getNumberOfFriendInterested() {
         return numberOfFriendInterested;
     }
+    public boolean isFavorite() {
+        return isFavorite;
+    }
     public boolean isSearched() {
         return isSearched;
     }
@@ -68,8 +73,8 @@ public class Restaurant {
     public void setNumberOfFriendInterested(int numberOfFriendInterested) {
         this.numberOfFriendInterested = numberOfFriendInterested;
     }
-    public void setSearched(boolean searched) {
-        isSearched = searched;
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 
     @Override

@@ -102,10 +102,14 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",restaurant.getNumberOfFriendInterested()));
             if (restaurant.isSearched()) {
                 mBinding.listViewRowContainer.setBackground(itemView.getResources().getDrawable(R.drawable.rounded_border));
+            } else {
+                mBinding.listViewRowContainer.setBackground(itemView.getResources().getDrawable(R.color.light_background_color));
             }
 
             if (restaurantFavorite != null) {
                 mBinding.listViewRowFavoriteImg.setVisibility(View.VISIBLE);
+            } else {
+                mBinding.listViewRowFavoriteImg.setVisibility(View.GONE);
             }
         }
 

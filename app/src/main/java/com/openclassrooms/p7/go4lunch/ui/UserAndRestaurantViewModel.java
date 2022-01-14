@@ -91,6 +91,9 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public void setNumberOfFriendInterested(List<User> allInterestedUsers, List<Restaurant> restaurants) {
         mapDataSource.setNumberOfFriendInterested(allInterestedUsers, restaurants);
     }
+    public void setRestaurantFavorite(List<RestaurantFavorite> restaurantFavoriteList, List<Restaurant> restaurants) {
+        mapDataSource.setRestaurantFavorite(restaurantFavoriteList, restaurants);
+    }
 
     //                  --- RESTAURANT FAVORITE ---
     public MutableLiveData<RestaurantFavorite> getCurrentRestaurantFavorite(String currentRestaurantId) {

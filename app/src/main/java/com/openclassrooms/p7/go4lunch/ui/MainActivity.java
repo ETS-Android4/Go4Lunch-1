@@ -1,14 +1,15 @@
 package com.openclassrooms.p7.go4lunch.ui;
 
-import static android.content.ContentValues.TAG;
 import static com.openclassrooms.p7.go4lunch.notification.PushNotificationService.periodicTimeRequest;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -27,14 +28,14 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityMainBinding;
+import com.openclassrooms.p7.go4lunch.dialog.CustomChoiceDialogPopup;
+import com.openclassrooms.p7.go4lunch.dialog.RestaurantChoiceDialogPopup;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.notification.PushNotificationService;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.fragment.preference.PreferenceFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
@@ -146,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
         this.setTabLayoutName();
     }
 
+    @SuppressLint("NonConstantResourceId")
     private void configureListeners() {
         mBinding.activityMainNavigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
@@ -191,36 +193,29 @@ public class MainActivity extends AppCompatActivity {
 
     private void showRestaurantSelected() {
         ApiService apiService = DI.getRestaurantApiService();
-        mViewModel.getCurrentFirestoreUser().observe(this, user -> {
-            mCurrentUser = user;
-        });
+        mViewModel.getCurrentFirestoreUser().observe(this, user -> mCurrentUser = user);
         String restaurantName = apiService.formatRestaurantName(mCurrentUser.getRestaurantName());
         if (restaurantName.equals("")) {
             restaurantName = getString(R.string.main_activity_no_restaurant_selected);
         }
-        AlertDialog.Builder restaurantSelectedPopup = new AlertDialog.Builder(this);
-        restaurantSelectedPopup
-                .setView(R.layout.dialog_box)
-                //TODO
-//                .setTitle(getString(R.string.main_activity_selected_restaurant_dialog))
-//                .setMessage(restaurantName)
-                .show();
-        TextView title = findViewById(R.id.dialog_box_title);
-        TextView message = findViewById(R.id.dialog_box_message);
-        title.setText(restaurantName);
-        message.setText(getString(R.string.main_activity_selected_restaurant_dialog));
+        RestaurantChoiceDialogPopup restaurantChoiceDialogPopup = new RestaurantChoiceDialogPopup(this);
+        restaurantChoiceDialogPopup.setTitle(getString(R.string.main_activity_selected_restaurant_dialog));
+        restaurantChoiceDialogPopup.setMessage(restaurantName);
+        restaurantChoiceDialogPopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        restaurantChoiceDialogPopup.build();
     }
 
     private void signOutAlertPopup() {
-        AlertDialog.Builder signOutPopup = new AlertDialog.Builder(this);
-        signOutPopup
-                .setTitle(R.string.main_activity_signout_confirmation_title)
-                .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> {
-                    mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
-                })
-                .setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, (dialog, which) -> {
-                })
-                .show();
+        CustomChoiceDialogPopup customChoiceDialogPopup = new CustomChoiceDialogPopup(this);
+        customChoiceDialogPopup.setTitle(getString(R.string.main_activity_signout_confirmation_title));
+        customChoiceDialogPopup.setPositiveBtnText(getResources().getString(R.string.main_activity_signout_confirmation_positive_btn));
+        customChoiceDialogPopup.setNegativeBtnText(getResources().getString(R.string.main_activity_signout_confirmation_negative_btn));
+        customChoiceDialogPopup.getPositiveBtn().setOnClickListener(view -> {
+            mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
+        });
+        customChoiceDialogPopup.getNegativeBtn().setOnClickListener(view -> customChoiceDialogPopup.close());
+        customChoiceDialogPopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        customChoiceDialogPopup.build();
     }
 
     private void updateHeader() {

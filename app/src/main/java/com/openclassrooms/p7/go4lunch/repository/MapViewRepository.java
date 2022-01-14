@@ -17,6 +17,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
@@ -139,6 +140,7 @@ public class MapViewRepository {
                 place.getLatLng(),
                 placeImage,
                 0,
+                false,
                 isSearched);
     }
 
@@ -152,6 +154,19 @@ public class MapViewRepository {
             }
             restaurant.setNumberOfFriendInterested(userList.size());
             userList.clear();
+        }
+    }
+
+    public void setRestaurantFavorite(List<RestaurantFavorite> restaurantFavoriteList, List<Restaurant> restaurants) {
+        for (Restaurant restaurant : restaurants) {
+            if (restaurant.isFavorite()) {
+                restaurant.setFavorite(false);
+            }
+            for (RestaurantFavorite restaurantFavorite : restaurantFavoriteList) {
+                if (restaurantFavorite.getRestaurantId().equals(restaurant.getId())) {
+                    restaurant.setFavorite(true);
+                }
+            }
         }
     }
 }

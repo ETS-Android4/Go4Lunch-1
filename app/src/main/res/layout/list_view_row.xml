@@ -4,6 +4,7 @@
     android:id="@+id/list_view_row_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/light_background_color"
     android:layout_margin="@dimen/list_view_row_margin">
 
     <androidx.appcompat.widget.LinearLayoutCompat

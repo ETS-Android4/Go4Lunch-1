@@ -2,6 +2,8 @@ package com.openclassrooms.p7.go4lunch.ui.fragment.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.databinding.FragmentPreferenceSettingsBinding;
+import com.openclassrooms.p7.go4lunch.dialog.CustomChoiceDialogPopup;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 public class PreferenceFragment extends Fragment {
@@ -69,24 +72,16 @@ public class PreferenceFragment extends Fragment {
     }
 
     private void deleteAccountAlertPopup() {
-        AlertDialog.Builder signOutPopup = new AlertDialog.Builder(requireContext());
-        signOutPopup
-                .setTitle(R.string.preference_popup_title_delete_account)
-                .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> {
-//                    mViewModel.deleteUser(requireContext());
-                    mViewModel.deleteUserAccount(requireContext());
-//                    quitApplicationAlertPopup();
-                }).setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, null)
-                .show();
-    }
-
-    private void quitApplicationAlertPopup() {
-        AlertDialog.Builder signOutPopup = new AlertDialog.Builder(requireContext());
-        signOutPopup
-                .setTitle(R.string.preference_popup_title_quit_app)
-                .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> {
-                    requireActivity().finishAffinity();
-                }).setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, null)
-                .show();
+        CustomChoiceDialogPopup customChoiceDialogPopup = new CustomChoiceDialogPopup(requireContext());
+        customChoiceDialogPopup.setTitle(getResources().getString(R.string.preference_popup_title_delete_account));
+        customChoiceDialogPopup.setPositiveBtnText(getResources().getString(R.string.main_activity_signout_confirmation_positive_btn));
+        customChoiceDialogPopup.setNegativeBtnText(getResources().getString(R.string.main_activity_signout_confirmation_negative_btn));
+        customChoiceDialogPopup.getPositiveBtn().setOnClickListener(view -> {
+            mViewModel.deleteUserAccount(requireContext());
+            customChoiceDialogPopup.dismiss();
+        });
+        customChoiceDialogPopup.getNegativeBtn().setOnClickListener(view -> customChoiceDialogPopup.close());
+        customChoiceDialogPopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        customChoiceDialogPopup.build();
     }
 }
