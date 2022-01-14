@@ -14,6 +14,7 @@
 
     <color name="facebook">#3A5898</color>
     <color name="google">#F53E28</color>
+    <color name="twitter">#50acef</color>
     <color name="map_marker">#FF5722</color>
     <color name="drawerlayout_color">#FF8A50</color>
     <color name="map_marker_favorite">#69F0AE</color>

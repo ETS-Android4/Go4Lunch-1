@@ -23,6 +23,20 @@
         android:layout_marginHorizontal="@dimen/activity_login_layout_margin_size">
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/activity_login_twitter_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_login_layout_margin_size"
+            android:padding="@dimen/activity_login_btn_padding"
+            android:text="@string/login_activity_twitter_sign_in"
+            style="@style/Base.CardView"
+            android:textSize="@dimen/activity_login_btn_text_size"
+            android:drawableLeft="@drawable/twitter_logo"
+            android:background="@drawable/rounded_border"
+            android:backgroundTint="@color/twitter"
+            android:textColor="@color/white" />
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/activity_login_facebook_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

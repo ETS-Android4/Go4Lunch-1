@@ -19,6 +19,7 @@ import com.facebook.login.LoginResult;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 import java.util.Arrays;
@@ -49,11 +50,13 @@ public class FacebookSignInActivity extends LoginActivity {
 
                     @Override
                     public void onCancel() {
+                        Log.d(TAG, "facebook:onCancel");
 
                     }
 
                     @Override
                     public void onError(@NonNull FacebookException error) {
+                        Log.d(TAG, "facebook:onError", error);
 
                     }
                 });
@@ -75,12 +78,11 @@ public class FacebookSignInActivity extends LoginActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(getApplicationContext(), "Authentication success", Toast.LENGTH_SHORT).show();
-                        finish();
                     } else {
                         Log.d(TAG, "signInWithCredential:failure", task.getException());
                         Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
-                        finish();
                     }
+                    finish();
                 });
     }
 }
