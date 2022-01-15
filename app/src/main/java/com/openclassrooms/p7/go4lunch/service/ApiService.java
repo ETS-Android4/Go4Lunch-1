@@ -7,6 +7,8 @@ import com.google.android.libraries.places.api.model.LocalTime;
 import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
+import com.openclassrooms.p7.go4lunch.model.SortMethod;
 import com.openclassrooms.p7.go4lunch.model.User;
 
 import java.util.Calendar;
@@ -36,9 +38,11 @@ public interface ApiService {
     int setSelectedImage(boolean Selected);
 
     // --- ORDER ---
-    void listViewComparator(List<Restaurant> restaurantList);
+    void restaurantComparator(List<Restaurant> restaurantList, SortMethod sortMethod);
     void workmatesViewComparator(List<User> userList);
 
     List<User> getInterestedFriend(List<User> userList, String restaurantId);
     String formatInterestedFriends(List<User> userList);
+
+    RestaurantFavorite getRestaurantFavorite(Restaurant mRestaurantList, List<RestaurantFavorite> restaurantFavoriteList);
 }

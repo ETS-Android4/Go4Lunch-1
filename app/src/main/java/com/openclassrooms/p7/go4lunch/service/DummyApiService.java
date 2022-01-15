@@ -11,6 +11,8 @@ import com.google.android.libraries.places.api.model.Period;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
+import com.openclassrooms.p7.go4lunch.model.SortMethod;
 import com.openclassrooms.p7.go4lunch.model.User;
 
 import java.util.ArrayList;
@@ -162,6 +164,17 @@ public class DummyApiService implements ApiService {
     }
 
     @Override
+    public RestaurantFavorite getRestaurantFavorite(Restaurant restaurant, List<RestaurantFavorite> restaurantFavoriteList) {
+        RestaurantFavorite restaurantFavorite = null;
+        for (RestaurantFavorite favorite : restaurantFavoriteList) {
+            if (favorite.getRestaurantId().equals(restaurant.getId())) {
+                restaurantFavorite = favorite;
+            }
+        }
+        return restaurantFavorite;
+    }
+
+    @Override
     public List<User> getInterestedFriend(List<User> userList, String restaurantId) {
         List<User> interestedFriends = new ArrayList<>();
         for (User user : userList) {
@@ -289,8 +302,35 @@ public class DummyApiService implements ApiService {
      * Call to sort restaurantList with most users interested first.
      */
     @Override
+<<<<<<< HEAD
     public void listViewComparator(List<Restaurant> restaurantList) {
         Collections.sort(restaurantList, new Restaurant.RestaurantFriendInterestedComparator());
+=======
+    public void restaurantComparator(List<Restaurant> restaurantList, SortMethod sortMethod) {
+        switch (sortMethod) {
+            case INTERESTED_ASCENDING: Collections.sort(restaurantList, new Restaurant.RestaurantFriendInterestedAscendingComparator());
+            break;
+            case INTERESTED_DESCENDING: Collections.sort(restaurantList, new Restaurant.RestaurantFriendInterestedDescendingComparator());
+                break;
+            case RATING_ASCENDING: Collections.sort(restaurantList, new Restaurant.RestaurantRatingAscendingComparator());
+                break;
+            case RATING_DESCENDING: Collections.sort(restaurantList, new Restaurant.RestaurantRatingDescendingComparator());
+                break;
+            case DISTANCE_ASCENDING: Collections.sort(restaurantList, new Restaurant.RestaurantDistanceAscendingComparator());
+                break;
+            case DISTANCE_DESCENDING: Collections.sort(restaurantList, new Restaurant.RestaurantDistanceDescendingComparator());
+                break;
+            case FAVORITE_ASCENDING: Collections.sort(restaurantList, new Restaurant.RestaurantFavoriteAscendingComparator());
+                break;
+            case FAVORITE_DESCENDING: Collections.sort(restaurantList, new Restaurant.RestaurantFavoriteDescendingComparator());
+                break;
+            case SEARCHED_ASCENDING: Collections.sort(restaurantList, new Restaurant.RestaurantSearchedAscendingComparator());
+                break;
+            case SEARCHED_DESCENDING: Collections.sort(restaurantList, new Restaurant.RestaurantSearchedDescendingComparator());
+                break;
+        }
+
+>>>>>>> f0c8bfb
     }
 
     @Override

@@ -25,13 +25,13 @@ public class Restaurant {
     private final LatLng position;
     private final Bitmap pictureUrl;
     private Integer numberOfFriendInterested;
-    private boolean isFavorite;
-    private boolean isSearched;
+    private Boolean isFavorite;
+    private Boolean isSearched;
 
     // --- CONSTRUCTOR ---
 
 
-    public Restaurant(String id, String name, String address, String openingHours, String phoneNumber, String uriWebsite, float distance, double rating, LatLng position, Bitmap pictureUrl, Integer numberOfFriendInterested, boolean isFavorite, boolean isSearched) {
+    public Restaurant(String id, String name, String address, String openingHours, String phoneNumber, String uriWebsite, float distance, double rating, LatLng position, Bitmap pictureUrl, Integer numberOfFriendInterested, Boolean isFavorite, Boolean isSearched) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -63,10 +63,10 @@ public class Restaurant {
     public Integer getNumberOfFriendInterested() {
         return numberOfFriendInterested;
     }
-    public boolean isFavorite() {
+    public Boolean isFavorite() {
         return isFavorite;
     }
-    public boolean isSearched() {
+    public Boolean isSearched() {
         return isSearched;
     }
 
@@ -74,7 +74,7 @@ public class Restaurant {
     public void setNumberOfFriendInterested(int numberOfFriendInterested) {
         this.numberOfFriendInterested = numberOfFriendInterested;
     }
-    public void setFavorite(boolean favorite) {
+    public void setFavorite(Boolean favorite) {
         isFavorite = favorite;
     }
 
@@ -89,6 +89,7 @@ public class Restaurant {
     }
 
     // --- COMPARATOR CLASS ---
+<<<<<<< HEAD
     public static class RestaurantFriendInterestedComparator implements Comparator<Restaurant> {
         @Override
         public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
@@ -124,9 +125,75 @@ public class Restaurant {
     }
 
     public static class RestaurantSearchedComparator implements Comparator<Restaurant> {
+=======
+    public static class RestaurantFriendInterestedAscendingComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return restaurantLeft.numberOfFriendInterested.compareTo(restaurantRight.numberOfFriendInterested);
+        }
+    }
+
+    public static class RestaurantFriendInterestedDescendingComparator implements Comparator<Restaurant> {
+>>>>>>> f0c8bfb
         @Override
         public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
             return restaurantRight.numberOfFriendInterested.compareTo(restaurantLeft.numberOfFriendInterested);
+        }
+    }
+
+    public static class RestaurantRatingAscendingComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return Double.compare(restaurantLeft.rating, restaurantRight.rating);
+        }
+    }
+
+    public static class RestaurantRatingDescendingComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return Double.compare(restaurantRight.rating, restaurantLeft.rating);
+        }
+    }
+
+    public static class RestaurantDistanceAscendingComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return Double.compare(restaurantRight.distance, restaurantLeft.distance);
+        }
+    }
+
+    public static class RestaurantDistanceDescendingComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return Double.compare(restaurantLeft.distance, restaurantRight.distance);
+        }
+    }
+
+    public static class RestaurantFavoriteAscendingComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return Boolean.compare(restaurantRight.isFavorite, restaurantLeft.isFavorite);
+        }
+    }
+
+    public static class RestaurantFavoriteDescendingComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return Boolean.compare(restaurantLeft.isFavorite, restaurantRight.isFavorite);
+        }
+    }
+
+    public static class RestaurantSearchedAscendingComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return Boolean.compare(restaurantRight.isSearched, restaurantLeft.isSearched);
+        }
+    }
+
+    public static class RestaurantSearchedDescendingComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return Boolean.compare(restaurantLeft.isSearched, restaurantRight.isSearched);
         }
     }
 }

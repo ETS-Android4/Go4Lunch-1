@@ -343,7 +343,7 @@ public class ServiceTest {
         List<Restaurant> restaurantListToTest = new ArrayList<>();
         restaurantListToTest = getDefaultRestaurantList();
         //ACT
-        service.listViewComparator(restaurantListToTest);
+//        service.restaurantComparator(restaurantListToTest);
         //ASSERT
         assertEquals("CCCC", restaurantListToTest.get(0).getId());
         assertEquals("BBBB", restaurantListToTest.get(1).getId());
@@ -422,10 +422,10 @@ public class ServiceTest {
 
     private List<Restaurant> getDefaultRestaurantList() {
         List<Restaurant> defaultRestaurantList = new ArrayList<>();
-        Restaurant restaurantTest0 = new Restaurant("AAAA", "Restaurant le jasmin", "3 rue St Félicien", "18h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 3, false);
-        Restaurant restaurantTest1 = new Restaurant("BBBB", "RESTAURANT le goéland", "5 boulevard du battaillon", "15h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 9, false);
-        Restaurant restaurantTest2 = new Restaurant("CCCC", "restaurant le Kébab", "270 avenue camille blanc", "11h30", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 15, false);
-        Restaurant restaurantTest3 = new Restaurant("DDDD", "le Syrien", "270 rue du voisin", "08h00", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 4, true);
+        Restaurant restaurantTest0 = new Restaurant("AAAA", "Restaurant le jasmin", "3 rue St Félicien", "18h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 3, true, false);
+        Restaurant restaurantTest1 = new Restaurant("BBBB", "RESTAURANT le goéland", "5 boulevard du battaillon", "15h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 9, true,false);
+        Restaurant restaurantTest2 = new Restaurant("CCCC", "restaurant le Kébab", "270 avenue camille blanc", "11h30", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 15, false, false);
+        Restaurant restaurantTest3 = new Restaurant("DDDD", "le Syrien", "270 rue du voisin", "08h00", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 4, false, true);
 
         defaultRestaurantList.add(restaurantTest0);
         defaultRestaurantList.add(restaurantTest1);

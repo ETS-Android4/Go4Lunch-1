@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,7 @@ import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
+import com.openclassrooms.p7.go4lunch.model.SortMethod;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
@@ -52,6 +55,9 @@ public class ListViewFragment extends Fragment {
     private ListViewAdapter listViewAdapter;
     private UserAndRestaurantViewModel mViewModel;
     private ApiService mApiService;
+    private final List<Restaurant> mRestaurantList = new ArrayList<>();
+    private final List<RestaurantFavorite> mRestaurantFavoriteList = new ArrayList<>();
+    private SortMethod mSortMethod;
 
     @Nullable
     @Override
@@ -65,15 +71,19 @@ public class ListViewFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.list_view_toolbar_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
     private void configureServiceAndViewModel() {
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserAndRestaurantViewModel.class);
         mApiService = DI.getRestaurantApiService();
-//        List<Restaurant> restaurants = new ArrayList<>();
-//        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants::addAll);
-
     }
 
     private void initList() {
+        mSortMethod = SortMethod.NONE;
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
     }
@@ -82,9 +92,6 @@ public class ListViewFragment extends Fragment {
     public void onResume() {
         super.onResume();
         List<User> userInterestedList = new ArrayList<>();
-        List<RestaurantFavorite> restaurantFavoriteList = new ArrayList<>();
-        List<Restaurant> restaurantList = new ArrayList<>();
-
         mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), users -> {
             if (!userInterestedList.isEmpty()) {
                 userInterestedList.clear();
@@ -92,41 +99,76 @@ public class ListViewFragment extends Fragment {
             userInterestedList.addAll(users);
                 });
 
-        mViewModel.getAllRestaurantFavorite().observe(getViewLifecycleOwner(), users -> {
-            if (!restaurantFavoriteList.isEmpty()) {
-                restaurantFavoriteList.clear();
+        mViewModel.getAllRestaurantFavorite().observe(getViewLifecycleOwner(), restaurantFavoriteList -> {
+            if (!mRestaurantFavoriteList.isEmpty()) {
+                mRestaurantFavoriteList.clear();
             }
-            restaurantFavoriteList.addAll(users);
-            listViewAdapter = new ListViewAdapter(restaurantList, restaurantFavoriteList);
+            mRestaurantFavoriteList.addAll(restaurantFavoriteList);
+            mViewModel.setRestaurantFavorite(restaurantFavoriteList, mRestaurantList);
+            listViewAdapter = new ListViewAdapter(mRestaurantList);
             mRecyclerView.setAdapter(listViewAdapter);
-            mApiService.listViewComparator(restaurantList);
         });
 
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
             if (!userInterestedList.isEmpty()) {
                 mViewModel.setNumberOfFriendInterested(userInterestedList, restaurants);
             }
-            if (!restaurantList.isEmpty()) {
-                restaurantList.clear();
+            if (!mRestaurantList.isEmpty()) {
+                mRestaurantList.clear();
             }
-            restaurantList.addAll(restaurants);
-            listViewAdapter = new ListViewAdapter(restaurants, restaurantFavoriteList);
+            mRestaurantList.addAll(restaurants);
+            mViewModel.setRestaurantFavorite(mRestaurantFavoriteList, restaurants);
+            listViewAdapter = new ListViewAdapter(restaurants);
             mRecyclerView.setAdapter(listViewAdapter);
-            mApiService.listViewComparator(restaurants);
         });
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        List<Place.Field> fields = Arrays.asList(Place.Field.ID);
-        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-                .setTypeFilter(TypeFilter.ESTABLISHMENT)
-                .setLocationBias(mApiService.getRectangularBound(MapViewFragment.CURRENT_LOCATION))
-                .setCountry("FR")
-                .setHint("Search restaurant")
-                .build(requireContext());
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-        return super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+        if (id == R.id.sort_menu_toolbar_search_btn) {
+            List<Place.Field> fields = Arrays.asList(Place.Field.ID);
+            Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                    .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                    .setLocationBias(mApiService.getRectangularBound(MapViewFragment.CURRENT_LOCATION))
+                    .setCountry("FR")
+                    .setHint("Search restaurant")
+                    .build(requireContext());
+            startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+
+        } else if (id == R.id.sort_menu_interested_ascending) {
+            mSortMethod = SortMethod.INTERESTED_ASCENDING;
+
+        } else if (id == R.id.sort_menu_interested_descending) {
+            mSortMethod = SortMethod.INTERESTED_DESCENDING;
+
+        } else if (id == R.id.sort_menu_rating_ascending) {
+            mSortMethod = SortMethod.RATING_ASCENDING;
+
+        } else if (id == R.id.sort_menu_rating_descending) {
+            mSortMethod = SortMethod.RATING_DESCENDING;
+
+        } else if (id == R.id.sort_menu_distance_ascending) {
+            mSortMethod = SortMethod.DISTANCE_ASCENDING;
+
+        } else if (id == R.id.sort_menu_distance_descending) {
+            mSortMethod = SortMethod.DISTANCE_DESCENDING;
+
+        } else if (id == R.id.sort_menu_favorite_ascending) {
+            mSortMethod = SortMethod.FAVORITE_ASCENDING;
+
+        } else if (id == R.id.sort_menu_favorite_descending) {
+            mSortMethod = SortMethod.FAVORITE_DESCENDING;
+
+        } else if (id == R.id.sort_menu_searched_ascending) {
+            mSortMethod = SortMethod.SEARCHED_ASCENDING;
+
+        } else if (id == R.id.sort_menu_searched_descending) {
+            mSortMethod = SortMethod.SEARCHED_DESCENDING;
+        }
+        mApiService.restaurantComparator(mRestaurantList, mSortMethod);
+        listViewAdapter.updateRestaurantListOrder(mRestaurantList);
+        return false;
     }
 
     @Override

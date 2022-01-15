@@ -98,12 +98,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
-        return true;
-    }
-
     private void configureViewBinding() {
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());
         View root = mBinding.getRoot();

@@ -26,12 +26,10 @@ import java.util.Locale;
 
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListViewHolder> {
 
-    private final List<Restaurant> mRestaurantList;
-    private final List<RestaurantFavorite> restaurantFavoriteList;
+    private List<Restaurant> mRestaurantList;
 
-    public ListViewAdapter(List<Restaurant> mRestaurantList, List<RestaurantFavorite> restaurantFavoriteList) {
+    public ListViewAdapter(List<Restaurant> mRestaurantList) {
         this.mRestaurantList = mRestaurantList;
-        this.restaurantFavoriteList = restaurantFavoriteList;
     }
 
     @NonNull
@@ -43,13 +41,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
 
     @Override
     public void onBindViewHolder(@NonNull ListViewAdapter.ListViewHolder holder, int position) {
-        RestaurantFavorite restaurantFavorite = null;
-        for (RestaurantFavorite restaurant : restaurantFavoriteList) {
-            if (restaurant.getRestaurantId().equals(mRestaurantList.get(position).getId())) {
-                restaurantFavorite = restaurant;
-            }
-        }
-        holder.bind(mRestaurantList.get(position), restaurantFavorite);
+        holder.bind(mRestaurantList.get(position));
         //TODO commit detail fragment
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
@@ -63,6 +55,12 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     public int getItemCount() {
         return mRestaurantList.size();
     }
+
+    public void updateRestaurantListOrder(List<Restaurant> restaurantList) {
+        mRestaurantList = restaurantList;
+        notifyDataSetChanged();
+    }
+
 
     public static class ListViewHolder extends RecyclerView.ViewHolder {
 
@@ -81,7 +79,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         }
 
         @SuppressLint("UseCompatLoadingForDrawables")
-        public void bind(Restaurant restaurant, RestaurantFavorite restaurantFavorite){
+        public void bind(Restaurant restaurant){
             String openingHourText = makeOpeningHourString(restaurant.getOpeningHours());
             mBinding.listViewRowRestaurantNameTv.setText(mApiService.formatRestaurantName(restaurant.getName()));
             mBinding.listViewRowRestaurantAdressTv.setText(restaurant.getAddress());
@@ -106,7 +104,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
                 mBinding.listViewRowContainer.setBackground(itemView.getResources().getDrawable(R.color.light_background_color));
             }
 
-            if (restaurantFavorite != null) {
+            if (restaurant.isFavorite()) {
                 mBinding.listViewRowFavoriteImg.setVisibility(View.VISIBLE);
             } else {
                 mBinding.listViewRowFavoriteImg.setVisibility(View.GONE);

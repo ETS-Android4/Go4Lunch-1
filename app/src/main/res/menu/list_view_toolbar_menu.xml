@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/sort_menu_toolbar_search_btn"
+        android:title="@string/toolbar_menu_search_button"
+        android:icon="@drawable/baseline_search_24"
+        app:showAsAction="ifRoom">
+    </item>
+
+    <item
+        android:id="@+id/toolbar_filter_btn"
+        android:title="@string/toolbar_menu_filer_button"
+        android:icon="@drawable/baseline_filter_list_24"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/sort_menu_interested_ascending"
+                android:title="@string/sort_menu_friend_ascending"
+                app:showAsAction="never|withText"/>
+            <item
+                android:id="@+id/sort_menu_interested_descending"
+                android:title="@string/sort_menu_friend_descending"
+                app:showAsAction="never|withText"/>
+            <item
+                android:id="@+id/sort_menu_rating_ascending"
+                android:title="@string/sort_menu_rating_ascending"
+                app:showAsAction="never|withText"/>
+            <item
+                android:id="@+id/sort_menu_rating_descending"
+                android:title="@string/sort_menu_rating_descending"
+                app:showAsAction="never|withText"/>
+            <item
+                android:id="@+id/sort_menu_distance_ascending"
+                android:title="@string/sort_menu_distance_ascending"
+                app:showAsAction="never|withText"/>
+            <item
+                android:id="@+id/sort_menu_distance_descending"
+                android:title="@string/sort_menu_distance_descending"
+                app:showAsAction="never|withText"/>
+            <item
+                android:id="@+id/sort_menu_favorite_ascending"
+                android:title="@string/sort_menu_favorite_ascending"
+                app:showAsAction="never|withText"/>
+            <item
+                android:id="@+id/sort_menu_favorite_descending"
+                android:title="@string/sort_menu_favorite_descending"
+                app:showAsAction="never|withText"/>
+            <item
+                android:id="@+id/sort_menu_searched_ascending"
+                android:title="@string/sort_menu_searched_ascending"
+                app:showAsAction="never|withText"/>
+            <item
+                android:id="@+id/sort_menu_searched_descending"
+                android:title="@string/sort_menu_searched_descending"
+                app:showAsAction="never|withText"/>
+        </menu>
+    </item>
+
+</menu>

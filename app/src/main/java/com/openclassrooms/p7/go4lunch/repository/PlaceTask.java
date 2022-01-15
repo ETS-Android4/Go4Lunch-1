@@ -14,7 +14,7 @@ import java.util.Objects;
 @SuppressWarnings("deprecation")
 public class PlaceTask extends AsyncTask<String, Integer, List<String>> {
 
-    private GoogleMapsHelper mGoogleMapsHelper = GoogleMapsHelper.getInstance();
+    private final GoogleMapsHelper mGoogleMapsHelper = GoogleMapsHelper.getInstance();
 
     private final MutableLiveData<List<String>> listOfPlaceId = new MutableLiveData<>();
 
@@ -39,6 +39,9 @@ public class PlaceTask extends AsyncTask<String, Integer, List<String>> {
             listOfId = jsonParser.parseResult(object);
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+        while (Objects.requireNonNull(listOfId).size() > 5) {
+            listOfId.remove(listOfId.size() - 1);
         }
         return listOfId;
 
