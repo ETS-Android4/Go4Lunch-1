@@ -1,6 +1,17 @@
 package com.openclassrooms.p7.go4lunch.service;
 
 
+import static com.openclassrooms.p7.go4lunch.model.SortMethod.DISTANCE_ASCENDING;
+import static com.openclassrooms.p7.go4lunch.model.SortMethod.DISTANCE_DESCENDING;
+import static com.openclassrooms.p7.go4lunch.model.SortMethod.FAVORITE_ASCENDING;
+import static com.openclassrooms.p7.go4lunch.model.SortMethod.FAVORITE_DESCENDING;
+import static com.openclassrooms.p7.go4lunch.model.SortMethod.INTERESTED_ASCENDING;
+import static com.openclassrooms.p7.go4lunch.model.SortMethod.INTERESTED_DESCENDING;
+import static com.openclassrooms.p7.go4lunch.model.SortMethod.RATING_ASCENDING;
+import static com.openclassrooms.p7.go4lunch.model.SortMethod.RATING_DESCENDING;
+import static com.openclassrooms.p7.go4lunch.model.SortMethod.SEARCHED_ASCENDING;
+import static com.openclassrooms.p7.go4lunch.model.SortMethod.SEARCHED_DESCENDING;
+
 import android.location.Location;
 import android.net.Uri;
 
@@ -301,11 +312,7 @@ public class DummyApiService implements ApiService {
     /**
      * Call to sort restaurantList with most users interested first.
      */
-    @Override
-<<<<<<< HEAD
-    public void listViewComparator(List<Restaurant> restaurantList) {
-        Collections.sort(restaurantList, new Restaurant.RestaurantFriendInterestedComparator());
-=======
+
     public void restaurantComparator(List<Restaurant> restaurantList, SortMethod sortMethod) {
         switch (sortMethod) {
             case INTERESTED_ASCENDING: Collections.sort(restaurantList, new Restaurant.RestaurantFriendInterestedAscendingComparator());
@@ -330,7 +337,7 @@ public class DummyApiService implements ApiService {
                 break;
         }
 
->>>>>>> f0c8bfb
+
     }
 
     @Override

@@ -109,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
                         showToastMessage(getString(R.string.login_activity_error_no_internet));
                     } else if (response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                        showToastMessage(getString(R.string.login_activity_error_unknow_error));
+                        showToastMessage(getString(R.string.login_activity_error_unknown_error));
                     }
                 }
             }

@@ -130,7 +130,7 @@
                 android:background="@android:color/transparent"
                 android:drawableTop="@drawable/ic_call"
                 android:drawablePadding="@dimen/fragment_detail_btn_drawable_padding"
-                android:text="@string/detail_activityl_call_text"
+                android:text="@string/detail_activity_call_text"
                 android:textStyle="bold"/>
 
             <!-- LIKE CONTAINER -->
@@ -145,7 +145,7 @@
                 android:background="@android:color/transparent"
                 android:drawableTop="@drawable/ic_star_outline"
                 android:drawablePadding="@dimen/fragment_detail_btn_drawable_padding"
-                android:text="@string/detail_activityl_like_text"
+                android:text="@string/detail_activity_like_text"
                 android:textStyle="bold" />
 
             <!-- WEBSITE CONTAINER -->
@@ -160,7 +160,7 @@
                 android:background="@android:color/transparent"
                 android:drawableTop="@drawable/ic_public"
                 android:drawablePadding="@dimen/fragment_detail_btn_drawable_padding"
-                android:text="@string/detail_activityl_call_text"
+                android:text="@string/detail_activity_call_text"
                 android:textStyle="bold"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Comparator;
-import java.util.function.ToDoubleFunction;
 
 /**
  * Created by lleotraas on 21.
@@ -26,7 +25,7 @@ public class Restaurant {
     private final Bitmap pictureUrl;
     private Integer numberOfFriendInterested;
     private Boolean isFavorite;
-    private Boolean isSearched;
+    private final Boolean isSearched;
 
     // --- CONSTRUCTOR ---
 
@@ -89,43 +88,6 @@ public class Restaurant {
     }
 
     // --- COMPARATOR CLASS ---
-<<<<<<< HEAD
-    public static class RestaurantFriendInterestedComparator implements Comparator<Restaurant> {
-        @Override
-        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
-            return restaurantRight.numberOfFriendInterested.compareTo(restaurantLeft.numberOfFriendInterested);
-        }
-    }
-
-    public static class RestaurantRatingComparator implements Comparator<Restaurant> {
-        @Override
-        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
-            if (restaurantRight.rating > restaurantLeft.rating) {
-                return -1;
-            } else {
-                return 1;
-            }
-        }
-    }
-
-
-
-    public static class RestaurantDistanceComparator implements Comparator<Restaurant> {
-        @Override
-        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
-            return restaurantRight.numberOfFriendInterested.compareTo(restaurantLeft.numberOfFriendInterested);
-        }
-    }
-
-    public static class RestaurantFavoriteComparator implements Comparator<Restaurant> {
-        @Override
-        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
-            return restaurantRight.numberOfFriendInterested.compareTo(restaurantLeft.numberOfFriendInterested);
-        }
-    }
-
-    public static class RestaurantSearchedComparator implements Comparator<Restaurant> {
-=======
     public static class RestaurantFriendInterestedAscendingComparator implements Comparator<Restaurant> {
         @Override
         public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
@@ -134,7 +96,6 @@ public class Restaurant {
     }
 
     public static class RestaurantFriendInterestedDescendingComparator implements Comparator<Restaurant> {
->>>>>>> f0c8bfb
         @Override
         public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
             return restaurantRight.numberOfFriendInterested.compareTo(restaurantLeft.numberOfFriendInterested);
@@ -158,14 +119,14 @@ public class Restaurant {
     public static class RestaurantDistanceAscendingComparator implements Comparator<Restaurant> {
         @Override
         public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
-            return Double.compare(restaurantRight.distance, restaurantLeft.distance);
+            return Double.compare(restaurantLeft.distance, restaurantRight.distance);
         }
     }
 
     public static class RestaurantDistanceDescendingComparator implements Comparator<Restaurant> {
         @Override
         public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
-            return Double.compare(restaurantLeft.distance, restaurantRight.distance);
+            return Double.compare(restaurantRight.distance, restaurantLeft.distance);
         }
     }
 

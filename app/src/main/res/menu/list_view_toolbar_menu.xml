@@ -11,7 +11,7 @@
 
     <item
         android:id="@+id/toolbar_filter_btn"
-        android:title="@string/toolbar_menu_filer_button"
+        android:title="@string/toolbar_menu_filter_button"
         android:icon="@drawable/baseline_filter_list_24"
         app:showAsAction="ifRoom">
         <menu>
