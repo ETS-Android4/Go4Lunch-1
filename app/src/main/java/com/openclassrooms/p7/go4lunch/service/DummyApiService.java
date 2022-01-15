@@ -290,7 +290,7 @@ public class DummyApiService implements ApiService {
      */
     @Override
     public void listViewComparator(List<Restaurant> restaurantList) {
-        Collections.sort(restaurantList, new Restaurant.RestaurantComparator());
+        Collections.sort(restaurantList, new Restaurant.RestaurantFriendInterestedComparator());
     }
 
     @Override

@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Comparator;
+import java.util.function.ToDoubleFunction;
 
 /**
  * Created by lleotraas on 21.
@@ -88,7 +89,41 @@ public class Restaurant {
     }
 
     // --- COMPARATOR CLASS ---
-    public static class RestaurantComparator implements Comparator<Restaurant> {
+    public static class RestaurantFriendInterestedComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return restaurantRight.numberOfFriendInterested.compareTo(restaurantLeft.numberOfFriendInterested);
+        }
+    }
+
+    public static class RestaurantRatingComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            if (restaurantRight.rating > restaurantLeft.rating) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+    }
+
+
+
+    public static class RestaurantDistanceComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return restaurantRight.numberOfFriendInterested.compareTo(restaurantLeft.numberOfFriendInterested);
+        }
+    }
+
+    public static class RestaurantFavoriteComparator implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
+            return restaurantRight.numberOfFriendInterested.compareTo(restaurantLeft.numberOfFriendInterested);
+        }
+    }
+
+    public static class RestaurantSearchedComparator implements Comparator<Restaurant> {
         @Override
         public int compare(Restaurant restaurantLeft, Restaurant restaurantRight) {
             return restaurantRight.numberOfFriendInterested.compareTo(restaurantLeft.numberOfFriendInterested);

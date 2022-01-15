@@ -44,6 +44,11 @@
             android:name=".ui.login.LoginActivity"
             android:parentActivityName=".ui.MainActivity" />
 
+        <!-- Twitter Activity -->
+        <activity
+            android:name=".ui.sign_in.TwitterSignInActivity"
+            android:parentActivityName=".ui.MainActivity" />
+
         <!-- Facebook Sign In Activity -->
         <activity
             android:name=".ui.sign_in.FacebookSignInActivity"
