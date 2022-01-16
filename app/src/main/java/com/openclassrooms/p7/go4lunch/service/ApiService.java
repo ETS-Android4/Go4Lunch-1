@@ -23,9 +23,11 @@ public interface ApiService {
     String getCurrentDay(Calendar calendar);
     String formatUserFirstName(String userName);
     String formatRestaurantName(String restaurantName);
+    String formatInterestedFriends(List<User> userList);
     String makeStringOpeningHours(OpeningHours openingHours, String currentDay, LocalTime currentTime);
 
     // --- GETTER ---
+    List<User> getInterestedFriend(List<User> userList, String restaurantId);
     String getOpeningHours(OpeningHours openingHours);
     String getWebsiteUri(Uri websiteUri);
     double getRating(Double rating);
@@ -40,9 +42,4 @@ public interface ApiService {
     // --- ORDER ---
     void restaurantComparator(List<Restaurant> restaurantList, SortMethod sortMethod);
     void workmatesViewComparator(List<User> userList);
-
-    List<User> getInterestedFriend(List<User> userList, String restaurantId);
-    String formatInterestedFriends(List<User> userList);
-
-    RestaurantFavorite getRestaurantFavorite(Restaurant mRestaurantList, List<RestaurantFavorite> restaurantFavoriteList);
 }

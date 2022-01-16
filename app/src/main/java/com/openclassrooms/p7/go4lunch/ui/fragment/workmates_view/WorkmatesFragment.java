@@ -2,6 +2,8 @@ package com.openclassrooms.p7.go4lunch.ui.fragment.workmates_view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -63,5 +65,11 @@ public class WorkmatesFragment extends Fragment {
             mRecyclerView.setAdapter(workmatesAdapter);
             mApiService.workmatesViewComparator(userList);
         });
+    }
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.preference_toolbar, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }

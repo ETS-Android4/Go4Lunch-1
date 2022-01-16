@@ -175,17 +175,6 @@ public class DummyApiService implements ApiService {
     }
 
     @Override
-    public RestaurantFavorite getRestaurantFavorite(Restaurant restaurant, List<RestaurantFavorite> restaurantFavoriteList) {
-        RestaurantFavorite restaurantFavorite = null;
-        for (RestaurantFavorite favorite : restaurantFavoriteList) {
-            if (favorite.getRestaurantId().equals(restaurant.getId())) {
-                restaurantFavorite = favorite;
-            }
-        }
-        return restaurantFavorite;
-    }
-
-    @Override
     public List<User> getInterestedFriend(List<User> userList, String restaurantId) {
         List<User> interestedFriends = new ArrayList<>();
         for (User user : userList) {

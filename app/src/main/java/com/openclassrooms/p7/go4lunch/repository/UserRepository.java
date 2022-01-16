@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.MutableLiveData;
 
 import com.facebook.AccessToken;
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
@@ -26,6 +27,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.dialog.CustomChoiceDialogPopup;
+import com.openclassrooms.p7.go4lunch.injector.Go4LunchApplication;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
@@ -40,6 +42,7 @@ public class UserRepository {
     private final MutableLiveData<User> currentUser;
     private final MutableLiveData<List<User>> listOfUser;
     private final MutableLiveData<List<User>> listOfUserInterested;
+    private final boolean isUnderTest = Go4LunchApplication.isIsRunningTest();
 
     private static UserRepository mUserRepository;
     private final FirebaseHelper mFirebaseHelper;
@@ -121,8 +124,10 @@ public class UserRepository {
         }).continueWith(task -> {
             if (task.isComplete()) {
                 return Tasks.await(deleteUser(context).addOnCompleteListener(task1 -> {
-                    Toast.makeText(context, context.getResources().getString(R.string.preference_popup_account_deleted), Toast.LENGTH_SHORT).show();
-                    context.startActivity(new Intent(context, LoginActivity.class));
+                    if (!isUnderTest) {
+                        Toast.makeText(context, context.getResources().getString(R.string.preference_popup_account_deleted), Toast.LENGTH_SHORT).show();
+                        context.startActivity(new Intent(context, LoginActivity.class));
+                    }
                 }));
             } else {
                 return false;

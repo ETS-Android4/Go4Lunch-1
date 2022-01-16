@@ -1,4 +1,4 @@
-package com.openclassrooms.p7.go4lunch;
+package com.openclassrooms.p7.go4lunch.service;
 
 import static org.junit.Assert.assertEquals;
 

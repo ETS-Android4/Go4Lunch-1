@@ -1,5 +1,6 @@
 package com.openclassrooms.p7.go4lunch;
 
+import static com.openclassrooms.p7.go4lunch.TestUtils.FIRST_RESTAURANT_ID;
 import static com.openclassrooms.p7.go4lunch.TestUtils.USER_EMAIL_TEST;
 import static com.openclassrooms.p7.go4lunch.TestUtils.USER_PASSWORD_TEST;
 import static com.openclassrooms.p7.go4lunch.TestUtils.USER_RESTAURANT_ID;
@@ -36,6 +37,7 @@ import com.openclassrooms.p7.go4lunch.repository.RestaurantFavoriteRepository;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -132,27 +134,27 @@ public class UserRepositoryAndRestaurantFavoriteRepositoryTest {
 
     @Test
     public void testf_createFavoriteRestaurant_withSuccess() throws ExecutionException, InterruptedException {
-        RestaurantFavorite restaurantFavoriteExpected = getDefaultRestaurantFavorite(0);
+        RestaurantFavorite restaurantFavoriteExpected = getDefaultRestaurantFavorite().get(0);
         viewModel.createRestaurantFavorite(restaurantFavoriteExpected);
         DocumentSnapshot documentSnapshot = Tasks.await(getFirestoreRestaurantFavorite(currentUser.getUid(), restaurantFavoriteExpected.getRestaurantId()));
         RestaurantFavorite restaurantFavoriteToTest = documentSnapshot.toObject(RestaurantFavorite.class);
         assert Objects.requireNonNull(restaurantFavoriteExpected.getRestaurantId()).equals(Objects.requireNonNull(restaurantFavoriteToTest).getRestaurantId());
-        viewModel.createRestaurantFavorite(getDefaultRestaurantFavorite(1));
-        viewModel.createRestaurantFavorite(getDefaultRestaurantFavorite(2));
+        viewModel.createRestaurantFavorite(getDefaultRestaurantFavorite().get(1));
+        viewModel.createRestaurantFavorite(getDefaultRestaurantFavorite().get(2));
     }
 
     @Test
     public void testg_getCurrentRestaurantFavorite_shouldReturnCurrentRestaurantFavorite() throws InterruptedException {
-        LiveDataTestUtils.observeForTesting(viewModel.getCurrentRestaurantFavorite("1111"), liveData -> {
+        LiveDataTestUtils.observeForTesting(viewModel.getCurrentRestaurantFavorite(FIRST_RESTAURANT_ID), liveData -> {
             Thread.sleep(500);
             RestaurantFavorite restaurantFavorite = liveData.getValue();
-            assert (Objects.requireNonNull(restaurantFavorite).getRestaurantId().equals("1111"));
+            assert (Objects.requireNonNull(restaurantFavorite).getRestaurantId().equals(FIRST_RESTAURANT_ID));
         });
     }
 
     @Test
     public void testh_deleteRestaurantFavorite_withSuccess() throws InterruptedException {
-        RestaurantFavorite restaurantFavoriteToDelete = getDefaultRestaurantFavorite(0);
+        RestaurantFavorite restaurantFavoriteToDelete = getDefaultRestaurantFavorite().get(0);
         viewModel.deleteRestaurantFavorite(restaurantFavoriteToDelete);
         LiveDataTestUtils.observeForTesting(viewModel.getCurrentRestaurantFavorite(restaurantFavoriteToDelete.getRestaurantId()), liveData -> {
             Thread.sleep(500);
@@ -162,7 +164,53 @@ public class UserRepositoryAndRestaurantFavoriteRepositoryTest {
     }
 
     @Test
-    public void testi_deleteUser_withSuccess() throws ExecutionException, InterruptedException {
+    public void testi_getAllUsers_withSuccess() throws InterruptedException {
+        List<User> userList = new ArrayList<>();
+        LiveDataTestUtils.observeForTesting(viewModel.getAllUsers(), liveData -> {
+            Thread.sleep(500);
+            userList.addAll(Objects.requireNonNull(liveData.getValue()));
+            assertEquals(userList.size(), 5);
+        });
+    }
+
+    @Test
+    public void testj_getAllInterestedUsers_withSuccess() throws InterruptedException {
+        List<User> interestedUserList = new ArrayList<>();
+        LiveDataTestUtils.observeForTesting(viewModel.getAllInterestedUsers(), liveData -> {
+            Thread.sleep(500);
+            interestedUserList.addAll(Objects.requireNonNull(liveData.getValue()));
+            assertEquals(interestedUserList.size(), 4);
+        });
+    }
+
+    @Test
+    public void testk_getAllInterestedUsersAtCurrentRestaurant_withSuccess() throws InterruptedException {
+        List<User> interestedUserList = new ArrayList<>();
+        LiveDataTestUtils.observeForTesting(viewModel.getAllInterestedUsers(), liveData -> {
+            Thread.sleep(500);
+            interestedUserList.addAll(Objects.requireNonNull(liveData.getValue()));
+            assertEquals(interestedUserList.size(), 4);
+        });
+        List<User> userInterestedAtCurrentRestaurants = viewModel.getAllInterestedUsersAtCurrentRestaurant("1111", interestedUserList);
+        assertEquals(userInterestedAtCurrentRestaurants.size(), 2);
+    }
+
+    @Test
+    public void testl_getCurrentFirebaseUser_withSuccess() {
+        FirebaseUser currentUser = viewModel.getCurrentFirebaseUser();
+        assert currentUser.getUid().equals(currentUser.getUid());
+    }
+
+    @Test
+    public void testm_signOut_withSuccess() throws InterruptedException {
+        viewModel.signOut(context);
+        Thread.sleep(500);
+        FirebaseUser currentUser = viewModel.getCurrentFirebaseUser();
+        assertNull(currentUser);
+    }
+
+    @Test
+    public void testo_deleteFirestoreUserAndDeleteFirebaseUser_withSuccess() throws ExecutionException, InterruptedException {
         viewModel.deleteUser(context);
         DocumentSnapshot documentSnapshotExpected = Tasks.await(getCurrentFirestoreUser(currentUser.getUid()));
         User userExpected = documentSnapshotExpected.toObject(User.class);
@@ -173,62 +221,4 @@ public class UserRepositoryAndRestaurantFavoriteRepositoryTest {
         FirebaseUser newUser = viewModel.getCurrentFirebaseUser();
         assertNotEquals(userDeleted.getUid(), newUser.getUid());
     }
-
-    @Test
-    public void testj_getAllUsers_withSuccess() throws InterruptedException {
-        List<User> userList = new ArrayList<>();
-        LiveDataTestUtils.observeForTesting(viewModel.getAllUsers(), liveData -> {
-            Thread.sleep(500);
-            userList.addAll(Objects.requireNonNull(liveData.getValue()));
-            assertEquals(userList.size(), 4);
-        });
-    }
-
-    @Test
-    public void testk_getAllInterestedUsers_withSuccess() throws InterruptedException {
-        List<User> interestedUserList = new ArrayList<>();
-        LiveDataTestUtils.observeForTesting(viewModel.getAllInterestedUsers(), liveData -> {
-            Thread.sleep(500);
-            interestedUserList.addAll(Objects.requireNonNull(liveData.getValue()));
-            assertEquals(interestedUserList.size(), 3);
-        });
-    }
-
-    @Test
-    public void testl_getAllInterestedUsersAtCurrentRestaurant_withSuccess() throws InterruptedException {
-        List<User> interestedUserList = new ArrayList<>();
-        LiveDataTestUtils.observeForTesting(viewModel.getAllInterestedUsers(), liveData -> {
-            Thread.sleep(500);
-            interestedUserList.addAll(Objects.requireNonNull(liveData.getValue()));
-            assertEquals(interestedUserList.size(), 3);
-        });
-        List<User> userInterestedAtCurrentRestaurants = viewModel.getAllInterestedUsersAtCurrentRestaurant("1111", interestedUserList);
-        assertEquals(userInterestedAtCurrentRestaurants.size(), 2);
-    }
-
-    @Test
-    public void testm_getCurrentFirebaseUser_withSuccess() {
-        FirebaseUser currentUser = viewModel.getCurrentFirebaseUser();
-        assert currentUser.getUid().equals(currentUser.getUid());
-    }
-
-    @Test
-    public void testn_signOut_withSuccess() throws InterruptedException {
-        viewModel.signOut(context);
-        Thread.sleep(500);
-        FirebaseUser currentUser = viewModel.getCurrentFirebaseUser();
-        assertNull(currentUser);
-    }
-
-    @Test
-    public void testo_deleteUser_withSuccess() throws InterruptedException, ExecutionException {
-        viewModel.deleteFirebaseUser(context);
-        Thread.sleep(500);
-        createFirebaseUser(USER_EMAIL_TEST, USER_PASSWORD_TEST);
-        FirebaseUser userDeleted = currentUser;
-        FirebaseUser newUser = viewModel.getCurrentFirebaseUser();
-        assertNotEquals(userDeleted.getUid(), newUser.getUid());
-    }
-
-
 }

@@ -6,12 +6,13 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -23,7 +24,6 @@ import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 
 public class PreferenceFragment extends Fragment {
 
-    private static final String TAG = PreferenceFragment.class.getSimpleName();
     private FragmentPreferenceSettingsBinding mBinding;
     private UserAndRestaurantViewModel mViewModel;
     private String notification;
@@ -57,17 +57,15 @@ public class PreferenceFragment extends Fragment {
             } else {
                 notification = "notification_disabled";
             }
-            saveSharedPreferences("notification", notification);
+            saveSharedPreferences(notification);
         });
 
-        mBinding.preferenceSettingDeleteAccountBtn.setOnClickListener(view -> {
-            deleteAccountAlertPopup();
-        });
+        mBinding.preferenceSettingDeleteAccountBtn.setOnClickListener(view -> deleteAccountAlertPopup());
     }
 
-    private void saveSharedPreferences(String category, String userSettingsGetter) {
+    private void saveSharedPreferences(String userSettingsGetter) {
         SharedPreferences.Editor editor = requireActivity().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE).edit();
-        editor.putString(category, userSettingsGetter);
+        editor.putString("notification", userSettingsGetter);
         editor.apply();
     }
 
@@ -83,5 +81,12 @@ public class PreferenceFragment extends Fragment {
         customChoiceDialogPopup.getNegativeBtn().setOnClickListener(view -> customChoiceDialogPopup.close());
         customChoiceDialogPopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         customChoiceDialogPopup.build();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.preference_toolbar, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }

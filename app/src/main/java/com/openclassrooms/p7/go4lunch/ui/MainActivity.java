@@ -3,6 +3,7 @@ package com.openclassrooms.p7.go4lunch.ui;
 import static com.openclassrooms.p7.go4lunch.notification.PushNotificationService.periodicTimeRequest;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,9 +11,12 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +25,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
@@ -37,6 +42,7 @@ import com.openclassrooms.p7.go4lunch.dialog.RestaurantChoiceDialogPopup;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
+import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 import com.openclassrooms.p7.go4lunch.ui.fragment.preference.PreferenceFragment;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
@@ -105,9 +111,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configureToolbar() {
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.toolbar, null);
         setSupportActionBar(mBinding.activityMainToolbar.toolbar);
+
     }
 
     private void configureNavigationDrawer() {
@@ -175,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
     private void clearToolbarAndTabs() {
         mBinding.activityMainTabs.setVisibility(View.GONE);
         mBinding.activityMainToolbar.getRoot().setTitle(getString(R.string.main_activity_settings_title));
-        mBinding.activityMainToolbar.getRoot().getMenu().clear();
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -272,5 +276,16 @@ public class MainActivity extends AppCompatActivity {
     private void setTextUserData(FirebaseUser user) {
         username.setText(user.getDisplayName());
         email.setText(user.getEmail());
+    }
+
+    public static void hideKeyboard(Activity activity, View view) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void showKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 }

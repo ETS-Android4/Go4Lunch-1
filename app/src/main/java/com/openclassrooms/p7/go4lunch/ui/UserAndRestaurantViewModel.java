@@ -14,20 +14,16 @@ import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.repository.MapViewRepository;
 import com.openclassrooms.p7.go4lunch.repository.PlaceTask;
 import com.openclassrooms.p7.go4lunch.repository.RestaurantFavoriteRepository;
-import com.openclassrooms.p7.go4lunch.repository.SearchPlaceTask;
 import com.openclassrooms.p7.go4lunch.repository.UserRepository;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class UserAndRestaurantViewModel extends ViewModel {
-
 
     private final UserRepository userDataSource;
     private final RestaurantFavoriteRepository restaurantFavoriteDataSource;
     private final MapViewRepository mapDataSource;
     private final PlaceTask placeTaskExecutor;
-    private SearchPlaceTask searchPlaceTaskExecutor;
 
     public UserAndRestaurantViewModel(
             UserRepository userRepository,
@@ -39,7 +35,6 @@ public class UserAndRestaurantViewModel extends ViewModel {
         restaurantFavoriteDataSource = restaurantFavoriteRepository;
         mapDataSource = mapViewRepository;
         placeTaskExecutor = placeTask;
-        searchPlaceTaskExecutor = new SearchPlaceTask();
     }
 
     //                   --- FOR USER FIREBASE ---
@@ -120,15 +115,5 @@ public class UserAndRestaurantViewModel extends ViewModel {
     }
     public MutableLiveData<List<String>> getListOfPlaceId() {
         return placeTaskExecutor.getListOfPlaceId();
-    }
-
-    public void createNewSearchPlaceTaskExecutor() {
-        searchPlaceTaskExecutor = new SearchPlaceTask();
-    }
-    public void searchPlaceTaskExecutor(String url) {
-        searchPlaceTaskExecutor.execute(url);
-    }
-    public MutableLiveData<List<String>> getListOfSearchedPlaceId() {
-        return searchPlaceTaskExecutor.getListOfPlaceId();
     }
 }

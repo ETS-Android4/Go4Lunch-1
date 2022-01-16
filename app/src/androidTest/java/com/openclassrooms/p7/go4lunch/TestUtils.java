@@ -10,6 +10,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
+import com.openclassrooms.p7.go4lunch.model.User;
 
 import org.junit.Assert;
 
@@ -50,6 +51,7 @@ public abstract class TestUtils {
         Assert.assertNotNull(currentFirebaseUser);
     }
 
+
     public static Task<DocumentSnapshot> getCurrentFirestoreUser(String userID) {
         return FirebaseFirestore.getInstance()
                 .collection("users_test")
@@ -60,12 +62,21 @@ public abstract class TestUtils {
         Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail, userPassword));
     }
 
-    public static RestaurantFavorite getDefaultRestaurantFavorite(int index) {
+    public static List<RestaurantFavorite> getDefaultRestaurantFavorite() {
         List<RestaurantFavorite> restaurantFavoriteList = new ArrayList<>();
-        restaurantFavoriteList.add(new RestaurantFavorite("1111"));
-        restaurantFavoriteList.add(new RestaurantFavorite("2222"));
-        restaurantFavoriteList.add(new RestaurantFavorite("3333"));
-        return restaurantFavoriteList.get(index);
+        restaurantFavoriteList.add(new RestaurantFavorite(FIRST_RESTAURANT_ID));
+        restaurantFavoriteList.add(new RestaurantFavorite(SECOND_RESTAURANT_ID));
+        restaurantFavoriteList.add(new RestaurantFavorite(THIRD_RESTAURANT_ID));
+        return restaurantFavoriteList;
+    }
+
+    public static List<User> getDefaultUserList() {
+        List<User> userList = new ArrayList<>();
+        userList.add(new User("1111", "test1", "photo", "restaurant1", "ChIJexGknqI1sRIRWr8XRhcWfKw", true));
+        userList.add(new User("2222", "test2", "photo", "", "", false));
+        userList.add(new User("3333", "test3", "photo", "restaurant1", "ChIJexGknqI1sRIRWr8XRhcWfKw", true));
+        userList.add(new User("4444", "test4", "photo", "restaurant2", "ChIJ5X07y6M1sRIRNiPZimTgF-4", true));
+        return userList;
     }
 
     public static Task<DocumentSnapshot> getFirestoreRestaurantFavorite(String userId, String restaurantId) {

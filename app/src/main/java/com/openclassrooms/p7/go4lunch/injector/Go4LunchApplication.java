@@ -27,8 +27,6 @@ public class Go4LunchApplication extends Application {
         } catch (ClassNotFoundException e) {
             isRunningTest = false;
         }
-//        createNotificationChannel();
-//        periodicTimeRequest(this);
     }
 
     public static boolean isIsRunningTest() {
@@ -38,15 +36,4 @@ public class Go4LunchApplication extends Application {
     public static Context getContext() {
         return context;
     }
-
-
-//    public static void periodicTimeRequest(Context context) {
-//        long timeDiff = setTimeUntilBeginWork();
-//        PeriodicWorkRequest timeToLunch = new PeriodicWorkRequest.Builder(PushNotificationService.class, 24, TimeUnit.HOURS)
-//                .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
-//                .addTag(PERIODIC_TIME_WORK_TAG)
-//                .build();
-//        WorkManager.getInstance(context).enqueueUniquePeriodicWork("lunch time", ExistingPeriodicWorkPolicy.REPLACE, timeToLunch);
-//        Log.e(TAG, "periodicTimeRequest: PERIODIC WORK ENQUEUED");
-//    }
 }

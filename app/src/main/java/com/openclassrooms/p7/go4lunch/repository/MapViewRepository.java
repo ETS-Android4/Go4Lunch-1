@@ -95,9 +95,6 @@ public class MapViewRepository {
                         restaurantList.add(restaurant);
                         listOfRestaurant.postValue(restaurantList);
                         Log.e(TAG, "requestForPlaceDetails: PLACE FOUND WITH PHOTO: " + place.getName());
-                        if (place.getTypes() != null) {
-                            Log.e(TAG, "requestForPlaceDetails: PLACE TYPE: " + place.getTypes().get(0));
-                        }
                     }).addOnFailureListener((exception) -> {
                         if (exception instanceof ApiException) {
                             Log.e(TAG, "requestForPlaceDetails: PLACE NOT FOUND");

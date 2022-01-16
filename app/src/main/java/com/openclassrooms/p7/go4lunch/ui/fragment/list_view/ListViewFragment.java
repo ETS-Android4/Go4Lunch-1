@@ -4,8 +4,14 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 
+import static com.openclassrooms.p7.go4lunch.ui.MainActivity.hideKeyboard;
+import static com.openclassrooms.p7.go4lunch.ui.MainActivity.showKeyboard;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +37,7 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
+import com.openclassrooms.p7.go4lunch.databinding.FragmentListViewBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
@@ -38,6 +45,7 @@ import com.openclassrooms.p7.go4lunch.model.SortMethod;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
+import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewAutocompleteAdapter;
 import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 
 import java.util.ArrayList;
@@ -48,7 +56,7 @@ import java.util.Objects;
 /**
  * Created by lleotraas on 14.
  */
-public class ListViewFragment extends Fragment {
+public class ListViewFragment extends Fragment implements MapViewAutocompleteAdapter.ClickListener{
 
     private static final int AUTOCOMPLETE_REQUEST_CODE = 23;
     private RecyclerView mRecyclerView;
@@ -58,21 +66,26 @@ public class ListViewFragment extends Fragment {
     private final List<Restaurant> mRestaurantList = new ArrayList<>();
     private final List<RestaurantFavorite> mRestaurantFavoriteList = new ArrayList<>();
     private SortMethod mSortMethod;
+    private FragmentListViewBinding mBinding;
+    private MapViewAutocompleteAdapter mMapViewAutocompleteAdapter;
+    private RecyclerView mRecyclerViewSearchResult;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        View root = inflater.inflate(R.layout.fragment_list_view, container, false);
-        mRecyclerView = root.findViewById(R.id.list_view_recycler_view);
+        mBinding = FragmentListViewBinding.inflate(inflater, container, false);
+        View root = mBinding.getRoot();
+        mRecyclerView = mBinding.listViewRecyclerView;
         this.configureServiceAndViewModel();
-        setHasOptionsMenu(true);
+        this.createAutocomplete();
+        this.setHasOptionsMenu(true);
         this.initList();
         return root;
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.list_view_toolbar_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -127,14 +140,16 @@ public class ListViewFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.sort_menu_toolbar_search_btn) {
-            List<Place.Field> fields = Arrays.asList(Place.Field.ID);
-            Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-                    .setTypeFilter(TypeFilter.ESTABLISHMENT)
-                    .setLocationBias(mApiService.getRectangularBound(MapViewFragment.CURRENT_LOCATION))
-                    .setCountry("FR")
-                    .setHint("Search restaurant")
-                    .build(requireContext());
-            startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+            if (mBinding.placeSearch.getVisibility() == View.GONE) {
+                mBinding.placeSearch.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mBinding.placeSearch.requestFocus();
+                showKeyboard(requireActivity());
+            } else {
+                mBinding.placeSearch.setVisibility(View.GONE);
+                mBinding.placesRecyclerView.setVisibility(View.GONE);
+                hideKeyboard(requireActivity(), mBinding.placeSearch);
+            }
 
         } else if (id == R.id.sort_menu_interested_ascending) {
             mSortMethod = SortMethod.INTERESTED_ASCENDING;
@@ -171,21 +186,42 @@ public class ListViewFragment extends Fragment {
         return false;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(Objects.requireNonNull(data));
-                List<String> placesId = new ArrayList<>();
-                placesId.add(place.getId());
-                mViewModel.requestForPlaceDetails(placesId, requireContext(), true);
-            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                Status status = Autocomplete.getStatusFromIntent(data);
-                Log.i(TAG, status.getStatusMessage());
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(requireContext(), requireContext().getResources().getString(R.string.map_view_fragment_search_canceled), Toast.LENGTH_SHORT).show();
+    @SuppressLint("NotifyDataSetChanged")
+    private void createAutocomplete() {
+        mRecyclerViewSearchResult = mBinding.placesRecyclerView;
+        mBinding.placeSearch.addTextChangedListener(filterTextWatcher);
+        mMapViewAutocompleteAdapter = new MapViewAutocompleteAdapter(requireContext());
+        mRecyclerViewSearchResult.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mMapViewAutocompleteAdapter.setClickListener(this);
+        mRecyclerViewSearchResult.setAdapter(mMapViewAutocompleteAdapter);
+        mMapViewAutocompleteAdapter.notifyDataSetChanged();
+    }
+
+    private final TextWatcher filterTextWatcher = new TextWatcher() {
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (!editable.toString().equals("")) {
+                mMapViewAutocompleteAdapter.getFilter().filter(editable.toString());
+                if (mRecyclerViewSearchResult.getVisibility() == View.GONE) {mRecyclerViewSearchResult.setVisibility(View.VISIBLE);}
+            } else {
+                if (mRecyclerViewSearchResult.getVisibility() == View.VISIBLE) {mRecyclerViewSearchResult.setVisibility(View.GONE);}
             }
         }
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+    };
+
+    @Override
+    public void click(List<String> listOfPlaceId) {
+        mViewModel.requestForPlaceDetails(listOfPlaceId, requireContext(), true);
+        mBinding.placeSearch.setVisibility(View.GONE);
+        mBinding.placesRecyclerView.setVisibility(View.GONE);
+        hideKeyboard(requireActivity(), mBinding.placeSearch);
     }
 }

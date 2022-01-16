@@ -16,6 +16,7 @@ import com.google.android.libraries.places.api.model.TimeOfWeek;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
+import com.openclassrooms.p7.go4lunch.model.SortMethod;
 import com.openclassrooms.p7.go4lunch.model.User;
 
 import org.junit.After;
@@ -220,23 +221,6 @@ public class ServiceTest {
     }
 
     @Test
-    public void getRectangularBound_shouldReturn_rectangularBound() {
-        // ARRANGE
-        double latitude = 43.4073612;
-        double longitude = 3.6997723;
-        LatLng currentLocation = new LatLng(latitude, longitude);
-        LatLng southWest = new LatLng(latitude - 0.050000, longitude + 0.050000);
-        LatLng northEast = new LatLng(latitude + 0.050000, longitude + 0.050000);
-        RectangularBounds rectangularBoundsExpected = RectangularBounds.newInstance(
-                new LatLng(southWest.latitude, southWest.longitude),
-                new LatLng(northEast.latitude, northEast.longitude));
-        // ACT
-        RectangularBounds rectangularBoundsToTest = service.getRectangularBound(currentLocation);
-        // ASSERT
-        assertEquals(rectangularBoundsExpected, rectangularBoundsToTest);
-    }
-
-    @Test
     public void setRatingStars_shouldReturn_starBorder() {
         int drawableExpected = R.drawable.baseline_star_border_24;
         int indexToTest = 0;
@@ -343,12 +327,84 @@ public class ServiceTest {
         List<Restaurant> restaurantListToTest = new ArrayList<>();
         restaurantListToTest = getDefaultRestaurantList();
         //ACT
-//        service.restaurantComparator(restaurantListToTest);
+        service.restaurantComparator(restaurantListToTest, SortMethod.INTERESTED_DESCENDING);
         //ASSERT
         assertEquals("CCCC", restaurantListToTest.get(0).getId());
         assertEquals("BBBB", restaurantListToTest.get(1).getId());
         assertEquals("DDDD", restaurantListToTest.get(2).getId());
         assertEquals("AAAA", restaurantListToTest.get(3).getId());
+
+        //ACT
+        service.restaurantComparator(restaurantListToTest, SortMethod.INTERESTED_ASCENDING);
+        //ASSERT
+        assertEquals("AAAA", restaurantListToTest.get(0).getId());
+        assertEquals("DDDD", restaurantListToTest.get(1).getId());
+        assertEquals("BBBB", restaurantListToTest.get(2).getId());
+        assertEquals("CCCC", restaurantListToTest.get(3).getId());
+
+        //ACT
+        service.restaurantComparator(restaurantListToTest, SortMethod.RATING_DESCENDING);
+        //ASSERT
+        assertEquals("AAAA", restaurantListToTest.get(0).getId());
+        assertEquals("BBBB", restaurantListToTest.get(1).getId());
+        assertEquals("CCCC", restaurantListToTest.get(2).getId());
+        assertEquals("DDDD", restaurantListToTest.get(3).getId());
+
+        //ACT
+        service.restaurantComparator(restaurantListToTest, SortMethod.RATING_ASCENDING);
+        //ASSERT
+        assertEquals("DDDD", restaurantListToTest.get(0).getId());
+        assertEquals("CCCC", restaurantListToTest.get(1).getId());
+        assertEquals("BBBB", restaurantListToTest.get(2).getId());
+        assertEquals("AAAA", restaurantListToTest.get(3).getId());
+
+        //ACT
+        service.restaurantComparator(restaurantListToTest, SortMethod.DISTANCE_DESCENDING);
+        //ASSERT
+        assertEquals("BBBB", restaurantListToTest.get(0).getId());
+        assertEquals("AAAA", restaurantListToTest.get(1).getId());
+        assertEquals("DDDD", restaurantListToTest.get(2).getId());
+        assertEquals("CCCC", restaurantListToTest.get(3).getId());
+
+        //ACT
+        service.restaurantComparator(restaurantListToTest, SortMethod.DISTANCE_ASCENDING);
+        //ASSERT
+        assertEquals("CCCC", restaurantListToTest.get(0).getId());
+        assertEquals("DDDD", restaurantListToTest.get(1).getId());
+        assertEquals("AAAA", restaurantListToTest.get(2).getId());
+        assertEquals("BBBB", restaurantListToTest.get(3).getId());
+
+        //ACT
+        service.restaurantComparator(restaurantListToTest, SortMethod.FAVORITE_DESCENDING);
+        //ASSERT
+        assertEquals("CCCC", restaurantListToTest.get(0).getId());
+        assertEquals("DDDD", restaurantListToTest.get(1).getId());
+        assertEquals("AAAA", restaurantListToTest.get(2).getId());
+        assertEquals("BBBB", restaurantListToTest.get(3).getId());
+
+        //ACT
+        service.restaurantComparator(restaurantListToTest, SortMethod.FAVORITE_ASCENDING);
+        //ASSERT
+        assertEquals("AAAA", restaurantListToTest.get(0).getId());
+        assertEquals("BBBB", restaurantListToTest.get(1).getId());
+        assertEquals("CCCC", restaurantListToTest.get(2).getId());
+        assertEquals("DDDD", restaurantListToTest.get(3).getId());
+
+        //ACT
+        service.restaurantComparator(restaurantListToTest, SortMethod.SEARCHED_DESCENDING);
+        //ASSERT
+        assertEquals("AAAA", restaurantListToTest.get(0).getId());
+        assertEquals("BBBB", restaurantListToTest.get(1).getId());
+        assertEquals("CCCC", restaurantListToTest.get(2).getId());
+        assertEquals("DDDD", restaurantListToTest.get(3).getId());
+
+        //ACT
+        service.restaurantComparator(restaurantListToTest, SortMethod.SEARCHED_ASCENDING);
+        //ASSERT
+        assertEquals("DDDD", restaurantListToTest.get(0).getId());
+        assertEquals("AAAA", restaurantListToTest.get(1).getId());
+        assertEquals("BBBB", restaurantListToTest.get(2).getId());
+        assertEquals("CCCC", restaurantListToTest.get(3).getId());
     }
 
     @Test
@@ -422,10 +478,10 @@ public class ServiceTest {
 
     private List<Restaurant> getDefaultRestaurantList() {
         List<Restaurant> defaultRestaurantList = new ArrayList<>();
-        Restaurant restaurantTest0 = new Restaurant("AAAA", "Restaurant le jasmin", "3 rue St Félicien", "18h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 3, true, false);
-        Restaurant restaurantTest1 = new Restaurant("BBBB", "RESTAURANT le goéland", "5 boulevard du battaillon", "15h", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 9, true,false);
-        Restaurant restaurantTest2 = new Restaurant("CCCC", "restaurant le Kébab", "270 avenue camille blanc", "11h30", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 15, false, false);
-        Restaurant restaurantTest3 = new Restaurant("DDDD", "le Syrien", "270 rue du voisin", "08h00", "0467868361", "http://www.mangerBouger.fr", 450.987f, 2.3,null, null, 4, false, true);
+        Restaurant restaurantTest0 = new Restaurant("AAAA", "Restaurant le jasmin", "3 rue St Félicien", "18h", "0467868361", "http://www.mangerBouger.fr", 250.987f, 4.3,null, null, 3, true, false);
+        Restaurant restaurantTest1 = new Restaurant("BBBB", "RESTAURANT le goéland", "5 boulevard du battaillon", "15h", "0467868361", "http://www.mangerBouger.fr", 350.987f, 2.8,null, null, 9, true,false);
+        Restaurant restaurantTest2 = new Restaurant("CCCC", "restaurant le Kébab", "270 avenue camille blanc", "11h30", "0467868361", "http://www.mangerBouger.fr", 50.987f, 2.3,null, null, 15, false, false);
+        Restaurant restaurantTest3 = new Restaurant("DDDD", "le Syrien", "270 rue du voisin", "08h00", "0467868361", "http://www.mangerBouger.fr", 150.987f, 1.7,null, null, 4, false, true);
 
         defaultRestaurantList.add(restaurantTest0);
         defaultRestaurantList.add(restaurantTest1);

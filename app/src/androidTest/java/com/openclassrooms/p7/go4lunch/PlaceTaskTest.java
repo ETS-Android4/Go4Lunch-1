@@ -48,8 +48,6 @@ public class PlaceTaskTest {
         assertNull(viewModel.getListOfPlaceId().getValue());
         viewModel.placeTaskExecutor(NEARBY_SEARCH_URL);
         int listOfIdSize = placeTask.get().size();
-        LiveDataTestUtils.observeForTesting(viewModel.getListOfPlaceId(), liveData -> {
-            assertEquals(listOfIdSize, Objects.requireNonNull(liveData.getValue()).size());
-        });
+        LiveDataTestUtils.observeForTesting(viewModel.getListOfPlaceId(), liveData -> assertEquals(listOfIdSize, Objects.requireNonNull(liveData.getValue()).size()));
     }
 }

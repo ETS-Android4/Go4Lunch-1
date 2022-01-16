@@ -55,7 +55,6 @@ android {
 
 dependencies {
 
-
     def work_version = "2.7.1"
     implementation "androidx.work:work-runtime:$work_version"
 
@@ -97,8 +96,9 @@ dependencies {
 
     // GoogleMap Dependencies
     implementation 'com.google.android.gms:play-services-maps:18.0.1'
-    implementation 'com.google.android.libraries.places:places:2.5.0'
+    implementation 'com.google.android.gms:play-services-places:17.0.0'
     implementation 'com.google.android.gms:play-services-location:19.0.0'
+    implementation 'com.google.android.libraries.places:places:2.5.0'
     implementation 'com.google.maps.android:android-maps-utils:2.2.3'
 }
 

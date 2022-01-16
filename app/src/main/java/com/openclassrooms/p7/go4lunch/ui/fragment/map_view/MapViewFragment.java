@@ -2,9 +2,9 @@ package com.openclassrooms.p7.go4lunch.ui.fragment.map_view;
 
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
+import static com.openclassrooms.p7.go4lunch.ui.MainActivity.hideKeyboard;
+import static com.openclassrooms.p7.go4lunch.ui.MainActivity.showKeyboard;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,23 +12,27 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,33 +46,28 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
-import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.databinding.FragmentMapViewBinding;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 /**
  * Created by lleotraas on 14.
  */
 public class MapViewFragment extends Fragment implements OnMapReadyCallback,
-                                                         GoogleMap.OnMarkerClickListener{
+                                                         GoogleMap.OnMarkerClickListener,
+                                                         MapViewAutocompleteAdapter.ClickListener{
 
 
-    private static final int AUTOCOMPLETE_REQUEST_CODE = 23;
     private GoogleMap mMap = null;
     private Location lastKnownLocation;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -83,13 +82,17 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     private boolean locationPermissionGranted;
     private UserAndRestaurantViewModel mViewModel;
-    private ApiService mApiService;
     private boolean isAlreadyNearbySearched;
+    private FragmentMapViewBinding mBinding;
+    private MapViewAutocompleteAdapter mMapViewAutocompleteAdapter;
+    private RecyclerView mRecyclerView;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View result = inflater.inflate(R.layout.fragment_map_view, container, false);
+        mBinding = FragmentMapViewBinding.inflate(inflater, container, false);
+        View result = mBinding.getRoot();
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
         }
@@ -105,33 +108,29 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                 startActivity(new Intent(requireActivity(), LoginActivity.class));
             }
         });
-        setHasOptionsMenu(true);
+        this.configureListeners();
+        this.createAutocomplete();
+        this.setHasOptionsMenu(true);
         return result;
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.toolbar_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+
     }
 
     private void configureServiceAndViewModel() {
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserAndRestaurantViewModel.class);
-        mApiService = DI.getRestaurantApiService();
     }
 
     private void putMarkerOnMap() {
-        mViewModel.getIsAlreadyNearbySearched().observe(getViewLifecycleOwner(), aBoolean -> {
-            isAlreadyNearbySearched = aBoolean;
-        });
+        mViewModel.getIsAlreadyNearbySearched().observe(getViewLifecycleOwner(), aBoolean -> isAlreadyNearbySearched = aBoolean);
         mViewModel.getListOfPlaceId().observe(getViewLifecycleOwner(), strings -> {
             if (isAlreadyNearbySearched) {
                 mViewModel.requestForPlaceDetails(strings, requireContext(), false);
             }
-        });
-        mViewModel.getListOfSearchedPlaceId().observe(getViewLifecycleOwner(), strings -> {
-            mViewModel.requestForPlaceDetails(strings, requireContext(), true);
-            mViewModel.createNewSearchPlaceTaskExecutor();
         });
         List<User> userInterestedList = new ArrayList<>();
         mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), userInterestedList::addAll);
@@ -145,41 +144,30 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                     MarkerOptions markerOptions = setMarkerOnMap(restaurant);
                     markerOptions.icon(BitmapDescriptorFactory.fromResource(setMarkerIcon(restaurant)));
                     mMap.addMarker(markerOptions);
+                    if (restaurant.isSearched()) {
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(restaurant.getPosition()));
+                    }
                 }
             }
         });
     }
-
+    //TODO taille des telephones et mode portrait
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        searchRestaurant("marcel");
-//        List<Place.Field> fields = Arrays.asList(Place.Field.ID);
-//        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-//                .setTypeFilter(TypeFilter.ESTABLISHMENT)
-//                .setLocationBias(mApiService.getRectangularBound(MapViewFragment.CURRENT_LOCATION))
-//                .setCountry("FR")
-//                .setHint("Search restaurant")
-//                .build(requireContext());
-//        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(Objects.requireNonNull(data));
-                List<String> placesId = new ArrayList<>();
-                placesId.add(place.getId());
-                mViewModel.requestForPlaceDetails(placesId, requireContext(), true);
-            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                Status status = Autocomplete.getStatusFromIntent(data);
-                Log.i(TAG, status.getStatusMessage());
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(requireContext(), requireContext().getResources().getString(R.string.map_view_fragment_search_canceled), Toast.LENGTH_SHORT).show();
+        int id = item.getItemId();
+        if (id == R.id.toolbar_search_btn) {
+            if (mBinding.placeSearch.getVisibility() == View.GONE) {
+                mBinding.placeSearch.setVisibility(View.VISIBLE);
+                mBinding.placesRecyclerView.setVisibility(View.VISIBLE);
+                mBinding.placeSearch.requestFocus();
+                showKeyboard(requireActivity());
+            } else {
+                mBinding.placeSearch.setVisibility(View.GONE);
+                mBinding.placesRecyclerView.setVisibility(View.GONE);
+                hideKeyboard(requireActivity(), mBinding.placeSearch);
             }
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -319,20 +307,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         mViewModel.placeTaskExecutor(url);
     }
 
-    private String searchRestaurant(String input) {
-//        String url = "https://maps.googleapis.com/maps/api/place/queryautocomplete/json"
-        String url = "https://maps.googleapis.com/maps/api/place/autocomplete/json"
-                +"?input=" + input
-                +"&components=country:fr"
-                +"&types=establishment"
-                +"&location=" + lastKnownLocation.getLatitude() + "," + lastKnownLocation.getLongitude()
-                + "&radius=1500"
-                +"&strictbounds=true"
-                + "&key=" + BuildConfig.GMP_KEY;
-        mViewModel.searchPlaceTaskExecutor(url);
-        return url;
-    }
-
     private MarkerOptions setMarkerOnMap(Restaurant restaurant) {
         MarkerOptions options = new MarkerOptions();
         LatLng latLng = new LatLng(restaurant.getPosition().latitude, restaurant.getPosition().longitude);
@@ -351,5 +325,71 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             return R.drawable.baseline_place_orange;
     }
 
-    
+    @SuppressLint("NotifyDataSetChanged")
+    private void createAutocomplete() {
+        mRecyclerView = mBinding.placesRecyclerView;
+        mBinding.placeSearch.addTextChangedListener(filterTextWatcher);
+        mMapViewAutocompleteAdapter = new MapViewAutocompleteAdapter(requireContext());
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mMapViewAutocompleteAdapter.setClickListener(this);
+        mRecyclerView.setAdapter(mMapViewAutocompleteAdapter);
+        mMapViewAutocompleteAdapter.notifyDataSetChanged();
+    }
+
+    private final TextWatcher filterTextWatcher = new TextWatcher() {
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (!editable.toString().equals("")) {
+                mMapViewAutocompleteAdapter.getFilter().filter(editable.toString());
+                if (mRecyclerView.getVisibility() == View.GONE) {mRecyclerView.setVisibility(View.VISIBLE);}
+            } else {
+                if (mRecyclerView.getVisibility() == View.VISIBLE) {mRecyclerView.setVisibility(View.GONE);}
+            }
+        }
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+    };
+
+    @Override
+    public void click(List<String> listOfPlaceId) {
+        mViewModel.requestForPlaceDetails(listOfPlaceId, requireContext(), true);
+        mBinding.placeSearch.setVisibility(View.GONE);
+        mBinding.placesRecyclerView.setVisibility(View.GONE);
+        hideKeyboard(requireActivity(), mBinding.placeSearch);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void configureListeners() {
+        mBinding.placeSearch.setOnTouchListener((view, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                mBinding.placeSearch.setVisibility(View.GONE);
+                mBinding.placesRecyclerView.setVisibility(View.GONE);
+                hideKeyboard(requireActivity(), mBinding.placeSearch);
+            }
+            return false;
+        });
+        mBinding.mapViewContainer.setClickable(true);
+        mBinding.map.setOnClickListener(view -> {
+            Log.d(TAG, "configureListeners: MAP TOUCHED");
+            if (mBinding.placeSearch.getVisibility() == View.VISIBLE) {
+                mBinding.placeSearch.setVisibility(View.GONE);
+                mBinding.placesRecyclerView.setVisibility(View.GONE);
+                hideKeyboard(requireActivity(), mBinding.placeSearch);
+            }
+        });
+        mBinding.mapViewContainer.setOnClickListener(view -> {
+            Log.d(TAG, "configureListeners: MAP TOUCHED");
+        });
+        if (mMap != null) {
+            mMap.setOnCameraMoveListener(() -> {
+                Log.d(TAG, "configureListeners: MAP MOVED");
+            });
+        }
+    }
 }

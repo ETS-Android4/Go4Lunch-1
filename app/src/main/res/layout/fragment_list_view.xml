@@ -1,12 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/list_view_container"
     android:background="?attr/background_color"
     tools:context=".ui.fragment.list_view.ListViewFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_map_view_constraint_layout"
+        android:orientation="vertical"
+        android:padding="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="5dp">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/place_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:hint="@string/toolbar_menu_search_button"
+            android:inputType="textPostalAddress"
+            android:padding="15dp"
+            android:layout_marginBottom="15dp"
+            android:drawableLeft="@drawable/baseline_arrow_back_24"
+            android:background="@color/light_background_color"
+            android:visibility="gone"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/places_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/place_search"
+            android:background="#FFF"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:visibility="gone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_view_recycler_view"

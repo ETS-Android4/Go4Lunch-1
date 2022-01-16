@@ -39,7 +39,7 @@
     <string name="toolbar_title_hungry">I\'m Hungry!</string>
 
     <!-- Toolbar menu strings -->
-    <string name="toolbar_menu_search_button">Search</string>
+    <string name="toolbar_menu_search_button">Search restaurant</string>
     <string name="toolbar_menu_filter_button">Filter</string>
 
     <!-- Sort menu -->
