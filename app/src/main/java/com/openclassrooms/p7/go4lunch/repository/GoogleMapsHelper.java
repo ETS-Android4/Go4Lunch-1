@@ -49,7 +49,8 @@ public class GoogleMapsHelper {
                 Place.Field.WEBSITE_URI,
                 Place.Field.OPENING_HOURS,
                 Place.Field.LAT_LNG,
-                Place.Field.PHOTO_METADATAS
+                Place.Field.PHOTO_METADATAS,
+                Place.Field.TYPES
         );
         FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
                 .build();
@@ -70,11 +71,6 @@ public class GoogleMapsHelper {
         } else {
             return null;
         }
-    }
-
-    public HttpURLConnection getData(String url) throws IOException {
-        URL urlToConnect = new URL(url);
-        return (HttpURLConnection) urlToConnect.openConnection();
     }
 
     public String downloadUrl (String string) throws IOException {

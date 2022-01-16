@@ -9,11 +9,4 @@
         app:showAsAction="ifRoom">
     </item>
 
-    <item
-        android:id="@+id/toolbar_filter_btn"
-        android:title="@string/toolbar_menu_filter_button"
-        android:icon="@drawable/baseline_search_24"
-        app:showAsAction="ifRoom">>
-    </item>
-
 </menu>

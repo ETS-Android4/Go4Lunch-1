@@ -74,7 +74,7 @@ public class MapViewRepository {
      */
     public void requestForPlaceDetails(List<String> placeId, Context context, boolean isSearched) {
         List<Restaurant> restaurantList = new ArrayList<>();
-        if (placeId.size() == 1) {
+        if (isSearched) {
             restaurantList.addAll(Objects.requireNonNull(listOfRestaurant.getValue()));
             Restaurant restaurantToRemove = null;
             for (Restaurant restaurant : restaurantList) {
@@ -94,7 +94,10 @@ public class MapViewRepository {
                         Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), isSearched);
                         restaurantList.add(restaurant);
                         listOfRestaurant.postValue(restaurantList);
-                        Log.e(TAG, "requestForPlaceDetails: PLACE FOUND WITH PHOTO " + place.getName());
+                        Log.e(TAG, "requestForPlaceDetails: PLACE FOUND WITH PHOTO: " + place.getName());
+                        if (place.getTypes() != null) {
+                            Log.e(TAG, "requestForPlaceDetails: PLACE TYPE: " + place.getTypes().get(0));
+                        }
                     }).addOnFailureListener((exception) -> {
                         if (exception instanceof ApiException) {
                             Log.e(TAG, "requestForPlaceDetails: PLACE NOT FOUND");

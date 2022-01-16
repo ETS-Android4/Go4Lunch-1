@@ -50,4 +50,15 @@ public class JsonParser {
         assert jsonArray != null;
         return parseJsonArray(jsonArray);
     }
+
+    public List<String> parsePredictions(JSONObject object) {
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = object.getJSONArray("predictions");
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        assert jsonArray != null;
+        return parseJsonArray(jsonArray);
+    }
 }

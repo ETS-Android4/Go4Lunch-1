@@ -43,10 +43,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.openclassrooms.p7.go4lunch.BuildConfig;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
@@ -59,7 +57,6 @@ import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -132,6 +129,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                 mViewModel.requestForPlaceDetails(strings, requireContext(), false);
             }
         });
+        mViewModel.getListOfSearchedPlaceId().observe(getViewLifecycleOwner(), strings -> {
+            mViewModel.requestForPlaceDetails(strings, requireContext(), true);
+            mViewModel.createNewSearchPlaceTaskExecutor();
+        });
         List<User> userInterestedList = new ArrayList<>();
         mViewModel.getAllInterestedUsers().observe(getViewLifecycleOwner(), userInterestedList::addAll);
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
@@ -151,14 +152,15 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        List<Place.Field> fields = Arrays.asList(Place.Field.ID);
-        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-                .setTypeFilter(TypeFilter.ESTABLISHMENT)
-                .setLocationBias(mApiService.getRectangularBound(MapViewFragment.CURRENT_LOCATION))
-                .setCountry("FR")
-                .setHint("Search restaurant")
-                .build(requireContext());
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+        searchRestaurant("marcel");
+//        List<Place.Field> fields = Arrays.asList(Place.Field.ID);
+//        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+//                .setTypeFilter(TypeFilter.ESTABLISHMENT)
+//                .setLocationBias(mApiService.getRectangularBound(MapViewFragment.CURRENT_LOCATION))
+//                .setCountry("FR")
+//                .setHint("Search restaurant")
+//                .build(requireContext());
+//        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
         return super.onOptionsItemSelected(item);
     }
 
@@ -204,6 +206,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -316,6 +319,20 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         mViewModel.placeTaskExecutor(url);
     }
 
+    private String searchRestaurant(String input) {
+//        String url = "https://maps.googleapis.com/maps/api/place/queryautocomplete/json"
+        String url = "https://maps.googleapis.com/maps/api/place/autocomplete/json"
+                +"?input=" + input
+                +"&components=country:fr"
+                +"&types=establishment"
+                +"&location=" + lastKnownLocation.getLatitude() + "," + lastKnownLocation.getLongitude()
+                + "&radius=1500"
+                +"&strictbounds=true"
+                + "&key=" + BuildConfig.GMP_KEY;
+        mViewModel.searchPlaceTaskExecutor(url);
+        return url;
+    }
+
     private MarkerOptions setMarkerOnMap(Restaurant restaurant) {
         MarkerOptions options = new MarkerOptions();
         LatLng latLng = new LatLng(restaurant.getPosition().latitude, restaurant.getPosition().longitude);
@@ -333,4 +350,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         }
             return R.drawable.baseline_place_orange;
     }
+
+    
 }
