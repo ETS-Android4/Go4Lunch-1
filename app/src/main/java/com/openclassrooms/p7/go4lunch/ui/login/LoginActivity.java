@@ -14,11 +14,10 @@ import com.firebase.ui.auth.IdpResponse;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.databinding.ActivityLoginBinding;
-import com.openclassrooms.p7.go4lunch.ui.MainActivity;
+import com.openclassrooms.p7.go4lunch.ui.activity.MainActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.FacebookSignInActivity;
 import com.openclassrooms.p7.go4lunch.ui.sign_in.GoogleSignInActivity;
-import com.openclassrooms.p7.go4lunch.ui.sign_in.TwitterSignInActivity;
 
 /**
  * Created by lleotraas on 15.
@@ -70,12 +69,6 @@ public class LoginActivity extends AppCompatActivity {
 
         mBinding.activityLoginGoogleBtn.setOnClickListener(view -> {
             Intent intent = new Intent(this, GoogleSignInActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
-        });
-
-        mBinding.activityLoginTwitterBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(this, TwitterSignInActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
         });

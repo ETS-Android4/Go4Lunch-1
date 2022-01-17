@@ -1,16 +1,18 @@
-package com.openclassrooms.p7.go4lunch.ui.fragment.map_view;
+package com.openclassrooms.p7.go4lunch.model;
+
+import androidx.annotation.NonNull;
 
 public class PlaceAutocomplete {
      public CharSequence placeId;
      public CharSequence address, area;
 
-     PlaceAutocomplete(CharSequence placeId, CharSequence area, CharSequence address) {
+     public PlaceAutocomplete(CharSequence placeId, CharSequence area, CharSequence address) {
          this.placeId = placeId;
          this.area = area;
          this.address = address;
      }
 
-     @Override
+     @NonNull
      public String toString() {
          return area.toString();
      }

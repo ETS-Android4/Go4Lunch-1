@@ -27,12 +27,11 @@ public interface ApiService {
     String makeStringOpeningHours(OpeningHours openingHours, String currentDay, LocalTime currentTime);
 
     // --- GETTER ---
-    List<User> getInterestedFriend(List<User> userList, String restaurantId);
+    List<User> getInterestedUsers(List<User> userList, String restaurantId);
     String getOpeningHours(OpeningHours openingHours);
     String getWebsiteUri(Uri websiteUri);
     double getRating(Double rating);
     float getDistance(LatLng latLng, LatLng currentLocation);
-    RectangularBounds getRectangularBound(LatLng currentLocation);
 
     // --- SET IMAGE OR ICON ---
     int setRatingStars(int index, double rating);

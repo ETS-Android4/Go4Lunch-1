@@ -3,8 +3,8 @@ package com.openclassrooms.p7.go4lunch.ui.fragment.map_view;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.ContentValues.TAG;
-import static com.openclassrooms.p7.go4lunch.ui.MainActivity.hideKeyboard;
-import static com.openclassrooms.p7.go4lunch.ui.MainActivity.showKeyboard;
+import static com.openclassrooms.p7.go4lunch.ui.activity.MainActivity.hideKeyboard;
+import static com.openclassrooms.p7.go4lunch.ui.activity.MainActivity.showKeyboard;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -52,7 +51,7 @@ import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.databinding.FragmentMapViewBinding;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.User;
-import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
+import com.openclassrooms.p7.go4lunch.ui.activity.DetailActivity;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
@@ -104,7 +103,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             startActivity(new Intent(requireActivity(), LoginActivity.class));
         }
         mViewModel.getCurrentFirestoreUser().observe(getViewLifecycleOwner(), user -> {
-            if (user == null) {
+            if (!user.getUid().equals(mViewModel.getCurrentFirebaseUser().getUid())) {
                 startActivity(new Intent(requireActivity(), LoginActivity.class));
             }
         });
@@ -116,9 +115,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear();
         inflater.inflate(R.menu.toolbar_menu, menu);
-
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     private void configureServiceAndViewModel() {
@@ -151,7 +149,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             }
         });
     }
-    //TODO taille des telephones et mode portrait
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -374,22 +372,5 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             }
             return false;
         });
-        mBinding.mapViewContainer.setClickable(true);
-        mBinding.map.setOnClickListener(view -> {
-            Log.d(TAG, "configureListeners: MAP TOUCHED");
-            if (mBinding.placeSearch.getVisibility() == View.VISIBLE) {
-                mBinding.placeSearch.setVisibility(View.GONE);
-                mBinding.placesRecyclerView.setVisibility(View.GONE);
-                hideKeyboard(requireActivity(), mBinding.placeSearch);
-            }
-        });
-        mBinding.mapViewContainer.setOnClickListener(view -> {
-            Log.d(TAG, "configureListeners: MAP TOUCHED");
-        });
-        if (mMap != null) {
-            mMap.setOnCameraMoveListener(() -> {
-                Log.d(TAG, "configureListeners: MAP MOVED");
-            });
-        }
     }
 }

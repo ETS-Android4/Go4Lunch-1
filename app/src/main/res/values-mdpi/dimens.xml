@@ -5,12 +5,13 @@
     <dimen name="nav_drawer_meal_icon_margin_horizontal">80dp</dimen>
     <dimen name="nav_drawer_meal_icon_width">120dp</dimen>
     <dimen name="nav_drawer_meal_icon_height">@dimen/nav_drawer_meal_icon_width</dimen>
-    <dimen name="nav_drawer_title_text_size">50sp</dimen>
+    <dimen name="nav_drawer_title_text_size">40sp</dimen>
     <dimen name="nav_drawer_title_margin">40dp</dimen>
-    <dimen name="nav_drawer_name_size">22sp</dimen>
-    <dimen name="nav_drawer_email_size">18sp</dimen>
-    <dimen name="nav_drawer_profile_img_width">90dp</dimen>
+    <dimen name="nav_drawer_name_size">16sp</dimen>
+    <dimen name="nav_drawer_email_size">14sp</dimen>
+    <dimen name="nav_drawer_profile_img_width">60dp</dimen>
     <dimen name="nav_drawer_profile_img_height">@dimen/nav_drawer_profile_img_width</dimen>
+    <dimen name="nav_drawer_user_info_margin">10dp</dimen>
 
     <dimen name="activity_login_margin_icon">50dp</dimen>
     <dimen name="activity_login_icon_width">300dp</dimen>
@@ -46,6 +47,8 @@
     <dimen name="fragment_detail_restaurant_rating_star_vertical_margin">14dp</dimen>
     <dimen name="fragment_detail_restaurant_address">16sp</dimen>
     <dimen name="fragment_detail_no_friend_img_margin">@dimen/preference_setting_margin_top</dimen>
+    <dimen name="fragment_detail_call_btn_margin_start">24dp</dimen>
+    <dimen name="fragment_detail_website_btn_margin_end">24dp</dimen>
 
     <dimen name="preference_setting_title">30sp</dimen>
     <dimen name="preference_setting_normal_text_size">24sp</dimen>
@@ -63,7 +66,7 @@
     <dimen name="restaurant_choice_dialog_box_message_margin_bottom_size">
         @dimen/restaurant_choice_dialog_box_title_padding_size
     </dimen>
-    <dimen name="restaurant_choice_dialog_box_padding_padding_size">20dp</dimen>
-
+    <dimen name="restaurant_choice_dialog_box_padding_size">20dp</dimen>
+    <dimen name="restaurant_choice_dialog_box_btn_margin">16dp</dimen>
 
 </resources>

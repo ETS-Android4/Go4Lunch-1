@@ -3,6 +3,7 @@ package com.openclassrooms.p7.go4lunch;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -25,6 +26,9 @@ public abstract class TestUtils {
     public static final String USER_RESTAURANT_NAME_TEST = "restaurant test";
     public static final String USER_RESTAURANT_ID = "123456";
     public static final LatLng USER_CURRENT_LOCATION = new LatLng(43.4073612, 3.6997723);
+    public static RectangularBounds USER_RECTANGULAR_BOUNDS = RectangularBounds.newInstance(
+            new LatLng(USER_CURRENT_LOCATION.latitude - 0.060000, USER_CURRENT_LOCATION.longitude + 0.060000),
+            new LatLng(USER_CURRENT_LOCATION.latitude + 0.060000, USER_CURRENT_LOCATION.longitude + 0.060000));
 
     public static final String FIRST_RESTAURANT_ID =  "ChIJexGknqI1sRIRWr8XRhcWfKw";
     public static final String SECOND_RESTAURANT_ID = "ChIJ5X07y6M1sRIRNiPZimTgF-4";

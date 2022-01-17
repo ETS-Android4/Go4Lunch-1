@@ -1,5 +1,6 @@
 package com.openclassrooms.p7.go4lunch.ui.fragment.map_view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.text.style.CharacterStyle;
@@ -13,24 +14,22 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
+import com.openclassrooms.p7.go4lunch.model.PlaceAutocomplete;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -74,15 +73,14 @@ public class MapViewAutocompleteAdapter extends RecyclerView.Adapter<MapViewAuto
                 if (constraint != null) {
                     // Query the autocomplete API for the (constraint) search string.
                     mResultList = getPredictions(constraint);
-                    if (mResultList != null) {
-                        // The API successfully returned results.
-                        results.values = mResultList;
-                        results.count = mResultList.size();
-                    }
+                    // The API successfully returned results.
+                    results.values = mResultList;
+                    results.count = mResultList.size();
                 }
                 return results;
     }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 if (results != null && results.count > 0) {
@@ -90,13 +88,13 @@ public class MapViewAutocompleteAdapter extends RecyclerView.Adapter<MapViewAuto
                     notifyDataSetChanged();
                 } else {
                     // The API did not return any results, invalidate the data set.
-                    //notifyDataSetInvalidated();
+                    Log.d(TAG, "publishResults: Result invalidate.");
                 }
             }
         };
             }
 
-    private ArrayList<PlaceAutocomplete> getPredictions(CharSequence constraint) {
+    public ArrayList<PlaceAutocomplete> getPredictions(CharSequence constraint) {
 
         final ArrayList<PlaceAutocomplete> resultList = new ArrayList<>();
 
@@ -105,11 +103,9 @@ public class MapViewAutocompleteAdapter extends RecyclerView.Adapter<MapViewAuto
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
         // Use the builder to create a FindAutocompletePredictionsRequest.
-        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG);
         FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
                 .setCountry("FR")
                 .setTypeFilter(TypeFilter.ESTABLISHMENT)
-                .setLocationBias(mApiService.getRectangularBound(MapViewFragment.CURRENT_LOCATION))
                 .setSessionToken(token)
                 .setQuery(constraint.toString())
                 .build();
@@ -169,22 +165,11 @@ public class MapViewAutocompleteAdapter extends RecyclerView.Adapter<MapViewAuto
         public void onClick(View view) {
             PlaceAutocomplete item = mResultList.get(getAdapterPosition());
             if (view.getId() == R.id.place_item_view) {
-
                 String placeId = String.valueOf(item.placeId);
-
-//                List<Place.Field> placeFields = Collections.singletonList(Place.Field.ID);
-//                FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).build();
-//                placesClient.fetchPlace(request).addOnSuccessListener(response -> {
-//                    Place place = response.getPlace();
-                    List<String> listOfPlaceId = new ArrayList<>();
-                    listOfPlaceId.add(placeId);
-                    clickListener.click(listOfPlaceId);
-//                }).addOnFailureListener(exception -> {
-//                    if (exception instanceof ApiException) {
-//                        Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+                List<String> listOfPlaceId = new ArrayList<>();
+                listOfPlaceId.add(placeId);
+                clickListener.click(listOfPlaceId);
             }
         }
-        }
+    }
     }

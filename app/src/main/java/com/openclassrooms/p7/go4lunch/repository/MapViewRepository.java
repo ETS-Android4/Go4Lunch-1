@@ -10,28 +10,15 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.libraries.places.api.model.LocalTime;
-import com.google.android.libraries.places.api.model.OpeningHours;
-import com.google.android.libraries.places.api.model.Period;
 import com.google.android.libraries.places.api.model.Place;
-import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
 import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class MapViewRepository {
@@ -67,10 +54,10 @@ public class MapViewRepository {
     }
 
     /**
-     * Do a request to search a place in MapViewFragment.
+     * Do a request to search a place with photo if there is in MapViewFragment.
      * @param placeId id of the place.
      * @param context context of the fragment.
-     * @param isSearched usefull for the marker color.
+     * @param isSearched true if it is a searched place.
      */
     public void requestForPlaceDetails(List<String> placeId, Context context, boolean isSearched) {
         List<Restaurant> restaurantList = new ArrayList<>();
@@ -94,23 +81,29 @@ public class MapViewRepository {
                         Restaurant restaurant = createRestaurant(place, fetchPhotoResponse.getBitmap(), isSearched);
                         restaurantList.add(restaurant);
                         listOfRestaurant.postValue(restaurantList);
-                        Log.e(TAG, "requestForPlaceDetails: PLACE FOUND WITH PHOTO: " + place.getName());
+                        Log.d(TAG, "requestForPlaceDetails: place found with photo: " + place.getName());
                     }).addOnFailureListener((exception) -> {
                         if (exception instanceof ApiException) {
-                            Log.e(TAG, "requestForPlaceDetails: PLACE NOT FOUND");
+                            Log.d(TAG, "requestForPlaceDetails: place not found");
                         }
                     });
                 } else {
                     Restaurant restaurant = createRestaurant(place, null, isSearched);
                     restaurantList.add(restaurant);
                     listOfRestaurant.postValue(restaurantList);
-                    Log.e(TAG, "requestForPlaceDetails: PLACE FOUND WITHOUT PHOTO");
+                    Log.d(TAG, "requestForPlaceDetails: place found without photo");
                 }
             });
         }
         isAlreadyNearbySearched.setValue(false);
     }
 
+    /**
+     * Used to get the current restaurant.
+     * @param restaurantId Current restaurant id.
+     * @param restaurantList List of restaurant.
+     * @return Restaurant corresponding to restaurant id.
+     */
     public Restaurant getCurrentRestaurant(String restaurantId, List<Restaurant> restaurantList) {
         Restaurant currentRestaurant = null;
         for (Restaurant restaurant : Objects.requireNonNull(restaurantList)) {
@@ -122,9 +115,9 @@ public class MapViewRepository {
     }
 
     /**
-     * Call to get a request for photo.
-     * @param place id of the place.
-     * @param isSearched
+     * Call to create a restaurant.
+     * @param place Place to retrieve information.
+     * @param isSearched true if it is a searched place.
      * @return fetch place task.
      */
     private Restaurant createRestaurant(Place place, Bitmap placeImage, boolean isSearched) {
@@ -144,7 +137,12 @@ public class MapViewRepository {
                 isSearched);
     }
 
-    public void setNumberOfFriendInterested(List<User> userInterestedList, List<Restaurant> restaurants) {
+    /**
+     * Used to set the number of Users interested to the same restaurant.
+     * @param userInterestedList List of all interested users.
+     * @param restaurants List of all restaurants.
+     */
+    public void setNumberOfUserInterested(List<User> userInterestedList, List<Restaurant> restaurants) {
         List<User> userList = new ArrayList<>();
         for (Restaurant restaurant : restaurants) {
             for (User user : userInterestedList) {
@@ -152,11 +150,16 @@ public class MapViewRepository {
                     userList.add(user);
                 }
             }
-            restaurant.setNumberOfFriendInterested(userList.size());
+            restaurant.setNumberOfUserInterested(userList.size());
             userList.clear();
         }
     }
 
+    /**
+     * Used to set restaurants to favorite when they are liked or not favorite.
+     * @param restaurantFavoriteList List of restaurant liked.
+     * @param restaurants List of restaurant to modify.
+     */
     public void setRestaurantFavorite(List<RestaurantFavorite> restaurantFavoriteList, List<Restaurant> restaurants) {
         for (Restaurant restaurant : restaurants) {
             if (restaurant.isFavorite()) {

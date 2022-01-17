@@ -15,18 +15,34 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/activity_detail_fab"
+        android:id="@+id/activity_detail_select_fab"
         android:layout_width="@dimen/fragment_detail_fab_width"
         android:layout_height="@dimen/fragment_detail_fab_height"
         app:layout_constraintTop_toBottomOf="@id/activity_detail_image_header"
+        app:layout_constraintBottom_toTopOf="@+id/activity_detail_layout_primary"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/fragment_detail_fab_margin_top"
         android:layout_marginHorizontal="@dimen/fragment_detail_fab_margin_horizontal"
         android:src="@drawable/ic_baseline_check_circle_outline_24"
         app:fabCustomSize="@dimen/fragment_detail_fab_custom_size"
         app:maxImageSize="@dimen/fragment_detail_fab_img_size"
         android:backgroundTint="@color/white"
         android:contentDescription="@string/detail_activity_fab_content_description" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/activity_detail_back_fab"
+        android:layout_width="@dimen/fragment_detail_fab_width"
+        android:layout_height="@dimen/fragment_detail_fab_height"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="@dimen/fragment_detail_fab_margin_horizontal"
+        app:maxImageSize="@dimen/fragment_detail_fab_img_size"
+        android:src="@drawable/baseline_arrow_back_24"
+        android:tint="@color/map_marker"
+        app:backgroundTint="@android:color/transparent"
+        app:elevation="0dp"
+        app:pressedTranslationZ="0dp"
+        android:contentDescription="@string/detail_activity_back_fab_description" />
+
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/activity_detail_layout_primary"
@@ -66,7 +82,6 @@
                         android:layout_height="wrap_content"
                         android:textColor="?attr/decoration_text_color"
                         android:textSize="@dimen/fragment_detail_restaurant_name"
-                        android:text="Fleur de sel"
                         android:layout_marginTop="@dimen/fragment_detail_layout_margin_horizontal" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -74,7 +89,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:srcCompat="@drawable/baseline_star_rate_24"
-                        android:layout_marginTop    ="@dimen/fragment_detail_restaurant_rating_star_vertical_margin"
+                        android:layout_marginTop="@dimen/fragment_detail_restaurant_rating_star_vertical_margin"
                         android:layout_marginStart="@dimen/fragment_detail_layout_margin_horizontal"/>
 
 
@@ -95,7 +110,7 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/activity_detail_restaurant_type_and_adress_tv"
+                    android:id="@+id/activity_detail_restaurant_type_and_address_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/activity_detail_restaurant_info_container"
@@ -103,8 +118,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:textColor="?attr/decoration_text_color"
                     android:textSize="@dimen/fragment_detail_restaurant_address"
-                    android:layout_marginHorizontal="@dimen/fragment_detail_layout_margin_horizontal"
-                    android:text="12 rue de quelque chose 45 689 tombouctou" />
+                    android:layout_marginHorizontal="@dimen/fragment_detail_layout_margin_horizontal" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -126,7 +140,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginStart="24dp"
+                android:layout_marginStart="@dimen/fragment_detail_call_btn_margin_start"
                 android:background="@android:color/transparent"
                 android:drawableTop="@drawable/ic_call"
                 android:drawablePadding="@dimen/fragment_detail_btn_drawable_padding"
@@ -156,11 +170,11 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="24dp"
+                android:layout_marginEnd="@dimen/fragment_detail_website_btn_margin_end"
                 android:background="@android:color/transparent"
                 android:drawableTop="@drawable/ic_public"
                 android:drawablePadding="@dimen/fragment_detail_btn_drawable_padding"
-                android:text="@string/detail_activity_call_text"
+                android:text="@string/detail_activity_website_text"
                 android:textStyle="bold"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

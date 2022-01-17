@@ -63,17 +63,18 @@
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout-v23/fragment_map_view.xml" value="0.21510416666666668" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/activity_detail.xml" value="0.25" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/activity_login.xml" value="0.25" />
-        <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/activity_main.xml" value="0.75" />
+        <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/activity_preference.xml" value="0.12430555555555556" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/custom_choice_dialog_box.xml" value="0.25" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/custom_info_contents.xml" value="0.25798611111111114" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/dialog_box.xml" value="0.290234375" />
-        <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_detail.xml" value="0.25" />
+        <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_detail.xml" value="0.33" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_list_view.xml" value="0.2" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_map_view.xml" value="0.21875" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_preference_settings.xml" value="0.2359375" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_workmates.xml" value="0.5" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/list_view_row.xml" value="0.33" />
-        <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/navigation_drawer_header.xml" value="0.75" />
+        <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/navigation_drawer_header.xml" value="0.25" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/place_autocomplete_row.xml" value="0.290234375" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/restaurant_choice_dialog_box.xml" value="0.228125" />
         <entry key="..\:/Users/charl/StudioProjects/Go4Lunch/app/src/main/res/layout/toolbar.xml" value="0.25798611111111114" />

@@ -15,7 +15,6 @@ import androidx.core.app.NotificationManagerCompat;
 public class Go4LunchApplication extends Application {
     private static boolean isRunningTest;
     private static Context context;
-    public static final String CHANNEL_ID_STRING = "go4lunch_channel";
 
     @Override
     public void onCreate() {

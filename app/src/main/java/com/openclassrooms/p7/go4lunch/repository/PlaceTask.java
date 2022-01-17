@@ -22,7 +22,7 @@ public class PlaceTask extends AsyncTask<String, Integer, List<String>> {
         return listOfPlaceId;
     }
 
-    // Get the data from the url
+    // Get a JSONObject from the url address and get the place id.
     @Override
     protected List<String> doInBackground(String... strings) {
         String data = null;
@@ -40,14 +40,14 @@ public class PlaceTask extends AsyncTask<String, Integer, List<String>> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        while (Objects.requireNonNull(listOfId).size() > 5) {
-            listOfId.remove(listOfId.size() - 1);
-        }
+//        while (Objects.requireNonNull(listOfId).size() > 5) {
+//            listOfId.remove(listOfId.size() - 1);
+//        }
         return listOfId;
 
     }
 
-    // Execute the task to handle the data.
+    // Initialize the mutable place id list.
     @Override
     protected void onPostExecute(List<String> listOfId) {
         getListOfPlaceId().setValue(listOfId);

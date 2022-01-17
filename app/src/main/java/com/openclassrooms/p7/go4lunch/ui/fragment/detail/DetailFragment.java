@@ -1,5 +1,8 @@
 package com.openclassrooms.p7.go4lunch.ui.fragment.detail;
 
+import static com.openclassrooms.p7.go4lunch.notification.PushNotificationService.cancelPeriodicTimeRequest;
+import static com.openclassrooms.p7.go4lunch.notification.PushNotificationService.periodicTimeRequest;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -154,7 +157,9 @@ public class DetailFragment extends Fragment {
         // Make Restaurant as Favorite Button
         mBinding.activityDetailLikeBtn.setOnClickListener(view -> updateRestaurantFavorite());
         // Select Restaurant to lunch Button
-        mBinding.activityDetailFab.setOnClickListener(view -> updateRestaurantSelected());
+        mBinding.activityDetailSelectFab.setOnClickListener(view -> updateRestaurantSelected());
+        // Back to the Main activity
+        mBinding.activityDetailBackFab.setOnClickListener(view -> requireActivity().finish());
     }
 
     private void permissionToCall() {
@@ -183,20 +188,17 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    /**
-     * Check if the FavoriteRestaurant exist in the DB
-     * if exist, update the corresponding boolean
-     * if not exist, create it.
-     */
     private void updateRestaurantSelected() {
         if (mCurrentUser.getRestaurantId().equals(mCurrentRestaurant.getId())) {
             mCurrentUser.setRestaurantSelected(false);
             mCurrentUser.setRestaurantName("");
             mCurrentUser.setRestaurantId("");
+            cancelPeriodicTimeRequest(requireContext());
         } else {
             mCurrentUser.setRestaurantSelected(true);
             mCurrentUser.setRestaurantName(mCurrentRestaurant.getName());
             mCurrentUser.setRestaurantId(mCurrentRestaurant.getId());
+            periodicTimeRequest(requireContext());
         }
         setSelectedImage(mCurrentUser.isRestaurantSelected());
         mViewModel.updateUser(mCurrentUser);
@@ -226,9 +228,9 @@ public class DetailFragment extends Fragment {
     }
 
     private void setSelectedImage(boolean selected) {
-        mBinding.activityDetailFab.setImageResource(mApiService.setSelectedImage(selected));
+        mBinding.activityDetailSelectFab.setImageResource(mApiService.setSelectedImage(selected));
         if (selected) {
-            mBinding.activityDetailFab.setColorFilter(ContextCompat.getColor(requireContext(), R.color.map_marker_favorite));
+            mBinding.activityDetailSelectFab.setColorFilter(ContextCompat.getColor(requireContext(), R.color.map_marker_favorite));
         }
     }
 }

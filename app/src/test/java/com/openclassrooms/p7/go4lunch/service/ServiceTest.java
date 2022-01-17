@@ -6,12 +6,10 @@ import android.os.Parcel;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.DayOfWeek;
 import com.google.android.libraries.places.api.model.LocalTime;
 import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Period;
-import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.model.TimeOfWeek;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.injector.DI;
@@ -193,7 +191,7 @@ public class ServiceTest {
     @Test
     public void getInterestedFriends_shouldReturn_2Users() {
         // ARRANGE
-        List<User> userInterestedToTest = service.getInterestedFriend(getDefaultUserList(), "AAAA");
+        List<User> userInterestedToTest = service.getInterestedUsers(getDefaultUserList(), "AAAA");
         // ACT
 
         // ASSERT

@@ -1,4 +1,4 @@
-package com.openclassrooms.p7.go4lunch.ui;
+package com.openclassrooms.p7.go4lunch.ui.activity;
 
 import android.os.Bundle;
 

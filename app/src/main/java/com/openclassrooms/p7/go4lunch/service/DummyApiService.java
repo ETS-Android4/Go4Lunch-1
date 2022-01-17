@@ -1,17 +1,6 @@
 package com.openclassrooms.p7.go4lunch.service;
 
 
-import static com.openclassrooms.p7.go4lunch.model.SortMethod.DISTANCE_ASCENDING;
-import static com.openclassrooms.p7.go4lunch.model.SortMethod.DISTANCE_DESCENDING;
-import static com.openclassrooms.p7.go4lunch.model.SortMethod.FAVORITE_ASCENDING;
-import static com.openclassrooms.p7.go4lunch.model.SortMethod.FAVORITE_DESCENDING;
-import static com.openclassrooms.p7.go4lunch.model.SortMethod.INTERESTED_ASCENDING;
-import static com.openclassrooms.p7.go4lunch.model.SortMethod.INTERESTED_DESCENDING;
-import static com.openclassrooms.p7.go4lunch.model.SortMethod.RATING_ASCENDING;
-import static com.openclassrooms.p7.go4lunch.model.SortMethod.RATING_DESCENDING;
-import static com.openclassrooms.p7.go4lunch.model.SortMethod.SEARCHED_ASCENDING;
-import static com.openclassrooms.p7.go4lunch.model.SortMethod.SEARCHED_DESCENDING;
-
 import android.location.Location;
 import android.net.Uri;
 
@@ -22,7 +11,6 @@ import com.google.android.libraries.places.api.model.Period;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
-import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
 import com.openclassrooms.p7.go4lunch.model.SortMethod;
 import com.openclassrooms.p7.go4lunch.model.User;
 
@@ -34,6 +22,11 @@ import java.util.Objects;
 
 public class DummyApiService implements ApiService {
 
+    /**
+     * Get current day String from Calendar.
+     * @param calendar instance.
+     * @return string of current day.
+     */
     public String getCurrentDay(Calendar calendar) {
         int day = calendar.get(Calendar.DAY_OF_WEEK);
         String currentDays = "";
@@ -79,10 +72,10 @@ public class DummyApiService implements ApiService {
     }
 
     /**
-     * Get the current hour and openingHour of the currentDay and calculate the remaining time before Restaurant close.
-     *
+     * Get the current hour and openingHour of the currentDay and verify if morning or evening hour to show,
+     * verify if open hour or close hour to show, verify if minutes are show or not.
      * @param openingHours Restaurant openingHours.
-     * @return String with remaining time before restaurant close.
+     * @return String code that is read in ListViewAdapter.
      */
     public String makeStringOpeningHours(OpeningHours openingHours, String currentDay, LocalTime currentTime) {
         int currentHour = currentTime.getHours();
@@ -133,9 +126,8 @@ public class DummyApiService implements ApiService {
 
     /**
      * Used to format username with his first name and put a uppercase on the first letter.
-     *
      * @param userName name of the user.
-     * @return first name format.
+     * @return first name formatted.
      */
     @Override
     public String formatUserFirstName(String userName) {
@@ -150,7 +142,11 @@ public class DummyApiService implements ApiService {
         }
     }
 
-    //TODO comment
+    /**
+     * Used to format restaurant name and remove the "restaurant" word if there it is.
+     * @param restaurantName Restaurant name.
+     * @return Formatted restaurant name.
+     */
     @Override
     public String formatRestaurantName(String restaurantName) {
         if (!restaurantName.equals("")) {
@@ -165,6 +161,12 @@ public class DummyApiService implements ApiService {
         return restaurantName;
     }
 
+    /**
+     * Used to format a list of interested users for the notification ui.
+     * The formatted string is all users in the list, with one user by line.
+     * @param interestedFriendList List of interested users.
+     * @return Formatted list of interested users.
+     */
     @Override
     public String formatInterestedFriends(List<User> interestedFriendList) {
         String friendsInterested = "";
@@ -174,15 +176,21 @@ public class DummyApiService implements ApiService {
         return friendsInterested;
     }
 
+    /**
+     * Used to have a list of interested users to the current restaurant.
+     * @param userList list of all users interested.
+     * @param restaurantId Current restaurant id.
+     * @return List of interested users.
+     */
     @Override
-    public List<User> getInterestedFriend(List<User> userList, String restaurantId) {
-        List<User> interestedFriends = new ArrayList<>();
+    public List<User> getInterestedUsers(List<User> userList, String restaurantId) {
+        List<User> interestedUsers = new ArrayList<>();
         for (User user : userList) {
             if (user.getRestaurantId().equals(restaurantId)) {
-                interestedFriends.add(user);
+                interestedUsers.add(user);
             }
         }
-        return interestedFriends;
+        return interestedUsers;
     }
 
     /**
@@ -239,19 +247,6 @@ public class DummyApiService implements ApiService {
     }
 
     /**
-     * set a limit zone around the current User location for better search result.
-     *
-     * @param currentLocation current User Location.
-     * @return RectangularBound around the User.
-     */
-    @Override
-    public RectangularBounds getRectangularBound(LatLng currentLocation) {
-        return RectangularBounds.newInstance(
-                new LatLng(currentLocation.latitude - 0.060000, currentLocation.longitude + 0.060000),
-                new LatLng(currentLocation.latitude + 0.060000, currentLocation.longitude + 0.060000));
-    }
-
-    /**
      * Call three time to show the rating of Restaurant in ListViewFragment and DetailsActivity.
      *
      * @param index  Loop index.
@@ -271,7 +266,7 @@ public class DummyApiService implements ApiService {
     }
 
     /**
-     * Call if Restaurant is liked or not.
+     * Call when Restaurant is liked or not.
      *
      * @param isFavorite if restaurant is favorite or not.
      * @return liked image to set.
@@ -285,7 +280,7 @@ public class DummyApiService implements ApiService {
     }
 
     /**
-     * Call if Restaurant is selected or not.
+     * Call when Restaurant is selected or not.
      *
      * @param selected if restaurant is selected or not.
      * @return selected image to set.
@@ -299,7 +294,9 @@ public class DummyApiService implements ApiService {
     }
 
     /**
-     * Call to sort restaurantList with most users interested first.
+     * Call to sort restaurantList with users interested, rating, distance, favorite or searched.
+     * @param restaurantList Restaurant list to sort.
+     * @param sortMethod Use to which method to sort.
      */
 
     public void restaurantComparator(List<Restaurant> restaurantList, SortMethod sortMethod) {
@@ -329,6 +326,10 @@ public class DummyApiService implements ApiService {
 
     }
 
+    /**
+     * Used to sort list of users.
+     * @param userList Users list to sort.
+     */
     @Override
     public void workmatesViewComparator(List<User> userList) {
         Collections.sort(userList, new User.UserComparator());

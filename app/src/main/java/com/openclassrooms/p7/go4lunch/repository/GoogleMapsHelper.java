@@ -57,6 +57,12 @@ public class GoogleMapsHelper {
         return placesClient.fetchPlace(request);
     }
 
+    /**
+     * Call to get a request for place photo.
+     * @param place Place to get photo.
+     * @param context Application context.
+     * @return Fetch photo task.
+     */
     public Task<FetchPhotoResponse> getPhotoData(Place place, Context context) {
         PlacesClient placesClient = null;
         FetchPhotoRequest photoRequest = null;
@@ -73,6 +79,12 @@ public class GoogleMapsHelper {
         }
     }
 
+    /**
+     * Call to get data from an url address.
+     * @param string url.
+     * @return data from the url.
+     * @throws IOException if url is malformed.
+     */
     public String downloadUrl (String string) throws IOException {
         URL url = new URL(string);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

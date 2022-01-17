@@ -15,10 +15,8 @@ import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.databinding.ListViewRowBinding;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.Restaurant;
-import com.openclassrooms.p7.go4lunch.model.RestaurantFavorite;
-import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
-import com.openclassrooms.p7.go4lunch.ui.DetailActivity;
+import com.openclassrooms.p7.go4lunch.ui.activity.DetailActivity;
 
 import java.util.List;
 import java.util.Locale;
@@ -56,6 +54,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         return mRestaurantList.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateRestaurantListOrder(List<Restaurant> restaurantList) {
         mRestaurantList = restaurantList;
         notifyDataSetChanged();
@@ -99,7 +98,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             }
             mBinding.listViewRowInterestedFriendTv.setText(String.format("(%s)",restaurant.getNumberOfFriendInterested()));
             if (restaurant.isSearched()) {
-                mBinding.listViewRowContainer.setBackground(itemView.getResources().getDrawable(R.drawable.rounded_border));
+                mBinding.listViewRowContainer.setBackgroundColor(itemView.getResources().getColor(R.color.grey));
             } else {
                 mBinding.listViewRowContainer.setBackground(itemView.getResources().getDrawable(R.color.light_background_color));
             }

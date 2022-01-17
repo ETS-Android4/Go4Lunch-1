@@ -38,14 +38,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="center_vertical">
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="@dimen/nav_drawer_user_info_margin">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/header_username_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="Gérard BOUCHARD"
                 android:textSize="@dimen/nav_drawer_name_size"
                 android:textColor="@color/white"/>
 
@@ -53,7 +53,6 @@
                 android:id="@+id/header_email_adress_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="gérard@hotmail.com"
                 android:textSize="@dimen/nav_drawer_email_size"
                 android:textColor="@color/white"/>
 

@@ -17,8 +17,7 @@ public class JsonParser {
     private String parseJsonObject(JSONObject object){
         String dataList = null;
         try {
-            String placeId = object.getString("place_id");
-            dataList = placeId;
+            dataList = object.getString("place_id");
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -44,17 +43,6 @@ public class JsonParser {
         JSONArray jsonArray = null;
         try {
             jsonArray = object.getJSONArray("results");
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        assert jsonArray != null;
-        return parseJsonArray(jsonArray);
-    }
-
-    public List<String> parsePredictions(JSONObject object) {
-        JSONArray jsonArray = null;
-        try {
-            jsonArray = object.getJSONArray("predictions");
         }catch (JSONException e) {
             e.printStackTrace();
         }

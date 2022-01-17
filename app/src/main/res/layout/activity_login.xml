@@ -23,20 +23,6 @@
         android:layout_marginHorizontal="@dimen/activity_login_layout_margin_size">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/activity_login_twitter_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/activity_login_layout_margin_size"
-            android:padding="@dimen/activity_login_btn_padding"
-            android:text="@string/login_activity_twitter_sign_in"
-            style="@style/Base.CardView"
-            android:textSize="@dimen/activity_login_btn_text_size"
-            android:drawableLeft="@drawable/twitter_logo"
-            android:background="@drawable/rounded_border"
-            android:backgroundTint="@color/twitter"
-            android:textColor="@color/white" />
-
-        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/activity_login_facebook_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,7 +31,7 @@
             android:text="@string/login_activity_facebook_sign_in"
             style="@style/Base.CardView"
             android:textSize="@dimen/activity_login_btn_text_size"
-            android:drawableLeft="@drawable/ic_facebook_logo"
+            android:drawableStart="@drawable/ic_facebook_logo"
             android:background="@drawable/rounded_border"
             android:backgroundTint="@color/facebook"
             android:textColor="@color/white"
@@ -60,7 +46,7 @@
             android:text="@string/login_activity_google_sign_in"
             style="@style/Base.CardView"
             android:textSize="@dimen/activity_login_btn_text_size"
-            android:drawableLeft="@drawable/ic_google_logo"
+            android:drawableStart="@drawable/ic_google_logo"
             android:background="@drawable/rounded_border"
             android:backgroundTint="@color/google"
             android:textColor="@color/white"/>

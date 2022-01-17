@@ -41,9 +41,6 @@ public class UserAndRestaurantViewModel extends ViewModel {
     public FirebaseUser getCurrentFirebaseUser() {
         return userDataSource.getCurrentUser();
     }
-    public Task<Void> deleteFirebaseUser(Context context) {
-       return userDataSource.deleteUser(context);
-    }
     public Boolean isCurrentUserLogged() {
         return userDataSource.isCurrentUserLogged();
     }
@@ -59,9 +56,9 @@ public class UserAndRestaurantViewModel extends ViewModel {
         userDataSource.updateUser(user);
     }
     public void deleteUser(Context context) {
-        userDataSource.deleteUserFromFirestore(context);
+        userDataSource.deleteUserAccount(context);
     }
-    public void deleteUserAccount(Context context) { userDataSource.deleteUserAccount(context); }
+    public void deleteUserAccount(Context context) { userDataSource.verifyIfAccountDeletable(context); }
     public LiveData<List<User>> getAllUsers() {
         return userDataSource.getAllUsers();
     }
@@ -87,7 +84,7 @@ public class UserAndRestaurantViewModel extends ViewModel {
         return mapDataSource.getIsAlreadyNearbySearched();
     }
     public void setNumberOfFriendInterested(List<User> allInterestedUsers, List<Restaurant> restaurants) {
-        mapDataSource.setNumberOfFriendInterested(allInterestedUsers, restaurants);
+        mapDataSource.setNumberOfUserInterested(allInterestedUsers, restaurants);
     }
     public void setRestaurantFavorite(List<RestaurantFavorite> restaurantFavoriteList, List<Restaurant> restaurants) {
         mapDataSource.setRestaurantFavorite(restaurantFavoriteList, restaurants);

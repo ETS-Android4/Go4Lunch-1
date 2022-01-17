@@ -64,7 +64,7 @@
 
     <!-- ListViewHolder strings -->
     <string name="list_view_holder_open_at">ouvre à</string>
-    <string name="list_view_holder_until">jusqu\'à</string>
+    <string name="list_view_holder_until"> ouvert jusqu\'à</string>
     <string name="list_view_holder_still_open_until">est ouvert jusqu\'à </string>
     <string name="list_view_holder_still_closed">fermé</string>
     <string name="list_view_holder_am"> </string>
@@ -73,7 +73,8 @@
     <!-- Preference strings -->
     <string name="preference_notifications">notifications</string>
     <string name="preference_enable_notifications">Activer les notifications</string>
-    <string name="preference_setting_title">Réglages</string>
+    <string name="preference_setting_title">Menu des réglages</string>
+    <string name="preference_setting_toolbar_title">Réglages</string>
     <string name="preference_setting_enable_notification">Activer les notifications</string>
     <string name="preference_setting_delete_account">Supprimer le compte</string>
     <string name="preference_popup_title_delete_account">Supprimer ton compte ?</string>

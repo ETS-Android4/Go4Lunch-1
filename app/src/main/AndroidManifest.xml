@@ -19,9 +19,10 @@
 
         <!-- Main Activity -->
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:exported="true"
-            android:configChanges="uiMode">
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -31,33 +32,38 @@
 
         <!-- Detail Activity -->
         <activity
-            android:name=".ui.DetailActivity"
-            android:exported="true" />
+            android:name=".ui.activity.DetailActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+
+        <!-- Preference Activity -->
+        <activity
+            android:name=".ui.activity.PreferenceActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+
+        <!-- Login Activity -->
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:parentActivityName=".ui.activity.MainActivity"
+            android:screenOrientation="portrait"/>
+
+        <!-- Facebook Sign In Activity -->
+        <activity
+            android:name=".ui.sign_in.FacebookSignInActivity"
+            android:parentActivityName=".ui.activity.MainActivity"
+            android:screenOrientation="portrait"/>
+
+        <!-- Google Sign In Activity -->
+        <activity
+            android:name=".ui.sign_in.GoogleSignInActivity"
+            android:parentActivityName=".ui.activity.MainActivity"
+            android:screenOrientation="portrait"/>
 
         <!-- Google maps api key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${GMP_KEY}" />
-
-        <!-- Login Activity -->
-        <activity
-            android:name=".ui.login.LoginActivity"
-            android:parentActivityName=".ui.MainActivity" />
-
-        <!-- Twitter Activity -->
-        <activity
-            android:name=".ui.sign_in.TwitterSignInActivity"
-            android:parentActivityName=".ui.MainActivity" />
-
-        <!-- Facebook Sign In Activity -->
-        <activity
-            android:name=".ui.sign_in.FacebookSignInActivity"
-            android:parentActivityName=".ui.MainActivity" />
-
-        <!-- Google Sign In Activity -->
-        <activity
-            android:name=".ui.sign_in.GoogleSignInActivity"
-            android:parentActivityName=".ui.MainActivity" />
 
         <!-- Facebook application id -->
         <meta-data

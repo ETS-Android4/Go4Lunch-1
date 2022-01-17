@@ -24,10 +24,19 @@ public class RestaurantFavoriteRepository {
         return mRestaurantFavoriteRepository;
     }
 
+    /**
+     * Create a favorite restaurant in firestore.
+     * @param restaurantFavorite restaurant to create in firestore.
+     */
     public void createRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
         mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().document(restaurantFavorite.getRestaurantId()).set(restaurantFavorite);
     }
 
+    /**
+     * Get the current restaurant favorite livedata.
+     * @param currentRestaurantId Current restaurant id.
+     * @return Current restaurant favorite livedata.
+     */
     public MutableLiveData<RestaurantFavorite> getCurrentRestaurantFavorite(String currentRestaurantId) {
         mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().document(currentRestaurantId).get().addOnCompleteListener(task -> {
             DocumentSnapshot documentSnapshot = task.getResult();
@@ -36,6 +45,10 @@ public class RestaurantFavoriteRepository {
         return currentRestaurantFavorite;
     }
 
+    /**
+     * Get the current user list of restaurant favorite livedata.
+     * @return Current user list of restaurant favorite livedata.
+     */
     public MutableLiveData<List<RestaurantFavorite>> getAllRestaurantFavorite() {
         List<RestaurantFavorite> restaurantFavoriteList = new ArrayList<>();
         mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser().get().addOnCompleteListener(task -> {
@@ -50,6 +63,10 @@ public class RestaurantFavoriteRepository {
         return listOfRestaurantFavorite;
     }
 
+    /**
+     * Delete a favorite restaurant in firestore.
+     * @param restaurantFavorite restaurant to delete in firestore.
+     */
     public void deleteRestaurantFavorite(RestaurantFavorite restaurantFavorite) {
         mFirebaseHelper.getRestaurantFavoriteReferenceForCurrentUser()
                 .document(restaurantFavorite.getRestaurantId())

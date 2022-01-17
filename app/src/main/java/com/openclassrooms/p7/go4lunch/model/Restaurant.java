@@ -70,7 +70,7 @@ public class Restaurant {
     }
 
     // --- SETTERS ---
-    public void setNumberOfFriendInterested(int numberOfFriendInterested) {
+    public void setNumberOfUserInterested(int numberOfFriendInterested) {
         this.numberOfFriendInterested = numberOfFriendInterested;
     }
     public void setFavorite(Boolean favorite) {

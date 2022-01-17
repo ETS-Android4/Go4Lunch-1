@@ -1,6 +1,4 @@
-package com.openclassrooms.p7.go4lunch.ui;
-
-import static com.openclassrooms.p7.go4lunch.notification.PushNotificationService.periodicTimeRequest;
+package com.openclassrooms.p7.go4lunch.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -11,12 +9,8 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,8 +18,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
@@ -42,8 +34,8 @@ import com.openclassrooms.p7.go4lunch.dialog.RestaurantChoiceDialogPopup;
 import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
-import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
-import com.openclassrooms.p7.go4lunch.ui.fragment.preference.PreferenceFragment;
+import com.openclassrooms.p7.go4lunch.ui.PageAdapter;
+import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.login.LoginActivity;
 
 import java.util.Objects;
@@ -69,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         this.configureViewPager();
         this.configureListeners();
         this.updateHeader();
-        this.initNotification();
     }
 
     @Override
@@ -89,9 +80,7 @@ public class MainActivity extends AppCompatActivity {
         ) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.main_activity_alert_dialog_title)
-                    .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> {
-                        this.finishAffinity();
-                    }).setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, null)
+                    .setPositiveButton(R.string.main_activity_signout_confirmation_positive_btn, (dialog, which) -> this.finishAffinity()).setNegativeButton(R.string.main_activity_signout_confirmation_negative_btn, null)
                     .show();
         }
         if (Objects.requireNonNull(mBinding.activityMainTabs.getTabAt(1)).isSelected()) {
@@ -155,18 +144,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case R.id.settings:
-                    clearToolbarAndTabs();
-                    mBinding.activityMainToolbar.getRoot().setNavigationOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            configureViewBinding();
-                            configureToolbar();
-                            configureNavigationDrawer();
-                            configureListeners();
-                            configureViewPager();
-                            updateHeader();
-                        }
-                    });
+                    startActivity(new Intent(this, PreferenceActivity.class));
                     break;
 
                 case R.id.logout:
@@ -175,18 +153,6 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         });
-    }
-
-    private void clearToolbarAndTabs() {
-        mBinding.activityMainTabs.setVisibility(View.GONE);
-        mBinding.activityMainToolbar.getRoot().setTitle(getString(R.string.main_activity_settings_title));
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.linear_layout, new PreferenceFragment())
-                .commit();
-        mBinding.activityMainDrawerLayout.closeDrawer(GravityCompat.START);
-        mBinding.activityMainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
     private void showRestaurantSelected() {
@@ -208,9 +174,7 @@ public class MainActivity extends AppCompatActivity {
         customChoiceDialogPopup.setTitle(getString(R.string.main_activity_signout_confirmation_title));
         customChoiceDialogPopup.setPositiveBtnText(getResources().getString(R.string.main_activity_signout_confirmation_positive_btn));
         customChoiceDialogPopup.setNegativeBtnText(getResources().getString(R.string.main_activity_signout_confirmation_negative_btn));
-        customChoiceDialogPopup.getPositiveBtn().setOnClickListener(view -> {
-            mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity());
-        });
+        customChoiceDialogPopup.getPositiveBtn().setOnClickListener(view -> mViewModel.signOut(this).addOnSuccessListener(aVoid -> this.startSignActivity()));
         customChoiceDialogPopup.getNegativeBtn().setOnClickListener(view -> customChoiceDialogPopup.close());
         customChoiceDialogPopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         customChoiceDialogPopup.build();
@@ -260,10 +224,6 @@ public class MainActivity extends AppCompatActivity {
                 mBinding.activityMainTabs.selectTab(mBinding.activityMainTabs.getTabAt(position));
             }
         });
-    }
-
-    private void initNotification() {
-        periodicTimeRequest(this);
     }
 
     private void setUserPicture(Uri photoUrl) {

@@ -64,9 +64,12 @@
     <dimen name="restaurant_choice_dialog_box_message_margin_bottom_size">
         @dimen/restaurant_choice_dialog_box_title_padding_size
     </dimen>
-    <dimen name="restaurant_choice_dialog_box_padding_padding_size">
+    <dimen name="restaurant_choice_dialog_box_padding_size">
         @dimen/restaurant_choice_dialog_box_title_padding_size
     </dimen>
+    <dimen name="nav_drawer_user_info_margin">16dp</dimen>
+    <dimen name="fragment_detail_like_btn_margin_horizontal">0dp</dimen>
+    <dimen name="restaurant_choice_dialog_box_btn_margin">16dp</dimen>
 
 
 </resources>

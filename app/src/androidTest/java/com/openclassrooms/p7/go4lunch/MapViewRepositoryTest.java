@@ -76,7 +76,7 @@ public class MapViewRepositoryTest {
         LiveDataTestUtils.observeForTesting(viewModel.getAllRestaurants(), liveData -> {
             Thread.sleep(1000);
             List<Restaurant> restaurantList = new ArrayList<>(Objects.requireNonNull(liveData.getValue()));
-            assertEquals(restaurantList.size(), 3);
+            assertEquals(3, restaurantList.size());
         });
         LiveDataTestUtils.observeForTesting(viewModel.getIsAlreadyNearbySearched(), liveData -> {
             assertFalse(liveData.getValue());

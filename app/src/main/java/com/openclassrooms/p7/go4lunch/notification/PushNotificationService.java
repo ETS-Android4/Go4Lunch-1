@@ -1,7 +1,6 @@
 package com.openclassrooms.p7.go4lunch.notification;
 
-import static android.content.ContentValues.TAG;
-
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -15,7 +14,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
@@ -32,7 +30,7 @@ import com.openclassrooms.p7.go4lunch.injector.DI;
 import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.repository.FirebaseHelper;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
-import com.openclassrooms.p7.go4lunch.ui.MainActivity;
+import com.openclassrooms.p7.go4lunch.ui.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,7 +68,7 @@ public class PushNotificationService extends Worker {
         }
         createNotificationChannel();
         Task<QuerySnapshot> task = FirebaseFirestore.getInstance().collection("users").get();
-        List<DocumentSnapshot> documentSnapshotList = null;
+        List<DocumentSnapshot> documentSnapshotList;
         Log.e(TAG, "doWork: TRY TO DO WORK");
         try {
             documentSnapshotList = Tasks.await(task).getDocuments();
@@ -106,9 +104,9 @@ public class PushNotificationService extends Worker {
         }
         userList.remove(currentUser);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 123, intent, 0);
+        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 123, intent, 0);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-        List<User> interestedFriends = mApiService.getInterestedFriend(userList, Objects.requireNonNull(currentUser).getRestaurantId());
+        List<User> interestedFriends = mApiService.getInterestedUsers(userList, Objects.requireNonNull(currentUser).getRestaurantId());
         if (interestedFriends.isEmpty()) {
             whoEatWithUser = mContext.getString(R.string.push_notification_service_nobody_come);
         }
@@ -148,6 +146,10 @@ public class PushNotificationService extends Worker {
                 .build();
         WorkManager.getInstance(context).enqueueUniquePeriodicWork("lunch time", ExistingPeriodicWorkPolicy.REPLACE, timeToLunch);
         Log.e(TAG, "periodicTimeRequest: PERIODIC WORK ENQUEUED");
+    }
+
+    public static void cancelPeriodicTimeRequest(Context context) {
+        WorkManager.getInstance(context).cancelAllWork();
     }
 
     public static long setTimeUntilBeginWork() {

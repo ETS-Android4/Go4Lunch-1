@@ -1,25 +1,19 @@
 package com.openclassrooms.p7.go4lunch.ui.fragment.list_view;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-import static android.content.ContentValues.TAG;
-
-import static com.openclassrooms.p7.go4lunch.ui.MainActivity.hideKeyboard;
-import static com.openclassrooms.p7.go4lunch.ui.MainActivity.showKeyboard;
+import static com.openclassrooms.p7.go4lunch.ui.activity.MainActivity.hideKeyboard;
+import static com.openclassrooms.p7.go4lunch.ui.activity.MainActivity.showKeyboard;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,12 +23,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.common.api.Status;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.openclassrooms.p7.go4lunch.R;
 import com.openclassrooms.p7.go4lunch.ViewModelFactory;
 import com.openclassrooms.p7.go4lunch.databinding.FragmentListViewBinding;
@@ -46,19 +34,15 @@ import com.openclassrooms.p7.go4lunch.model.User;
 import com.openclassrooms.p7.go4lunch.service.ApiService;
 import com.openclassrooms.p7.go4lunch.ui.UserAndRestaurantViewModel;
 import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewAutocompleteAdapter;
-import com.openclassrooms.p7.go4lunch.ui.fragment.map_view.MapViewFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by lleotraas on 14.
  */
 public class ListViewFragment extends Fragment implements MapViewAutocompleteAdapter.ClickListener{
 
-    private static final int AUTOCOMPLETE_REQUEST_CODE = 23;
     private RecyclerView mRecyclerView;
     private ListViewAdapter listViewAdapter;
     private UserAndRestaurantViewModel mViewModel;
@@ -80,12 +64,12 @@ public class ListViewFragment extends Fragment implements MapViewAutocompleteAda
         this.createAutocomplete();
         this.setHasOptionsMenu(true);
         this.initList();
+        this.configureListeners();
         return root;
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear();
         inflater.inflate(R.menu.list_view_toolbar_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -131,6 +115,7 @@ public class ListViewFragment extends Fragment implements MapViewAutocompleteAda
             }
             mRestaurantList.addAll(restaurants);
             mViewModel.setRestaurantFavorite(mRestaurantFavoriteList, restaurants);
+            mApiService.restaurantComparator(restaurants, mSortMethod);
             listViewAdapter = new ListViewAdapter(restaurants);
             mRecyclerView.setAdapter(listViewAdapter);
         });
@@ -223,5 +208,17 @@ public class ListViewFragment extends Fragment implements MapViewAutocompleteAda
         mBinding.placeSearch.setVisibility(View.GONE);
         mBinding.placesRecyclerView.setVisibility(View.GONE);
         hideKeyboard(requireActivity(), mBinding.placeSearch);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void configureListeners() {
+        mBinding.placeSearch.setOnTouchListener((view, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                mBinding.placeSearch.setVisibility(View.GONE);
+                mBinding.placesRecyclerView.setVisibility(View.GONE);
+                hideKeyboard(requireActivity(), mBinding.placeSearch);
+            }
+            return false;
+        });
     }
 }
