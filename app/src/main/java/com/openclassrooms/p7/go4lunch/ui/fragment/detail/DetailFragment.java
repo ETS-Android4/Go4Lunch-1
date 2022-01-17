@@ -115,7 +115,7 @@ public class DetailFragment extends Fragment {
                     .into(mBinding.activityDetailImageHeader);
         }
         mBinding.activityDetailRestaurantNameTv.setText(mApiService.formatRestaurantName(mCurrentRestaurant.getName()));
-        mBinding.activityDetailRestaurantTypeAndAdressTv.setText(mCurrentRestaurant.getAddress());
+        mBinding.activityDetailRestaurantAddressTv.setText(mCurrentRestaurant.getAddress());
         for (int index = 0; index < ratingStarsArray.length; index++) {
             ratingStarsArray[index].setImageResource(mApiService.setRatingStars(index, mCurrentRestaurant.getRating()));
         }

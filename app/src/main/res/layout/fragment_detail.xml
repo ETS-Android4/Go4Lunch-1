@@ -110,7 +110,7 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/activity_detail_restaurant_type_and_address_tv"
+                    android:id="@+id/activity_detail_restaurant_address_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/activity_detail_restaurant_info_container"

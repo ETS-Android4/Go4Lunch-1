@@ -60,6 +60,8 @@ public class ListViewFragment extends Fragment implements MapViewAutocompleteAda
         mBinding = FragmentListViewBinding.inflate(inflater, container, false);
         View root = mBinding.getRoot();
         mRecyclerView = mBinding.listViewRecyclerView;
+        listViewAdapter = new ListViewAdapter(mRestaurantList);
+        mRecyclerView.setAdapter(listViewAdapter);
         this.configureServiceAndViewModel();
         this.createAutocomplete();
         this.setHasOptionsMenu(true);
@@ -102,8 +104,8 @@ public class ListViewFragment extends Fragment implements MapViewAutocompleteAda
             }
             mRestaurantFavoriteList.addAll(restaurantFavoriteList);
             mViewModel.setRestaurantFavorite(restaurantFavoriteList, mRestaurantList);
-            listViewAdapter = new ListViewAdapter(mRestaurantList);
-            mRecyclerView.setAdapter(listViewAdapter);
+            mApiService.restaurantComparator(mRestaurantList, mSortMethod);
+            listViewAdapter.updateRestaurantListOrder(mRestaurantList);
         });
 
         mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
@@ -116,8 +118,7 @@ public class ListViewFragment extends Fragment implements MapViewAutocompleteAda
             mRestaurantList.addAll(restaurants);
             mViewModel.setRestaurantFavorite(mRestaurantFavoriteList, restaurants);
             mApiService.restaurantComparator(restaurants, mSortMethod);
-            listViewAdapter = new ListViewAdapter(restaurants);
-            mRecyclerView.setAdapter(listViewAdapter);
+            listViewAdapter.updateRestaurantListOrder(restaurants);
         });
     }
 
@@ -166,9 +167,17 @@ public class ListViewFragment extends Fragment implements MapViewAutocompleteAda
         } else if (id == R.id.sort_menu_searched_descending) {
             mSortMethod = SortMethod.SEARCHED_DESCENDING;
         }
-        mApiService.restaurantComparator(mRestaurantList, mSortMethod);
-        listViewAdapter.updateRestaurantListOrder(mRestaurantList);
-        return false;
+        this.getRestaurantList();
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void getRestaurantList() {
+        mViewModel.getAllRestaurants().observe(getViewLifecycleOwner(), this::updateRestaurants);
+    }
+
+    private void updateRestaurants(List<Restaurant> restaurantList) {
+        mApiService.restaurantComparator(restaurantList, mSortMethod);
+        listViewAdapter.updateRestaurantListOrder(restaurantList);
     }
 
     @SuppressLint("NotifyDataSetChanged")
