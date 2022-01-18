@@ -48,7 +48,7 @@ public class ListViewFragment extends Fragment implements MapViewAutocompleteAda
     private UserAndRestaurantViewModel mViewModel;
     private ApiService mApiService;
     private final List<Restaurant> mRestaurantList = new ArrayList<>();
-    private final List<RestaurantFavorite> mRestaurantFavoriteList = new ArrayList<>();
+    private List<RestaurantFavorite> mRestaurantFavoriteList = new ArrayList<>();
     private SortMethod mSortMethod;
     private FragmentListViewBinding mBinding;
     private MapViewAutocompleteAdapter mMapViewAutocompleteAdapter;
@@ -97,7 +97,6 @@ public class ListViewFragment extends Fragment implements MapViewAutocompleteAda
             }
             userInterestedList.addAll(users);
                 });
-
         mViewModel.getAllRestaurantFavorite().observe(getViewLifecycleOwner(), restaurantFavoriteList -> {
             if (!mRestaurantFavoriteList.isEmpty()) {
                 mRestaurantFavoriteList.clear();

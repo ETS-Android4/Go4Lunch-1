@@ -153,7 +153,16 @@ public class UserRepositoryAndRestaurantFavoriteRepositoryTest {
     }
 
     @Test
-    public void testh_deleteRestaurantFavorite_withSuccess() throws InterruptedException {
+    public void testh_getAllRestaurantFavorite_shouldReturn3() throws InterruptedException {
+        LiveDataTestUtils.observeForTesting(viewModel.getAllRestaurantFavorite(), liveData -> {
+            Thread.sleep(500);
+            List<RestaurantFavorite> restaurantFavorite = liveData.getValue();
+            assert 3 == (Objects.requireNonNull(restaurantFavorite)).size();
+        });
+    }
+
+    @Test
+    public void testi_deleteRestaurantFavorite_withSuccess() throws InterruptedException {
         RestaurantFavorite restaurantFavoriteToDelete = getDefaultRestaurantFavorite().get(0);
         viewModel.deleteRestaurantFavorite(restaurantFavoriteToDelete);
         LiveDataTestUtils.observeForTesting(viewModel.getCurrentRestaurantFavorite(restaurantFavoriteToDelete.getRestaurantId()), liveData -> {
@@ -164,7 +173,7 @@ public class UserRepositoryAndRestaurantFavoriteRepositoryTest {
     }
 
     @Test
-    public void testi_getAllUsers_withSuccess() throws InterruptedException {
+    public void testj_getAllUsers_withSuccess() throws InterruptedException {
         List<User> userList = new ArrayList<>();
         LiveDataTestUtils.observeForTesting(viewModel.getAllUsers(), liveData -> {
             Thread.sleep(500);
@@ -174,7 +183,7 @@ public class UserRepositoryAndRestaurantFavoriteRepositoryTest {
     }
 
     @Test
-    public void testj_getAllInterestedUsers_withSuccess() throws InterruptedException {
+    public void testk_getAllInterestedUsers_withSuccess() throws InterruptedException {
         List<User> interestedUserList = new ArrayList<>();
         LiveDataTestUtils.observeForTesting(viewModel.getAllInterestedUsers(), liveData -> {
             Thread.sleep(500);
@@ -184,7 +193,7 @@ public class UserRepositoryAndRestaurantFavoriteRepositoryTest {
     }
 
     @Test
-    public void testk_getAllInterestedUsersAtCurrentRestaurant_withSuccess() throws InterruptedException {
+    public void testl_getAllInterestedUsersAtCurrentRestaurant_withSuccess() throws InterruptedException {
         List<User> interestedUserList = new ArrayList<>();
         LiveDataTestUtils.observeForTesting(viewModel.getAllInterestedUsers(), liveData -> {
             Thread.sleep(500);
@@ -196,13 +205,13 @@ public class UserRepositoryAndRestaurantFavoriteRepositoryTest {
     }
 
     @Test
-    public void testl_getCurrentFirebaseUser_withSuccess() {
+    public void testm_getCurrentFirebaseUser_withSuccess() {
         FirebaseUser currentUser = viewModel.getCurrentFirebaseUser();
         assert currentUser.getUid().equals(currentUser.getUid());
     }
 
     @Test
-    public void testm_signOut_withSuccess() throws InterruptedException {
+    public void testn_signOut_withSuccess() throws InterruptedException {
         viewModel.signOut(context);
         Thread.sleep(500);
         FirebaseUser currentUser = viewModel.getCurrentFirebaseUser();

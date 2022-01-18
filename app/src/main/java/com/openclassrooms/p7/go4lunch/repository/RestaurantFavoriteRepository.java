@@ -58,6 +58,9 @@ public class RestaurantFavoriteRepository {
                    restaurantFavoriteList.add(documentSnapshot.toObject(RestaurantFavorite.class));
                    listOfRestaurantFavorite.postValue(restaurantFavoriteList);
                }
+               if (task.getResult().isEmpty()) {
+                   listOfRestaurantFavorite.postValue(restaurantFavoriteList);
+               }
            }
         });
         return listOfRestaurantFavorite;

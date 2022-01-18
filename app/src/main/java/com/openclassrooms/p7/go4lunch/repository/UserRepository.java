@@ -85,11 +85,8 @@ public class UserRepository {
                     getCurrentFirestoreUser().postValue(currentUser);
                     Log.d(TAG, "createUser: User exist");
                 }
-
             }
-        }).addOnFailureListener(exception -> {
-
-        });
+        }).addOnFailureListener(exception -> Log.d(TAG, "createFireStoreUser: Failed to create user: " + exception.getMessage()));
     }
 
     /**

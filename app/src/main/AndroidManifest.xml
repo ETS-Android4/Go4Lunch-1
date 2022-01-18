@@ -22,7 +22,7 @@
             android:name=".ui.activity.MainActivity"
             android:exported="true"
             android:configChanges="uiMode"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -34,31 +34,31 @@
         <activity
             android:name=".ui.activity.DetailActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor"/>
 
         <!-- Preference Activity -->
         <activity
             android:name=".ui.activity.PreferenceActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor"/>
 
         <!-- Login Activity -->
         <activity
             android:name=".ui.login.LoginActivity"
             android:parentActivityName=".ui.activity.MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor"/>
 
         <!-- Facebook Sign In Activity -->
         <activity
             android:name=".ui.sign_in.FacebookSignInActivity"
             android:parentActivityName=".ui.activity.MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor"/>
 
         <!-- Google Sign In Activity -->
         <activity
             android:name=".ui.sign_in.GoogleSignInActivity"
             android:parentActivityName=".ui.activity.MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="fullSensor"/>
 
         <!-- Google maps api key -->
         <meta-data

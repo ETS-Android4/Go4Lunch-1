@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class DummyApiService implements ApiService {
@@ -153,7 +154,7 @@ public class DummyApiService implements ApiService {
             restaurantName = restaurantName.replace("RESTAURANT ", "");
             restaurantName = restaurantName.replace("Restaurant ", "");
             restaurantName = restaurantName.replace("restaurant ", "");
-            String restaurant = restaurantName.toLowerCase();
+            String restaurant = restaurantName.toLowerCase(Locale.getDefault());
             char[] restaurantNameArray = restaurant.toCharArray();
             restaurantNameArray[0] = Character.toUpperCase(restaurantNameArray[0]);
             return new String(restaurantNameArray);

@@ -73,11 +73,6 @@ public class FirebaseHelper {
         return AuthUI.getInstance().signOut(context);
     }
 
-    public Task<GetTokenResult> tokenRevoked() {
-        return FirebaseAuth.getInstance().getAccessToken(true);
-
-    }
-
     /**
      * Call to delete user account from Firestore.
      * @param context context of the activity.

@@ -8,6 +8,7 @@
     <string name="NOTIFICATION" translatable="false">notification</string>
     <string name="NOTIFICATION_ENABLED" translatable="false">notification_enabled</string>
     <string name="NOTIFICATION_DISABLED" translatable="false">notification_disabled</string>
+    <string name="detail_activity_back_fab_description" translatable="false">arrow back</string>
 
     <!-- Facebook api id -->
     <string name="facebook_application_id" translatable="false">590265162119569</string>
@@ -109,6 +110,5 @@
     <string name="map_view_repository_open_at">open at</string>
     <string name="map_view_repository_hour">pm</string>
     <string name="map_view_fragment_search_canceled">Search canceled</string>
-    <string name="detail_activity_back_fab_description">arrow back</string>
 
 </resources>

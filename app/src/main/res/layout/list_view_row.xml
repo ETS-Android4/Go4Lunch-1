@@ -76,10 +76,8 @@
                 android:id="@+id/list_view_row_interested_friend_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(3)"
                 android:textSize="@dimen/list_view_distance_between"
-                android:drawableLeft="@drawable/baseline_person_outline_24"
-                android:drawableTint="?attr/text_color"
+                android:drawableStart="@drawable/baseline_person_outline_24"
                 android:textColor="?attr/text_color"/>
 
             <androidx.appcompat.widget.LinearLayoutCompat

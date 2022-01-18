@@ -102,11 +102,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         if (!mViewModel.isCurrentUserLogged()) {
             startActivity(new Intent(requireActivity(), LoginActivity.class));
         }
-        mViewModel.getCurrentFirestoreUser().observe(getViewLifecycleOwner(), user -> {
-            if (!user.getUid().equals(mViewModel.getCurrentFirebaseUser().getUid())) {
-                startActivity(new Intent(requireActivity(), LoginActivity.class));
-            }
-        });
+
         this.configureListeners();
         this.createAutocomplete();
         this.setHasOptionsMenu(true);
