@@ -16,3 +16,6 @@ Go4Lunch is an application to know who eat at which restaurant.
 ### Installation
 - Get app-release.apk at Go4Lunch\app\release
 - Copy and install it in an android smartphone.
+
+### Author
+Charles freddy
