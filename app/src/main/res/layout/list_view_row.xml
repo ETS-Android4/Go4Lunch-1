@@ -131,7 +131,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/list_view_row_margin"
-                app:srcCompat="@drawable/no_image" />
+                app:srcCompat="@drawable/no_image_picture" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

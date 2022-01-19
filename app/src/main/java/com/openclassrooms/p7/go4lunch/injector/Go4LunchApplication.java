@@ -1,16 +1,7 @@
 package com.openclassrooms.p7.go4lunch.injector;
 
-import static android.content.ContentValues.TAG;
-import static com.openclassrooms.p7.go4lunch.notification.PushNotificationService.periodicTimeRequest;
-
 import android.app.Application;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.os.Build;
-import android.util.Log;
-
-import androidx.core.app.NotificationManagerCompat;
 
 public class Go4LunchApplication extends Application {
     private static boolean isRunningTest;

@@ -9,7 +9,7 @@
         android:id="@+id/workmates_list_row_profile_img"
         android:layout_width="@dimen/workmates_list_row_image_width"
         android:layout_height="@dimen/workmates_list_row_image_height"
-        android:src="@drawable/no_image"/>
+        android:src="@drawable/no_image_picture"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/workmates_list_row_eating_type_tv"

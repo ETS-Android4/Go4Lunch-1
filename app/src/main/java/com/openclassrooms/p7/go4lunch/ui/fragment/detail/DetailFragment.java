@@ -110,7 +110,7 @@ public class DetailFragment extends Fragment {
                     .into(mBinding.activityDetailImageHeader);
         } else {
             Glide.with(this)
-                    .load(R.drawable.no_image)
+                    .load(R.drawable.no_image_picture)
                     .centerCrop()
                     .into(mBinding.activityDetailImageHeader);
         }

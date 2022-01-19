@@ -91,6 +91,11 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
                         .load(restaurant.getPictureUrl())
                         .optionalCenterCrop()
                         .into(mBinding.listViewRowRestaurantPictureImg);
+            } else {
+                Glide.with(itemView)
+                        .load(R.drawable.no_image_picture)
+                        .centerCrop()
+                        .into(mBinding.listViewRowRestaurantPictureImg);
             }
 
             for (int index = 0; index < ratingStarsArray.length; index++) {
