@@ -40,7 +40,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     @Override
     public void onBindViewHolder(@NonNull ListViewAdapter.ListViewHolder holder, int position) {
         holder.bind(mRestaurantList.get(position));
-        //TODO commit detail fragment
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
             String id = mRestaurantList.get(position).getId();

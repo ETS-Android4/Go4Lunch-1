@@ -229,5 +229,6 @@ public class UserRepositoryAndRestaurantFavoriteRepositoryTest {
         FirebaseUser userDeleted = currentUser;
         FirebaseUser newUser = viewModel.getCurrentFirebaseUser();
         assertNotEquals(userDeleted.getUid(), newUser.getUid());
+        viewModel.signOut(context);
     }
 }
